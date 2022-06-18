@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, sized_box_for_whitespace, camel_case_types, unused_import, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, avoid_print, sized_box_for_whitespace, camel_case_types, unused_import, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable
 
 import 'dart:async';
 import 'dart:convert';
@@ -94,6 +94,21 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     });
   }
 
+  Future fetchBusinessProfile() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+
+    final int? business_id = localStorage.getInt("business_id");
+
+    final response = await http.get(
+      Uri.parse(
+          "http://localhost:8000/api/business-profile/fetch/${business_id}"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,11 +158,11 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: streamController?.stream,
+      body: FutureBuilder(
+        future: fetchBusinessProfile(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Container();
+            return businessPage();
           } else if (snapshot.hasError) {
             return Text("Error");
           } else {
@@ -156,6 +171,10 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         },
       ),
     );
+  }
+
+  Widget businessPage() {
+    return Container();
   }
 
   Widget sourceList() {
