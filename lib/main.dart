@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/loading.dart';
 import 'package:flutter_application_1/screens/components/create_professional_account.dart';
+import 'package:flutter_application_1/screens/components/manage_business_account.dart';
 import 'package:flutter_application_1/screens/components/pick_address_map.dart';
 import 'package:flutter_application_1/screens/components/upload.dart';
 import 'package:flutter_application_1/screens/components/upload_business_images.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
                 .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
           ),
         ),
-        home: ConfirmAuth());
+        home: ManageBusinessAccount());
     //  home: PickAddress());
   }
 }

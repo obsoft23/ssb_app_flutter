@@ -233,7 +233,7 @@ class _ProfessionalState extends State<Professional> {
                     postalController.text,
                     cityController.text,
                     countyController.text,
-                    countyController.text,
+                    countryController.text,
                   );
                 }
               }

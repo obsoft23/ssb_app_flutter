@@ -2459,4 +2459,48 @@ if (pics != null && pics.length < 2) {
             ),
           ),
         ),
-                  */
+
+
+
+
+
+
+
+
+
+        FutureBuilder(
+        future: fetchBusinessProfile(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return businessPage();
+          } else if (snapshot.hasError) {
+            return Text("Error");
+          } else {
+            return Text("Nothing");
+          }
+        },
+      ),
+           
+           
+           
+           
+           
+           
+           StreamBuilder(
+        stream: profileStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error"),
+            );
+          } else if (snapshot.hasData) {
+            return Text("");
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: Text("connecting."));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
+           */

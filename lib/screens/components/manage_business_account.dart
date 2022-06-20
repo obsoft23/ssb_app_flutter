@@ -30,6 +30,7 @@ import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:filter_list/filter_list.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class ManageBusinessAccount extends StatefulWidget {
   const ManageBusinessAccount({Key? key}) : super(key: key);
@@ -39,6 +40,8 @@ class ManageBusinessAccount extends StatefulWidget {
 }
 
 class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
+  late Stream profileStream;
+  var profile;
   bool isLoading = false;
   var selectedOpeningDayList = [];
   var newselectedOpeningDayList = [];
@@ -46,12 +49,6 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   var latitude;
   var longtitude;
   //import 'package:
-  String? addressController;
-  String? postalControlle;
-  String? cityController;
-  String? countyController;
-  String? countryController;
-  String? houseNoController;
 
   StreamController? streamController;
 
@@ -59,6 +56,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   void initState() {
     getCurrentLocation();
     super.initState();
+    profileStream = fetchBusinessProfile();
   }
 
   @override
@@ -94,7 +92,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     });
   }
 
-  Future fetchBusinessProfile() async {
+  Stream fetchBusinessProfile() async* {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
 
     final int? business_id = localStorage.getInt("business_id");
@@ -107,6 +105,17 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         'Accept': 'application/json',
       },
     );
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print("fetch business profile${data}");
+      // print("fetch business profile${data["profile"][0]["business_name"]}");
+      // print("image business profile${data["images"][0]["image_name"]}");
+      profile = BusinessProfile.fromJson(data["profile"][0]);
+      print(profile.longtitude);
+      yield data;
+    } else {
+      throw response.body.toString();
+    }
   }
 
   @override
@@ -158,15 +167,21 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: fetchBusinessProfile(),
+      body: StreamBuilder(
+        stream: profileStream,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error"),
+            );
+          } else if (snapshot.hasData) {
             return businessPage();
-          } else if (snapshot.hasError) {
-            return Text("Error");
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            return Center(child: CircularProgressIndicator());
           } else {
-            return Text("Nothing");
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -174,7 +189,61 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   }
 
   Widget businessPage() {
-    return Container();
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: 600,
+                  height: MediaQuery.of(context).size.height * .30,
+                  color: Colors.grey,
+                  child: Center(
+                    child: Icon(
+                      CupertinoIcons.camera,
+                      color: Colors.white,
+                      size: 75,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 200,
+                right: 20,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return UploadBusinessImages();
+                        }),
+                      );
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 50,
+                      color: Colors.white,
+                      child: Icon(Icons.edit),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          data["images"][0]["image_name"] == null
+              ? Text(
+                  "Olfe",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                )
+              : Text("")
+        ],
+      ),
+    );
   }
 
   Widget sourceList() {
@@ -367,3 +436,67 @@ List<closingDay> closeDayList = [
   closingDay(weekDay: "Friday ", avatar: ""),
   closingDay(weekDay: "Saturday ", avatar: ""),
 ];
+
+class BusinessProfile {
+  final String? businessName;
+  final String? businessDescription;
+  final String? openingTime;
+  final String? closingTime;
+  final String? emailController;
+  final String? phoneController;
+  final String? addressController;
+  final String? postalController;
+  final String? cityController;
+  final String? countyController;
+  final String? countryController;
+  final String? houseNoController;
+  final String? businessCatorgyController;
+  final String? businessSubCatorgyController;
+  final String? latitude;
+  final String? longtitude;
+  final String? rating;
+  final List<dynamic>? acitveDays;
+
+  BusinessProfile(
+      {this.businessName,
+      this.businessDescription,
+      this.openingTime,
+      this.closingTime,
+      this.emailController,
+      this.phoneController,
+      this.addressController,
+      this.postalController,
+      this.cityController,
+      this.countyController,
+      this.countryController,
+      this.houseNoController,
+      this.businessCatorgyController,
+      this.businessSubCatorgyController,
+      this.latitude,
+      this.longtitude,
+      this.rating,
+      this.acitveDays});
+
+  factory BusinessProfile.fromJson(Map<String, dynamic> json) {
+    return BusinessProfile(
+      businessName: json["business_name"],
+      businessDescription: json["business_descripition"],
+      openingTime: json["openingTime"],
+      closingTime: json["closingTime"],
+      emailController: json["email"],
+      phoneController: json["phone"],
+      addressController: json["full_address"],
+      postalController: json["postal_code"],
+      cityController: json["city_or_town"],
+      countyController: json["county_locality"],
+      countryController: json["country_nation"],
+      houseNoController: json["house_no"],
+      businessCatorgyController: json["business_category"],
+      businessSubCatorgyController: json["business_sub_category"],
+      latitude: json["latitude"],
+      longtitude: json["longtitude"],
+      rating: json["rating"],
+      acitveDays: json["active_days"].toList(),
+    );
+  }
+}

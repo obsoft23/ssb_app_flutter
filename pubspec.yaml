@@ -54,6 +54,7 @@ dependencies:
   loading_indicator: ^3.0.3
   filter_list: ^1.0.1
   images_picker: ^1.2.11
+  carousel_slider: ^4.1.1
 
 dev_dependencies:
   flutter_test:
