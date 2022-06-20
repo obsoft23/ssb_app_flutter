@@ -48,6 +48,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   var userLocation;
   var latitude;
   var longtitude;
+  List? businessImages;
   //import 'package:
 
   StreamController? streamController;
@@ -111,6 +112,9 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
       // print("fetch business profile${data["profile"][0]["business_name"]}");
       // print("image business profile${data["images"][0]["image_name"]}");
       profile = BusinessProfile.fromJson(data["profile"][0]);
+      // print("image business profile${data["images"].toList()}");
+      businessImages = data["images"].toList();
+      print(businessImages);
       print(profile.longtitude);
       yield data;
     } else {
@@ -235,12 +239,109 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               ),
             ],
           ),
-          data["images"][0]["image_name"] == null
+          profile.businessName != null
               ? Text(
-                  "Olfe",
+                  "${profile.businessName}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                 )
-              : Text("")
+              : Text(""),
+          profile.emailController != null
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "email : ${profile.emailController}",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.grey),
+                  ),
+                )
+              : Text(""),
+          Container(
+            padding: EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Spacer(),
+                Container(
+                  width: 275,
+                  height: 50,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      // Respond to button press
+                      setState(() {});
+                    },
+                    label: Text("Edit Professional Details"),
+                    icon: Icon(Icons.add, size: 18),
+                  ),
+                ),
+                Spacer(),
+                Center(
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    color: Colors.white,
+                    child: Icon(CupertinoIcons.eye),
+                  ),
+                ),
+                Spacer(),
+              ],
+            ),
+          ),
+          Divider(),
+          profile.phoneController != null
+              ? ListTile(
+                  leading: Icon(CupertinoIcons.phone),
+                  title: Text(
+                    '${profile.phoneController}',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  onTap: () {},
+                  dense: true,
+                )
+              : Container(child: null),
+          profile.addressController != null
+              ? ListTile(
+                  leading: Icon(Icons.location_on),
+                  title: Text(
+                    '${profile.addressController}',
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                  onTap: () {},
+                  dense: true,
+                )
+              : Container(child: null),
+          profile.joined != null
+              ? ListTile(
+                  leading: Icon(Icons.access_time_filled_rounded),
+                  title: Text(
+                    'Joined on ${profile.joined}',
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                  onTap: () {},
+                  dense: true,
+                )
+              : Container(child: null),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              Container(
+                height: 1,
+                width: MediaQuery.of(context).size.width * .75,
+                color: Color(0xffA2A2A2),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              OutlinedButton(
+                onPressed: () {},
+                child: Text("edit"),
+              ),
+              Spacer(),
+            ],
+          ),
         ],
       ),
     );
@@ -455,6 +556,7 @@ class BusinessProfile {
   final String? latitude;
   final String? longtitude;
   final String? rating;
+  final String? joined;
   final List<dynamic>? acitveDays;
 
   BusinessProfile(
@@ -475,6 +577,7 @@ class BusinessProfile {
       this.latitude,
       this.longtitude,
       this.rating,
+      this.joined,
       this.acitveDays});
 
   factory BusinessProfile.fromJson(Map<String, dynamic> json) {
@@ -496,6 +599,7 @@ class BusinessProfile {
       latitude: json["latitude"],
       longtitude: json["longtitude"],
       rating: json["rating"],
+      joined: json["created_at"],
       acitveDays: json["active_days"].toList(),
     );
   }

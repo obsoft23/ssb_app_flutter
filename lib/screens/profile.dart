@@ -205,50 +205,44 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         )
                       : Container(child: null),
-                  SizedBox(height: 30.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Center(
                         child: userDetails.hasProfessionalAcc == createStatus
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => IntroScreen(),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "Create Professional Account",
-                                  style: TextStyle(fontSize: 18.0),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  fixedSize: Size(350.0, 53.0),
-                                  primary: Colors.blueAccent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
+                            ? Container(
+                                width: 275,
+                                height: 50,
+                                child: OutlinedButton.icon(
+                                  onPressed: () {
+                                    // Respond to button press
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => IntroScreen(),
+                                      ),
+                                    );
+                                  },
+                                  label: Text("Create Professional Account"),
+                                  icon: Icon(Icons.add, size: 18),
                                 ),
                               )
-                            : ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ManageBusinessAccount(),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "Manage Professional Account",
-                                  style: TextStyle(fontSize: 18.0),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  fixedSize: Size(300.0, 47.0),
-                                  primary: Colors.blue,
+                            : Container(
+                                width: 275,
+                                height: 50,
+                                child: OutlinedButton.icon(
+                                  onPressed: () {
+                                    // Respond to button press
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ManageBusinessAccount(),
+                                      ),
+                                    );
+                                  },
+                                  label: Text("Manage Professional Account"),
+                                  icon: Icon(Icons.add, size: 18),
                                 ),
                               ),
                       ),
