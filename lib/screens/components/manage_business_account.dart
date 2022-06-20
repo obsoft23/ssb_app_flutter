@@ -1,16 +1,14 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, sized_box_for_whitespace, camel_case_types, unused_import, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable
+// ignore_for_file: prefer_const_constructors, avoid_print, sized_box_for_whitespace, camel_case_types, unused_import, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable, prefer_const_literals_to_create_immutables, prefer_final_fields
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_application_1/screens/components/email_support.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:flutter_application_1/network/api.dart';
-import 'package:flutter_application_1/screens/business_profile_slider.dart';
 import 'package:flutter_application_1/screens/components/edit_profile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -22,7 +20,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_application_1/screens/components/upload_business_images.dart';
-//import 'package:ssb_app/screens/components/pick_address_map.dart';
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:http/http.dart' as http;
@@ -31,6 +28,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:filter_list/filter_list.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ManageBusinessAccount extends StatefulWidget {
   const ManageBusinessAccount({Key? key}) : super(key: key);
@@ -48,7 +46,9 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   var userLocation;
   var latitude;
   var longtitude;
-  List? businessImages;
+  List businessImages = [];
+  int _current = 0;
+  final CarouselController _controller = CarouselController();
   //import 'package:
 
   StreamController? streamController;
@@ -112,10 +112,19 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
       // print("fetch business profile${data["profile"][0]["business_name"]}");
       // print("image business profile${data["images"][0]["image_name"]}");
       profile = BusinessProfile.fromJson(data["profile"][0]);
-      // print("image business profile${data["images"].toList()}");
-      businessImages = data["images"].toList();
+
+      final images = data["images"];
+      for (var i = 0; i < images.length; i++) {
+        // print(images[i]);
+        String? image_name = images[i]["image_name"];
+        final index = images[i]["image_order_index"];
+        print(
+            "http://localhost:8000/api/fetch-business-acc-image/${image_name}");
+        String name =
+            "http://localhost:8000/api/fetch-business-acc-image/${image_name}";
+        businessImages.insert(i, name);
+      }
       print(businessImages);
-      print(profile.longtitude);
       yield data;
     } else {
       throw response.body.toString();
@@ -141,7 +150,8 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         ),
         title: Text(
           "Manage Professional Account",
-          style: TextStyle(color: Colors.black, fontSize: 15),
+          style: TextStyle(
+              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
         ),
         actions: [
           GestureDetector(
@@ -200,18 +210,58 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  width: 600,
-                  height: MediaQuery.of(context).size.height * .30,
-                  color: Colors.grey,
-                  child: Center(
-                    child: Icon(
-                      CupertinoIcons.camera,
-                      color: Colors.white,
-                      size: 75,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * .40,
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                              aspectRatio: 1,
+                              enlargeCenterPage: true,
+                              viewportFraction: 1,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  _current = index;
+                                });
+                              }),
+                          items: businessImages
+                              .map(
+                                (item) => Image.network(
+                                  item,
+                                  fit: BoxFit.cover,
+                                  width: MediaQuery.of(context).size.width,
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
                     ),
-                  ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: businessImages.asMap().entries.map((entry) {
+                        return GestureDetector(
+                          onTap: () => _controller.animateToPage(entry.key),
+                          child: Container(
+                            width: 8.0,
+                            height: 8.0,
+                            margin: EdgeInsets.symmetric(horizontal: 4.0),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: (Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(
+                                        _current == entry.key ? 0.9 : 0.4)),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
               ),
               Positioned(
@@ -285,7 +335,6 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               ],
             ),
           ),
-          Divider(),
           profile.phoneController != null
               ? ListTile(
                   leading: Icon(CupertinoIcons.phone),
@@ -328,20 +377,183 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             children: <Widget>[
               Spacer(),
               Container(
-                height: 1,
+                height: 0.2,
                 width: MediaQuery.of(context).size.width * .75,
                 color: Color(0xffA2A2A2),
               ),
               SizedBox(
                 width: 10,
               ),
-              OutlinedButton(
+              TextButton(
                 onPressed: () {},
                 child: Text("edit"),
               ),
               Spacer(),
             ],
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(left: 8.0, top: 10.0),
+                child: Text(
+                  "Business description",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+          profile.businessDescription != null
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    '${profile.businessDescription}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                )
+              : Container(child: null),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              Container(
+                height: 0.2,
+                width: MediaQuery.of(context).size.width * .75,
+                color: Color(0xffA2A2A2),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text("edit"),
+              ),
+              Spacer(),
+            ],
+          ),
+          profile.businessCatorgyController != null
+              ? ListTile(
+                  leading: Icon(Icons.lock_person_outlined),
+                  title: Text(
+                    'Category : ${profile.businessCatorgyController}',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  onTap: () {},
+                  dense: true,
+                )
+              : Container(child: null),
+          profile.openingTime != null || profile.closingTime != null
+              ? ListTile(
+                  leading: Icon(Icons.add_task_sharp),
+                  title: Text(
+                    'Opened  between ${profile.openingTime} am - ${profile.closingTime} pm',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  onTap: () {},
+                  dense: true,
+                )
+              : Container(child: null),
+          profile.activeDays != null
+              ? ListTile(
+                  //  leading: Icon(Icons.add_task_sharp),
+                  title: Text(
+                    'We opened on : ${profile.activeDays.toString()}',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  onTap: () {},
+                  dense: true,
+                )
+              : Container(child: null),
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Reviews and Rating   ",
+                style: TextStyle(fontSize: 17),
+              ),
+              Container(
+                height: 0.2,
+                width: MediaQuery.of(context).size.width * .50,
+                color: Color(0xffA2A2A2),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+            ],
+          ),
+          ListTile(
+            leading: FlutterLogo(size: 72.0),
+            title: Text('Three-line ListTile'),
+            subtitle:
+                Text('A sufficiently long subtitle warrants three lines.'),
+            trailing: RatingBar.builder(
+              initialRating: 4,
+              minRating: 3,
+              itemSize: 10,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                print(rating);
+              },
+            ),
+            isThreeLine: true,
+          ),
+          ListTile(
+            leading: FlutterLogo(size: 72.0),
+            title: Text('Three-line ListTile'),
+            subtitle:
+                Text('A sufficiently long subtitle warrants three lines.'),
+            trailing: RatingBar.builder(
+              initialRating: 5,
+              minRating: 1,
+              itemSize: 10,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                print(rating);
+              },
+            ),
+            isThreeLine: true,
+          ),
+          ListTile(
+            leading: FlutterLogo(size: 72.0),
+            title: Text('Three-line ListTile'),
+            subtitle:
+                Text('A sufficiently long subtitle warrants three lines.'),
+            trailing: RatingBar.builder(
+              initialRating: 3,
+              minRating: 1,
+              itemSize: 10,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                print(rating);
+              },
+            ),
+            isThreeLine: true,
+          ),
+          SizedBox(height: 50),
         ],
       ),
     );
@@ -557,7 +769,7 @@ class BusinessProfile {
   final String? longtitude;
   final String? rating;
   final String? joined;
-  final List<dynamic>? acitveDays;
+  final List<dynamic>? activeDays;
 
   BusinessProfile(
       {this.businessName,
@@ -578,14 +790,14 @@ class BusinessProfile {
       this.longtitude,
       this.rating,
       this.joined,
-      this.acitveDays});
+      this.activeDays});
 
   factory BusinessProfile.fromJson(Map<String, dynamic> json) {
     return BusinessProfile(
       businessName: json["business_name"],
       businessDescription: json["business_descripition"],
-      openingTime: json["openingTime"],
-      closingTime: json["closingTime"],
+      openingTime: json["opening_time"],
+      closingTime: json["closing_time"],
       emailController: json["email"],
       phoneController: json["phone"],
       addressController: json["full_address"],
@@ -600,7 +812,7 @@ class BusinessProfile {
       longtitude: json["longtitude"],
       rating: json["rating"],
       joined: json["created_at"],
-      acitveDays: json["active_days"].toList(),
+      activeDays: json["active_days"].toList(),
     );
   }
 }

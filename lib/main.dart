@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
                 .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
           ),
         ),
-        home: ManageBusinessAccount());
+        home: ConfirmAuth());
     //  home: PickAddress());
   }
 }

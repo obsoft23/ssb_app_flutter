@@ -131,21 +131,14 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
           child: Container(
             margin: EdgeInsets.only(left: 8),
             child: Center(
-              child: Text(
-                "Done",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              ),
+              child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
             ),
           ),
         ),
         title: Text(
-          "Select Business Images",
+          "Manage Business Images",
           style: TextStyle(
-              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w200),
+              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
         ),
       ),
       body: FutureBuilder(

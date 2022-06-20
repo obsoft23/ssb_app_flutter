@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_application_1/screens/login.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 //import 'package:video_player/video_player.dart';
 
@@ -246,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                       ),
-                      SizedBox(width: 15.0),
+                    
                     ],
                   ),
                   Expanded(
@@ -272,21 +273,90 @@ class _ProfilePageState extends State<ProfilePage> {
                             Tab(text: "Video"),
                           ],
                         ),
-                        SizedBox(width: 50.0),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.more_vert),
-                        )
                       ],
                     ),
                   ),
-                  SizedBox(height: 10.0),
                   Expanded(
                     child: TabBarView(
                       controller: tabController,
                       children: [
-                        Center(
-                          child: Text("no photos"),
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: FlutterLogo(size: 72.0),
+                                title: Text('Three-line ListTile'),
+                                subtitle: Text(
+                                    'A sufficiently long subtitle warrants three lines.'),
+                                trailing: RatingBar.builder(
+                                  initialRating: 4,
+                                  minRating: 3,
+                                  itemSize: 10,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 4.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    print(rating);
+                                  },
+                                ),
+                                isThreeLine: true,
+                              ),
+                              ListTile(
+                                leading: FlutterLogo(size: 72.0),
+                                title: Text('Three-line ListTile'),
+                                subtitle: Text(
+                                    'A sufficiently long subtitle warrants three lines.'),
+                                trailing: RatingBar.builder(
+                                  initialRating: 4,
+                                  minRating: 3,
+                                  itemSize: 10,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 4.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    print(rating);
+                                  },
+                                ),
+                                isThreeLine: true,
+                              ),
+                              ListTile(
+                                leading: FlutterLogo(size: 72.0),
+                                title: Text('Three-line ListTile'),
+                                subtitle: Text(
+                                    'A sufficiently long subtitle warrants three lines.'),
+                                trailing: RatingBar.builder(
+                                  initialRating: 4,
+                                  minRating: 3,
+                                  itemSize: 10,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 4.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    print(rating);
+                                  },
+                                ),
+                                isThreeLine: true,
+                              ),
+                            ],
+                          ),
                         ),
                         Center(
                           child: Text("You don't have any videos"),
