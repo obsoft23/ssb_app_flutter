@@ -2503,4 +2503,77 @@ if (pics != null && pics.length < 2) {
         },
       ),
     );
+
+
+  load() async {
+    streamController?.add("Loading");
+    await Future.delayed(Duration(seconds: 1));
+    streamController?.add("Done");
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    if (true) {
+      //something change
+      load();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
            */
+
+
+
+  /*openFilterDialog() async {
+    await FilterListDialog.display<OpeningDay>(
+      context,
+      listData: openDayList,
+      selectedListData: openDayList,
+      choiceChipLabel: (openDayList) => openDayList!.weekDay,
+      validateSelectedItem: (list, val) => list!.contains(val),
+      onItemSearch: (openDayList, query) {
+        return openDayList.weekDay!.toLowerCase().contains(query.toLowerCase());
+      },
+      onApplyButtonClick: (list) {
+        setState(() {
+          selectedOpeningDayList = List.from(list!);
+          for (var element in selectedOpeningDayList) {
+            print(element.weekDay.toString());
+            newselectedOpeningDayList.add(element.weekDay.toString());
+          }
+        });
+
+        Navigator.pop(context);
+      },
+    );
+
+
+
+
+     businessImages.isNotEmpty
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children:
+                                businessImages.asMap().entries.map((entry) {
+                              return GestureDetector(
+                                onTap: () =>
+                                    _controller.animateToPage(entry.key),
+                                child: Container(
+                                  width: 8.0,
+                                  height: 8.0,
+                                  margin: EdgeInsets.symmetric(horizontal: 4.0),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: (Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white
+                                              : Colors.black)
+                                          .withOpacity(_current == entry.key
+                                              ? 0.9
+                                              : 0.4)),
+                                ),
+                              );
+                            }).toList(),
+                          )
+                        : Container(child: null),
+  }*/          

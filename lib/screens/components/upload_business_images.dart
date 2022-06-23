@@ -126,7 +126,9 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
-            setState(() {});
+            setState(() {
+             
+            });
           },
           child: Container(
             margin: EdgeInsets.only(left: 8),
@@ -149,190 +151,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
               child: Text('An error has occurred!'),
             );
           } else if (snapshot.hasData) {
-            return Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    //image 1
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      child: Center(
-                        child: Text(
-                          "click above to add or remove Photos 1",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20))),
-                            context: context,
-                            builder: (context) => sourceList(1));
-                      },
-                      child: singleImage == null
-                          ? Container(
-                              padding: EdgeInsets.all(10),
-                              width: 600,
-                              height: MediaQuery.of(context).size.height * .30,
-                              color: Colors.grey,
-                              child: Center(
-                                child: Icon(
-                                  CupertinoIcons.camera,
-                                  color: Colors.white,
-                                  size: 75,
-                                ),
-                              ),
-                            )
-                          : Container(
-                              padding: EdgeInsets.all(10),
-                              width: 600,
-                              height: MediaQuery.of(context).size.height * .30,
-                              child: singleImage!),
-                    ),
-
-                    Divider(),
-
-                    //adding image 2
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      child: Center(
-                        child: Text(
-                          "click above to add or remove Photos 2",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20))),
-                            context: context,
-                            builder: (context) => sourceList(2));
-                      },
-                      child: secondImage == null
-                          ? Container(
-                              padding: EdgeInsets.all(10),
-                              width: 600,
-                              height: MediaQuery.of(context).size.height * .30,
-                              color: Colors.grey,
-                              child: Center(
-                                child: Icon(
-                                  CupertinoIcons.camera,
-                                  color: Colors.white,
-                                  size: 75,
-                                ),
-                              ),
-                            )
-                          : Container(
-                              padding: EdgeInsets.all(10),
-                              width: 600,
-                              height: MediaQuery.of(context).size.height * .30,
-                              child: secondImage),
-                    ),
-
-                    Divider(),
-
-                    //adding image 3
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      child: Center(
-                        child: Text(
-                          "click above to add or remove Photos 3",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20))),
-                            context: context,
-                            builder: (context) => sourceList(3));
-                      },
-                      child: thirdImage == null
-                          ? Container(
-                              padding: EdgeInsets.all(10),
-                              width: 600,
-                              height: MediaQuery.of(context).size.height * .30,
-                              color: Colors.grey,
-                              child: Center(
-                                child: Icon(
-                                  CupertinoIcons.camera,
-                                  color: Colors.white,
-                                  size: 75,
-                                ),
-                              ),
-                            )
-                          : Container(
-                              padding: EdgeInsets.all(10),
-                              width: 600,
-                              height: MediaQuery.of(context).size.height * .30,
-                              child: thirdImage),
-                    ),
-
-                    Divider(),
-
-                    //adding image 4
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      child: Center(
-                        child: Text(
-                          "click above to add or remove Photos 4",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20))),
-                            context: context,
-                            builder: (context) => sourceList(4));
-                      },
-                      child: fourthImage == null
-                          ? Container(
-                              padding: EdgeInsets.all(10),
-                              width: 600,
-                              height: MediaQuery.of(context).size.height * .30,
-                              color: Colors.grey,
-                              child: Center(
-                                child: Icon(
-                                  CupertinoIcons.camera,
-                                  color: Colors.white,
-                                  size: 75,
-                                ),
-                              ),
-                            )
-                          : Container(
-                              padding: EdgeInsets.all(10),
-                              width: 600,
-                              height: MediaQuery.of(context).size.height * .30,
-                              child: fourthImage),
-                    ),
-
-                    Divider(),
-                    SizedBox(
-                      height: 40,
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return buildManagePhotos(context);
           } else {
             return Center(child: CircularProgressIndicator());
           }
@@ -341,6 +160,193 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
 
       /*,*/
     );
+  }
+
+  Widget buildManagePhotos(BuildContext context) {
+    return Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  //image 1
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: Center(
+                      child: Text(
+                        "click above to add or remove Photos 1",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20))),
+                          context: context,
+                          builder: (context) => sourceList(1));
+                    },
+                    child: singleImage == null
+                        ? Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            color: Colors.grey,
+                            child: Center(
+                              child: Icon(
+                                CupertinoIcons.camera,
+                                color: Colors.white,
+                                size: 75,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            child: singleImage!),
+                  ),
+
+                  Divider(),
+
+                  //adding image 2
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: Center(
+                      child: Text(
+                        "click above to add or remove Photos 2",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20))),
+                          context: context,
+                          builder: (context) => sourceList(2));
+                    },
+                    child: secondImage == null
+                        ? Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            color: Colors.grey,
+                            child: Center(
+                              child: Icon(
+                                CupertinoIcons.camera,
+                                color: Colors.white,
+                                size: 75,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            child: secondImage),
+                  ),
+
+                  Divider(),
+
+                  //adding image 3
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: Center(
+                      child: Text(
+                        "click above to add or remove Photos 3",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20))),
+                          context: context,
+                          builder: (context) => sourceList(3));
+                    },
+                    child: thirdImage == null
+                        ? Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            color: Colors.grey,
+                            child: Center(
+                              child: Icon(
+                                CupertinoIcons.camera,
+                                color: Colors.white,
+                                size: 75,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            child: thirdImage),
+                  ),
+
+                  Divider(),
+
+                  //adding image 4
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: Center(
+                      child: Text(
+                        "click above to add or remove Photos 4",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20))),
+                          context: context,
+                          builder: (context) => sourceList(4));
+                    },
+                    child: fourthImage == null
+                        ? Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            color: Colors.grey,
+                            child: Center(
+                              child: Icon(
+                                CupertinoIcons.camera,
+                                color: Colors.white,
+                                size: 75,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            child: fourthImage),
+                  ),
+
+                  Divider(),
+                  SizedBox(
+                    height: 40,
+                  ),
+                ],
+              ),
+            ),
+          );
   }
 
   Future chooseSingleImage(index) async {

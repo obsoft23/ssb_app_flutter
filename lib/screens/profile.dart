@@ -97,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  _fetchUser() async {
+  Stream _fetchUser() async* {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var token = localStorage.getString('token');
     final response = await Network().fetchUser(token);
@@ -106,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       userDetails = Profile.fromJson(jsonDecode(response.body));
       // print(userDetails.image);
-      return userDetails;
+      yield userDetails;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -126,252 +126,294 @@ class _ProfilePageState extends State<ProfilePage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        body: FutureBuilder(
-          future: _fetchUser(),
-          builder: ((context, snapshot) {
+        body: StreamBuilder(
+          stream: _fetchUser(),
+          builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('An error has occurred!'),
+              return Center(
+                child: Text("Error"),
               );
             } else if (snapshot.hasData) {
-              final profile = snapshot.data!;
-
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 15.0, right: 15.0, top: 35.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "${userDetails.name}",
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20))),
-                                context: context,
-                                builder: (context) => bottomSheetList());
-                          },
-                          icon: Icon(
-                            Icons.more_horiz,
-                            size: 24.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  userDetails.image == null
-                      ? CircleAvatar(
-                          radius: 70,
-                          child: Icon(Icons.person),
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.grey,
-                        )
-                      : CircleAvatar(
-                          radius: 70,
-                          backgroundImage: NetworkImage(
-                            "http://localhost:8000/api/fetch-user-image/${userDetails.image}",
-                          ),
-                        ),
-                  SizedBox(height: 20.0),
-                  Text(
-                    "@${userDetails.email}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  SizedBox(height: 30.0),
-                  userDetails.bio != null
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            " ${userDetails.bio}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        )
-                      : Container(child: null),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: userDetails.hasProfessionalAcc == createStatus
-                            ? Container(
-                                width: 275,
-                                height: 50,
-                                child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    // Respond to button press
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => IntroScreen(),
-                                      ),
-                                    );
-                                  },
-                                  label: Text("Create Professional Account"),
-                                  icon: Icon(Icons.add, size: 18),
-                                ),
-                              )
-                            : Container(
-                                width: 275,
-                                height: 50,
-                                child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    // Respond to button press
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            ManageBusinessAccount(),
-                                      ),
-                                    );
-                                  },
-                                  label: Text("Manage Professional Account"),
-                                  icon: Icon(Icons.add, size: 18),
-                                ),
-                              ),
-                      ),
-                    
-                    ],
-                  ),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TabBar(
-                          isScrollable: true,
-                          controller: tabController,
-                          indicator:
-                              BoxDecoration(borderRadius: BorderRadius.zero),
-                          labelColor: Colors.black,
-                          labelStyle: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold),
-                          unselectedLabelColor: Colors.black26,
-                          onTap: (tapIndex) {
-                            setState(() {
-                              selectedIndex = tapIndex;
-                            });
-                          },
-                          tabs: [
-                            Tab(text: "Reviews"),
-                            Tab(text: "Video"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      controller: tabController,
-                      children: [
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              ListTile(
-                                leading: FlutterLogo(size: 72.0),
-                                title: Text('Three-line ListTile'),
-                                subtitle: Text(
-                                    'A sufficiently long subtitle warrants three lines.'),
-                                trailing: RatingBar.builder(
-                                  initialRating: 4,
-                                  minRating: 3,
-                                  itemSize: 10,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  itemPadding:
-                                      EdgeInsets.symmetric(horizontal: 4.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                  ),
-                                  onRatingUpdate: (rating) {
-                                    print(rating);
-                                  },
-                                ),
-                                isThreeLine: true,
-                              ),
-                              ListTile(
-                                leading: FlutterLogo(size: 72.0),
-                                title: Text('Three-line ListTile'),
-                                subtitle: Text(
-                                    'A sufficiently long subtitle warrants three lines.'),
-                                trailing: RatingBar.builder(
-                                  initialRating: 4,
-                                  minRating: 3,
-                                  itemSize: 10,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  itemPadding:
-                                      EdgeInsets.symmetric(horizontal: 4.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                  ),
-                                  onRatingUpdate: (rating) {
-                                    print(rating);
-                                  },
-                                ),
-                                isThreeLine: true,
-                              ),
-                              ListTile(
-                                leading: FlutterLogo(size: 72.0),
-                                title: Text('Three-line ListTile'),
-                                subtitle: Text(
-                                    'A sufficiently long subtitle warrants three lines.'),
-                                trailing: RatingBar.builder(
-                                  initialRating: 4,
-                                  minRating: 3,
-                                  itemSize: 10,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  itemPadding:
-                                      EdgeInsets.symmetric(horizontal: 4.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                  ),
-                                  onRatingUpdate: (rating) {
-                                    print(rating);
-                                  },
-                                ),
-                                isThreeLine: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Center(
-                          child: Text("You don't have any videos"),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              );
+              return buildProfilePage(context);
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: Text("connecting."));
             } else {
               return Center(child: CircularProgressIndicator());
             }
-          }),
+          },
         ),
       ),
+    );
+  }
+
+  Column buildProfilePage(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 12,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 35.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "${userDetails.name}",
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20))),
+                      context: context,
+                      builder: (context) => bottomSheetList());
+                },
+                icon: Icon(
+                  Icons.more_horiz,
+                  size: 24.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 16.0),
+        userDetails.image == null
+            ? CircleAvatar(
+                radius: 70,
+                child: Icon(Icons.person),
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.grey,
+              )
+            : CircleAvatar(
+                radius: 70,
+                backgroundImage: NetworkImage(
+                  "http://localhost:8000/api/fetch-user-image/${userDetails.image}",
+                ),
+              ),
+        SizedBox(height: 20.0),
+        Text(
+          "@${userDetails.email}",
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 18.0,
+          ),
+        ),
+        SizedBox(height: 30.0),
+        userDetails.bio != null
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  " ${userDetails.bio}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 16.0,
+                  ),
+                ),
+              )
+            : Container(child: null),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: userDetails.hasProfessionalAcc == createStatus
+                  ? Container(
+                      width: 275,
+                      height: 50,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // Respond to button press
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => IntroScreen(),
+                            ),
+                          );
+                        },
+                        label: Text("Create Professional Account"),
+                        icon: Icon(Icons.add, size: 18),
+                      ),
+                    )
+                  : Container(
+                      width: 275,
+                      height: 50,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // Respond to button press
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ManageBusinessAccount(),
+                            ),
+                          );
+                        },
+                        label: Text("Manage Professional Account"),
+                        icon: Icon(Icons.add, size: 18),
+                      ),
+                    ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TabBar(
+              isScrollable: true,
+              controller: tabController,
+              indicator: BoxDecoration(borderRadius: BorderRadius.zero),
+              labelColor: Colors.black,
+              labelStyle:
+                  TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              unselectedLabelColor: Colors.black26,
+              onTap: (tapIndex) {
+                setState(() {
+                  selectedIndex = tapIndex;
+                });
+              },
+              tabs: [
+                Tab(text: "Reviews"),
+                Tab(text: "Video"),
+              ],
+            ),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: FlutterLogo(size: 72.0),
+                      title: Text('Three-line ListTile'),
+                      subtitle: Text(
+                          'A sufficiently long subtitle warrants three lines.'),
+                      trailing: RatingBar.builder(
+                        initialRating: 4,
+                        minRating: 3,
+                        itemSize: 10,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          print(rating);
+                        },
+                      ),
+                      isThreeLine: true,
+                    ),
+                    ListTile(
+                      leading: FlutterLogo(size: 72.0),
+                      title: Text('Three-line ListTile'),
+                      subtitle: Text(
+                          'A sufficiently long subtitle warrants three lines.'),
+                      trailing: RatingBar.builder(
+                        initialRating: 4,
+                        minRating: 3,
+                        itemSize: 10,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          print(rating);
+                        },
+                      ),
+                      isThreeLine: true,
+                    ),
+                    ListTile(
+                      leading: FlutterLogo(size: 72.0),
+                      title: Text('Three-line ListTile'),
+                      subtitle: Text(
+                          'A sufficiently long subtitle warrants three lines.'),
+                      trailing: RatingBar.builder(
+                        initialRating: 4,
+                        minRating: 3,
+                        itemSize: 10,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          print(rating);
+                        },
+                      ),
+                      isThreeLine: true,
+                    ),
+                    ListTile(
+                      leading: FlutterLogo(size: 72.0),
+                      title: Text('Three-line ListTile'),
+                      subtitle: Text(
+                          'A sufficiently long subtitle warrants three lines.'),
+                      trailing: RatingBar.builder(
+                        initialRating: 4,
+                        minRating: 3,
+                        itemSize: 10,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          print(rating);
+                        },
+                      ),
+                      isThreeLine: true,
+                    ),
+                    ListTile(
+                      leading: FlutterLogo(size: 72.0),
+                      title: Text('Three-line ListTile'),
+                      subtitle: Text(
+                          'A sufficiently long subtitle warrants three lines.'),
+                      trailing: RatingBar.builder(
+                        initialRating: 4,
+                        minRating: 3,
+                        itemSize: 10,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          print(rating);
+                        },
+                      ),
+                      isThreeLine: true,
+                    ),
+                    SizedBox(height: 50)
+                  ],
+                ),
+              ),
+              Center(
+                child: Text("You don't have any videos"),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 

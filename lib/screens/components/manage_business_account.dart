@@ -1,10 +1,11 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, sized_box_for_whitespace, camel_case_types, unused_import, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable, prefer_const_literals_to_create_immutables, prefer_final_fields
+// ignore_for_file: prefer_const_constructors, avoid_print, sized_box_for_whitespace, camel_case_types, unused_import, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable, prefer_const_literals_to_create_immutables, prefer_final_fields, unnecessary_null_comparison, unused_field
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:flutter_application_1/screens/components/email_support.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_webservice/directions.dart';
@@ -48,8 +49,29 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   var longtitude;
   List businessImages = [];
   int _current = 0;
+  var imageTemp;
+  var singleImage;
+  var secondImage;
+  var thirdImage;
+  var fourthImage;
+  var businessLatitude;
+  var businessLongtitude;
+
+  final singlePicker = ImagePicker();
   final CarouselController _controller = CarouselController();
+
   //import 'package:
+
+  TextEditingController businessName = TextEditingController();
+  TextEditingController businessDescription = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController postalController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController countyController = TextEditingController();
+  TextEditingController countryController = TextEditingController();
+  TextEditingController houseNoController = TextEditingController();
 
   StreamController? streamController;
 
@@ -63,22 +85,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   @override
   void dispose() {
     super.dispose();
-    load();
-  }
-
-  load() async {
-    streamController?.add("Loading");
-    await Future.delayed(Duration(seconds: 1));
-    streamController?.add("Done");
-  }
-
-  @override
-  void didUpdateWidget(oldWidget) {
-    if (true) {
-      //something change
-      load();
-    }
-    super.didUpdateWidget(oldWidget);
+    // load();
   }
 
   Future getCurrentLocation() async {
@@ -91,6 +98,51 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
       longtitude = position.longitude;
       print(userLocation);
     });
+  }
+
+  updateActiveDays() async {
+    //print(_data);
+    final prefs = await SharedPreferences.getInstance();
+    final _data = {
+      "active_days": newselectedOpeningDayList,
+      "business_id": prefs.getInt("business_id")
+    };
+
+    final response = await http.post(
+      Uri.parse("http://localhost:8000/api/business/update/active_days"),
+      body: jsonEncode(_data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data["success"] == 1) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Active Days Updated"),
+          ),
+        );
+        setState(() {
+          profileStream = fetchBusinessProfile();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.black,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Active not Updated"),
+          ),
+        );
+      }
+    }
   }
 
   Stream fetchBusinessProfile() async* {
@@ -170,7 +222,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                                   borderRadius: BorderRadius.vertical(
                                       top: Radius.circular(20))),
                               context: context,
-                              builder: (context) => sourceList());
+                              builder: (context) => optionList());
                         },
                         icon: Icon(
                           FontAwesomeIcons.ellipsis,
@@ -208,64 +260,75 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         children: [
           Stack(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+              Container(
+                margin: EdgeInsets.only(top: 0),
+                padding: const EdgeInsets.only(right: 8.0, left: 8.0),
                 child: Column(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * .40,
-                        child: CarouselSlider(
-                          options: CarouselOptions(
-                              aspectRatio: 1,
-                              enlargeCenterPage: true,
-                              viewportFraction: 1,
-                              onPageChanged: (index, reason) {
-                                setState(() {
-                                  _current = index;
-                                });
-                              }),
-                          items: businessImages
-                              .map(
-                                (item) => Image.network(
-                                  item,
-                                  fit: BoxFit.cover,
+                    businessImages.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {},
+                            child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
                                   width: MediaQuery.of(context).size.width,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: businessImages.asMap().entries.map((entry) {
-                        return GestureDetector(
-                          onTap: () => _controller.animateToPage(entry.key),
-                          child: Container(
-                            width: 8.0,
-                            height: 8.0,
-                            margin: EdgeInsets.symmetric(horizontal: 4.0),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: (Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black)
-                                    .withOpacity(
-                                        _current == entry.key ? 0.9 : 0.4)),
+                                  height:
+                                      MediaQuery.of(context).size.height * .40,
+                                  child: CarouselSlider(
+                                    options: CarouselOptions(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .45,
+                                        viewportFraction: 2,
+                                        initialPage: 0,
+                                        enableInfiniteScroll: true,
+                                        reverse: false,
+                                        autoPlay: true,
+                                        autoPlayInterval: Duration(seconds: 3),
+                                        autoPlayAnimationDuration:
+                                            Duration(milliseconds: 800),
+                                        autoPlayCurve: Curves.fastOutSlowIn,
+                                        enlargeCenterPage: true,
+                                        scrollDirection: Axis.horizontal,
+                                        onPageChanged: (index, reason) {
+                                          setState(() {
+                                            _current = index;
+                                          });
+                                        }),
+                                    items: businessImages
+                                        .map(
+                                          (item) => Image.network(
+                                            item,
+                                            fit: BoxFit.cover,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                )),
+                          )
+                        : Container(
+                            padding: EdgeInsets.all(10),
+                            width: 600,
+                            height: MediaQuery.of(context).size.height * .30,
+                            color: Colors.grey,
+                            child: Center(
+                              child: Icon(
+                                CupertinoIcons.camera,
+                                color: Colors.white,
+                                size: 75,
+                              ),
+                            ),
                           ),
-                        );
-                      }).toList(),
-                    ),
                   ],
                 ),
               ),
               Positioned(
-                top: 200,
+                top: 250,
                 right: 20,
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -315,6 +378,10 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   height: 50,
                   child: OutlinedButton.icon(
                     onPressed: () {
+                      showMaterialModalBottomSheet(
+                        context: context,
+                        builder: (context) => openBusinessImages(),
+                      );
                       // Respond to button press
                       setState(() {});
                     },
@@ -559,7 +626,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     );
   }
 
-  Widget sourceList() {
+  Widget optionList() {
     return Container(
       height: MediaQuery.of(context).size.height * 3.30,
       child: SingleChildScrollView(
@@ -567,7 +634,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           children: [
             Container(
               margin: EdgeInsets.only(top: 10),
-              width: 45,
+              width: 85,
               height: 5,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(30))),
@@ -575,15 +642,10 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                 color: Colors.grey[400],
               ),
             ),
+            SizedBox(height: 10),
             ListTile(
-              leading: Icon(Icons.edit),
-              title: Text('Edit Professional Account Details'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.cabin_outlined),
+              // leading: Icon(Icons.cabin_outlined),
+              leading: Icon(Icons.location_on),
               title: Text('Update Address'),
               onTap: () {
                 Navigator.pop(context);
@@ -602,11 +664,10 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               title: Text('Manage Photos'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return UploadBusinessImages();
-                  }),
+
+                showMaterialModalBottomSheet(
+                  context: context,
+                  builder: (context) => openBusinessImages(),
                 );
               },
             ),
@@ -615,7 +676,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               title: Text('Manage Active Days'),
               onTap: () {
                 Navigator.pop(context);
-                openFilterDialog();
+                activeDaysDialog();
               },
             ),
             ListTile(
@@ -644,19 +705,6 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                 );
               },
             ),
-            /* ListTile(
-              leading: Icon(CupertinoIcons.settings_solid),
-              title: Text('Account Settings'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return SupportEmail();
-                  }),
-                );
-              },
-            ),*/
             ListTile(
               leading: Icon(CupertinoIcons.battery_charging),
               title: Text('Analytics'),
@@ -676,7 +724,51 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     );
   }
 
-  openFilterDialog() async {
+  openBusinessImages() {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: Colors.white,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+            setState(() {
+              fetchBusinessProfile();
+            });
+          },
+          child: Container(
+            margin: EdgeInsets.only(left: 8),
+            child: Center(
+              child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+            ),
+          ),
+        ),
+        title: Text(
+          "Manage Business Images",
+          style: TextStyle(
+              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
+        ),
+      ),
+      body: FutureBuilder(
+        future: fetchPhotos(),
+        builder: ((context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('An error has occurred!'),
+            );
+          } else if (snapshot.hasData) {
+            return buildManagePhotos(context);
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        }),
+      ),
+
+      /*,*/
+    );
+  }
+
+  activeDaysDialog() async {
     await FilterListDialog.display<OpeningDay>(
       context,
       listData: openDayList,
@@ -695,6 +787,8 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           }
         });
 
+        updateActiveDays();
+
         Navigator.pop(context);
       },
     );
@@ -712,8 +806,582 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         usePlaceDetailSearch: true,
         onPlacePicked: (result) {
           print(result);
-          setState(() {});
+          addressController.text = result.formattedAddress!;
+          businessLatitude = result.geometry!.location.lat.toString();
+          businessLongtitude = result.geometry!.location.lng.toString();
+
+          for (var i in result.addressComponents!) {
+            print("${i.types.toString()}: " + i.longName);
+            if (i.types.first == "street_number") {
+              print("her postal code ${i.longName}");
+              houseNoController.text = i.longName;
+            }
+
+            if (i.types.first == "postal_code") {
+              print("her postal code ${i.longName}");
+              postalController.text = i.longName;
+            }
+
+            if (i.types.first == "administrative_area_level_2") {
+              print("here is the  ${i.longName}");
+              countyController.text = i.longName;
+            }
+            if (i.types.first == "postal_town" || i.types.first == "locality") {
+              print("here is the town ${i.longName}");
+              cityController.text = i.longName;
+            }
+            if (i.types.first == "country") {
+              print(" country ${i.longName}");
+              countryController.text = i.longName;
+            }
+          }
+          setState(() {
+            profileStream = fetchBusinessProfile();
+          });
+          updateBusinessAddress(
+            addressController.text,
+            houseNoController.text,
+            postalController.text,
+            cityController.text,
+            countyController.text,
+            countryController.text,
+          );
           Navigator.pop(context);
+        });
+  }
+
+  updateBusinessAddress(
+    address,
+    houseNo,
+    postalCode,
+    city,
+    county,
+    country,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final _data = {
+      "full_address": address,
+      "house_no": houseNo,
+      "postal_code": postalCode,
+      "city_or_town": city,
+      "county_locality": county,
+      "country_nation": country,
+      "latitude": businessLatitude,
+      "longtitude": businessLongtitude,
+      "business_id": prefs.getInt("business_id"),
+    };
+
+    final request = await http.post(
+      Uri.parse("http://localhost:8000/api/business/update/address"),
+      body: jsonEncode(_data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+
+    if (request.statusCode == 200) {
+      final data = json.decode(request.body);
+      print("data receieved from updating address${data}");
+      if (data["success"] == 1) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Address  succesfully updated"),
+          ),
+        );
+        setState(() {
+          profileStream = fetchBusinessProfile();
+        });
+      } else {
+        debugPrint(data);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.black,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Active not Updated"),
+          ),
+        );
+        setState(() {
+          profileStream = fetchBusinessProfile();
+        });
+      }
+    }
+  }
+
+  fetchPhotos() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    final int? business_id = localStorage.getInt("business_id");
+    final response = await http.get(
+      Uri.parse(
+          "http://localhost:8000/api/business-photos/fetch/${business_id}"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      // final body = response.body;
+
+      List data = jsonDecode(response.body);
+      try {
+        for (var i = 0; i < data.length; i++) {
+          print(data[i][0]);
+          String? image_name = data[i]["image_name"];
+          final index = data[i]["image_order_index"];
+          if (index != null) {
+            switch (index) {
+              case "1":
+                singleImage = Image.network(
+                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  fit: BoxFit.cover,
+                );
+
+                print("here is single image url${index}");
+
+                break;
+              case "2":
+                secondImage = Image.network(
+                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  fit: BoxFit.cover,
+                );
+
+                print("here is single image url${index}");
+
+                break;
+              case "3":
+                thirdImage = Image.network(
+                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  fit: BoxFit.cover,
+                );
+
+                print("here is single image url${index}");
+                break;
+              case "4":
+                fourthImage = Image.network(
+                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  fit: BoxFit.cover,
+                );
+
+                print("here is single image url${index}");
+
+                break;
+              default:
+                print("index fetched ${index} but  no correct index");
+                break;
+            }
+          }
+        }
+        return data;
+      } catch (error) {
+        print(error);
+      }
+    } else {
+      return print(response.body);
+    }
+  }
+
+  Future chooseSingleImage(index) async {
+    final pickedImage = await singlePicker.getImage(
+      source: ImageSource.gallery,
+      imageQuality: 0,
+    );
+
+    if (pickedImage != null) {
+      print(pickedImage.path);
+      var cropped = await ImageCropper().cropImage(
+        sourcePath: pickedImage.path,
+        aspectRatio: CropAspectRatio(
+          ratioX: 1,
+          ratioY: 1,
+        ),
+        compressQuality: 100,
+        maxHeight: 700,
+        maxWidth: 700,
+        compressFormat: ImageCompressFormat.jpg,
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Crop Image',
+              toolbarColor: Colors.blue,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Cropper',
+          )
+        ],
+      );
+      if (cropped != null) {
+        imageTemp = File(cropped.path);
+
+        switch (index) {
+          case 1:
+            singleImage = Image.file(
+              imageTemp!,
+              fit: BoxFit.cover,
+            );
+            setState(() {});
+            uploadBusinessPhotos(cropped, index);
+            break;
+          case 2:
+            secondImage = Image.file(
+              imageTemp!,
+              fit: BoxFit.cover,
+            );
+            setState(() {});
+            uploadBusinessPhotos(cropped, index);
+            break;
+          case 3:
+            thirdImage = Image.file(
+              imageTemp!,
+              fit: BoxFit.cover,
+            );
+            setState(() {});
+            uploadBusinessPhotos(cropped, index);
+            break;
+          case 4:
+            fourthImage = Image.file(
+              imageTemp!,
+              fit: BoxFit.cover,
+            );
+            setState(() {});
+            uploadBusinessPhotos(cropped, index);
+            break;
+          default:
+            print("index inserted is${index} but  no match");
+        }
+      } else {
+        return;
+      }
+    } else {
+      print("NO IMAGE SELECTED INDEX - ${index}");
+    }
+
+    setState(() {});
+  }
+
+  Widget buildManagePhotos(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            //image 1
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Center(
+                child: Text(
+                  "click above to add or remove Photos 1",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.grey),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20))),
+                    context: context,
+                    builder: (context) => sourceList(1));
+              },
+              child: singleImage == null
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      width: 600,
+                      height: MediaQuery.of(context).size.height * .30,
+                      color: Colors.grey,
+                      child: Center(
+                        child: Icon(
+                          CupertinoIcons.camera,
+                          color: Colors.white,
+                          size: 75,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(10),
+                      width: 600,
+                      height: MediaQuery.of(context).size.height * .45,
+                      child: singleImage!),
+            ),
+
+            Divider(),
+
+            //adding image 2
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Center(
+                child: Text(
+                  "click above to add or remove Photos 2",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.grey),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20))),
+                    context: context,
+                    builder: (context) => sourceList(2));
+              },
+              child: secondImage == null
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      width: 600,
+                      height: MediaQuery.of(context).size.height * .30,
+                      color: Colors.grey,
+                      child: Center(
+                        child: Icon(
+                          CupertinoIcons.camera,
+                          color: Colors.white,
+                          size: 75,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(10),
+                      width: 600,
+                      height: MediaQuery.of(context).size.height * .45,
+                      child: secondImage),
+            ),
+
+            Divider(),
+
+            //adding image 3
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Center(
+                child: Text(
+                  "click above to add or remove Photos 3",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.grey),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20))),
+                    context: context,
+                    builder: (context) => sourceList(3));
+              },
+              child: thirdImage == null
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      width: 600,
+                      height: MediaQuery.of(context).size.height * .30,
+                      color: Colors.grey,
+                      child: Center(
+                        child: Icon(
+                          CupertinoIcons.camera,
+                          color: Colors.white,
+                          size: 75,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(10),
+                      width: 600,
+                      height: MediaQuery.of(context).size.height * .45,
+                      child: thirdImage),
+            ),
+
+            Divider(),
+
+            //adding image 4
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Center(
+                child: Text(
+                  "click above to add or remove Photos 4",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.grey),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20))),
+                    context: context,
+                    builder: (context) => sourceList(4));
+              },
+              child: fourthImage == null
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      width: 600,
+                      height: MediaQuery.of(context).size.height * .30,
+                      color: Colors.grey,
+                      child: Center(
+                        child: Icon(
+                          CupertinoIcons.camera,
+                          color: Colors.white,
+                          size: 75,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(10),
+                      width: 600,
+                      height: MediaQuery.of(context).size.height * .45,
+                      child: fourthImage),
+            ),
+
+            Divider(),
+            SizedBox(
+              height: 40,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget sourceList(index) {
+    return Container(
+      height: 150,
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            width: 45,
+            height: 5,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+            child: Container(
+              color: Colors.grey[400],
+            ),
+          ),
+          ListTile(
+            leading: Icon(CupertinoIcons.capsule),
+            title: Text('Choose From Gallery - Frame ${index}'),
+            onTap: () {
+              Navigator.pop(context);
+              print("image 1");
+              chooseSingleImage(index);
+            },
+          ),
+          ListTile(
+            leading: Icon(CupertinoIcons.list_bullet),
+            title: Text('Remove Image'),
+            onTap: () {
+              singleImage = null;
+
+              (index);
+              setState(() {});
+              Navigator.pop(context);
+              switch (index) {
+                case 1:
+                  singleImage = null;
+
+                  break;
+                case 2:
+                  secondImage = null;
+                  break;
+                case 3:
+                  thirdImage = null;
+                  break;
+                case 4:
+                  fourthImage = null;
+                  break;
+                default:
+                  print("index inserted is${index} but  no match");
+              }
+
+              // chooseImage();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future uploadBusinessPhotos(image, index) async {
+    print("photo with the index of - ${index} trying to upload a photo");
+    String filename = image.path.split('/').last;
+    final prefs = await SharedPreferences.getInstance();
+    final _id = prefs.getInt("business_id");
+
+    final _token = prefs.getString("token");
+    FormData _data = FormData.fromMap({
+      "image": await MultipartFile.fromFile(
+        image.path,
+        filename: filename,
+        contentType: MediaType("image", "jpg"),
+      ),
+      "filename": filename,
+      "index": index,
+      "business_id": _id
+    });
+    print(_id);
+    try {
+      final request = await Dio()
+          .post(
+        "http://localhost:8000/api/business/photos/add",
+        data: _data,
+        options: Options(
+          headers: {'Authorization': 'Bearer ${prefs.getString("token")}'},
+        ),
+      )
+          .then((response) {
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text("image uploaded  successfully..."),
+              duration: const Duration(seconds: 6),
+            ),
+          );
+        } else {
+          print(response);
+        }
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("${error.values.first[0]}"),
+          ),
+        );
+      });
+
+      // setState(() {});
+    } catch (error) {
+      print("whats going on ${error}");
+    }
+  }
+
+  Future removeBusinessImage(index) async {
+    final prefs = await SharedPreferences.getInstance();
+    final _id = prefs.getInt("business_id");
+    final _token = prefs.getString("token");
+    final data = {
+      "business_id": _id,
+      "index": index,
+    };
+
+    final response = await http.post(
+        Uri.parse("http://localhost:8000/api/business/delete/add/${_id}"),
+        body: data,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${_token}'
         });
   }
 }

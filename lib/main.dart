@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: Colors.blue,
-          // brightness: Brightness.dark,
+        //  brightness: Brightness.dark,
           /* textTheme: GoogleFonts.nunitoTextTheme(
             Theme.of(context)
                 .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
