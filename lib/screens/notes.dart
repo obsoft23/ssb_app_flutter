@@ -2576,4 +2576,84 @@ if (pics != null && pics.length < 2) {
                             }).toList(),
                           )
                         : Container(child: null),
+
+
+
+
+class ConfirmAuth extends StatefulWidget {
+  @override
+  _ConfirmAuthState createState() => _ConfirmAuthState();
+}
+
+class _ConfirmAuthState extends State<ConfirmAuth> {
+  bool isAuth = false;
+  @override
+  void initState() {
+    _checkIfLoggedIn();
+    super.initState();
+  }
+
+  void _checkIfLoggedIn() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    if (token != null) {
+      setState(() {});
+      isAuth = true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget child = LandingPage();
+
+    if (isAuth) {
+      child = HomePage();
+    }
+
+    if (isAuth == false) {
+      child = LoginPage();
+    }
+    return child;
+  }
+
+  /*  */
+}
+
+ ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.red,
+                    elevation: 30,
+                    behavior: SnackBarBehavior.floating,
+                    content:
+                        Text("Please select opening hours and closing time"),
+                  ),
+                );
+
+
+Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              Container(
+                height: 0.2,
+                width: MediaQuery.of(context).size.width * .75,
+                color: Color(0xffA2A2A2),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              TextButton(
+                onPressed: () {
+                  showMaterialModalBottomSheet(
+                    context: context,
+                    builder: (context) => openEditDetails(),
+                  );
+                  // Respond to button press
+                  setState(() {});
+                },
+                child: Text("edit"),
+              ),
+              Spacer(),
+            ],
+          ),
   }*/          

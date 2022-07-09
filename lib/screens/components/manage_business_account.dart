@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter_application_1/screens/components/email_support.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -30,6 +31,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:filter_list/filter_list.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_application_1/screens/components/form_date.dart';
 
 class ManageBusinessAccount extends StatefulWidget {
   const ManageBusinessAccount({Key? key}) : super(key: key);
@@ -41,7 +43,9 @@ class ManageBusinessAccount extends StatefulWidget {
 class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   late Stream profileStream;
   var profile;
+  DateTime _dateTime = DateTime.now();
   bool isLoading = false;
+  var selectedValue;
   var selectedOpeningDayList = [];
   var newselectedOpeningDayList = [];
   var userLocation;
@@ -56,9 +60,14 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   var fourthImage;
   var businessLatitude;
   var businessLongtitude;
+  var openingTime;
+  var closingTime;
+  var postOpeningTime;
+  var postClosingTime;
 
   final singlePicker = ImagePicker();
   final CarouselController _controller = CarouselController();
+  final _formKey = GlobalKey<FormState>();
 
   //import 'package:
 
@@ -75,6 +84,34 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
   StreamController? streamController;
 
+  TextEditingController businessCatorgyController = TextEditingController();
+  TextEditingController businessSubCatorgyController = TextEditingController();
+
+  List<Text> businessCategories = [
+    Text("Select"),
+    Text("Health"),
+    Text("Academics"),
+    Text("Technology"),
+    Text("Enterpreneur"),
+    Text("Freelance"),
+    Text("Engineering"),
+    Text("Domestics"),
+  ];
+
+  List<Text> businessSubCategories = [
+    Text("Nursing"),
+    Text("Medicine"),
+    Text("Physiotherapist"),
+    Text("Uk"),
+    Text("Australia"),
+    Text("Africa"),
+    Text("New zealand"),
+    Text("Germany"),
+    Text("Italy"),
+    Text("Russia"),
+    Text("China"),
+  ];
+
   @override
   void initState() {
     getCurrentLocation();
@@ -86,101 +123,6 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   void dispose() {
     super.dispose();
     // load();
-  }
-
-  Future getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    setState(() {
-      userLocation = LatLng(position.latitude, position.longitude);
-      latitude = position.latitude;
-      longtitude = position.longitude;
-      print(userLocation);
-    });
-  }
-
-  updateActiveDays() async {
-    //print(_data);
-    final prefs = await SharedPreferences.getInstance();
-    final _data = {
-      "active_days": newselectedOpeningDayList,
-      "business_id": prefs.getInt("business_id")
-    };
-
-    final response = await http.post(
-      Uri.parse("http://localhost:8000/api/business/update/active_days"),
-      body: jsonEncode(_data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${prefs.getString("token")}'
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data["success"] == 1) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.green,
-            elevation: 30,
-            behavior: SnackBarBehavior.floating,
-            content: Text("Active Days Updated"),
-          ),
-        );
-        setState(() {
-          profileStream = fetchBusinessProfile();
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.black,
-            elevation: 30,
-            behavior: SnackBarBehavior.floating,
-            content: Text("Active not Updated"),
-          ),
-        );
-      }
-    }
-  }
-
-  Stream fetchBusinessProfile() async* {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-
-    final int? business_id = localStorage.getInt("business_id");
-
-    final response = await http.get(
-      Uri.parse(
-          "http://localhost:8000/api/business-profile/fetch/${business_id}"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    );
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      print("fetch business profile${data}");
-      // print("fetch business profile${data["profile"][0]["business_name"]}");
-      // print("image business profile${data["images"][0]["image_name"]}");
-      profile = BusinessProfile.fromJson(data["profile"][0]);
-
-      final images = data["images"];
-      for (var i = 0; i < images.length; i++) {
-        // print(images[i]);
-        String? image_name = images[i]["image_name"];
-        final index = images[i]["image_order_index"];
-        print(
-            "http://localhost:8000/api/fetch-business-acc-image/${image_name}");
-        String name =
-            "http://localhost:8000/api/fetch-business-acc-image/${image_name}";
-        businessImages.insert(i, name);
-      }
-      print(businessImages);
-      yield data;
-    } else {
-      throw response.body.toString();
-    }
   }
 
   @override
@@ -380,7 +322,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                     onPressed: () {
                       showMaterialModalBottomSheet(
                         context: context,
-                        builder: (context) => openBusinessImages(),
+                        builder: (context) => openEditDetails(),
                       );
                       // Respond to button press
                       setState(() {});
@@ -430,7 +372,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               ? ListTile(
                   leading: Icon(Icons.access_time_filled_rounded),
                   title: Text(
-                    'Joined on ${profile.joined}',
+                    'Joined ${profile.joined}',
                     style: TextStyle(
                       fontSize: 17,
                     ),
@@ -442,31 +384,17 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Spacer(),
+              Text(
+                "Bio ",
+                style: TextStyle(fontSize: 17),
+              ),
               Container(
                 height: 0.2,
-                width: MediaQuery.of(context).size.width * .75,
+                width: MediaQuery.of(context).size.width * .50,
                 color: Color(0xffA2A2A2),
               ),
               SizedBox(
                 width: 10,
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text("edit"),
-              ),
-              Spacer(),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 8.0, top: 10.0),
-                child: Text(
-                  "Business description",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
               ),
             ],
           ),
@@ -482,20 +410,18 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Spacer(),
+              Text(
+                "Details   ",
+                style: TextStyle(fontSize: 17),
+              ),
               Container(
                 height: 0.2,
-                width: MediaQuery.of(context).size.width * .75,
+                width: MediaQuery.of(context).size.width * .50,
                 color: Color(0xffA2A2A2),
               ),
               SizedBox(
                 width: 10,
               ),
-              TextButton(
-                onPressed: () {},
-                child: Text("edit"),
-              ),
-              Spacer(),
             ],
           ),
           profile.businessCatorgyController != null
@@ -724,6 +650,122 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     );
   }
 
+  buildOpeningTime() {
+    return SizedBox(
+      height: 200,
+      child: CupertinoDatePicker(
+          initialDateTime: _dateTime,
+          use24hFormat: true,
+          mode: CupertinoDatePickerMode.time,
+          onDateTimeChanged: (dateTime) {
+            setState(() {
+              _dateTime = dateTime;
+              final value = intl.DateFormat('HH:mm').format(_dateTime);
+              print(value);
+              postOpeningTime = value;
+              if (_dateTime.hour > 12) {
+                openingTime = value + " pm";
+              } else {
+                openingTime = value + " am";
+              }
+            });
+          }),
+    );
+  }
+
+  buildClosingTime() {
+    return SizedBox(
+      height: 200,
+      child: CupertinoDatePicker(
+        initialDateTime: _dateTime,
+        use24hFormat: true,
+        mode: CupertinoDatePickerMode.time,
+        onDateTimeChanged: (dateTime) {
+          setState(() {
+            _dateTime = dateTime;
+            final value = intl.DateFormat('HH:mm').format(_dateTime);
+            postClosingTime = value;
+            if (_dateTime.hour > 12) {
+              closingTime = value + " pm";
+            } else {
+              closingTime = value + " am";
+            }
+          });
+        },
+      ),
+    );
+  }
+
+  Widget openEditDetails() {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: Colors.white,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+            setState(() {
+              fetchBusinessProfile();
+            });
+          },
+          child: Container(
+            margin: EdgeInsets.only(left: 8),
+            child: Center(
+              child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+            ),
+          ),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              if (_formKey.currentState!.validate()) {
+                updateUserBusinessDetails();
+              } else {}
+            },
+            child: isLoading
+                ? SizedBox(
+                    width: 30,
+                    height: 25,
+                    child: Image.asset("assets/images/loader2.gif"),
+                  )
+                : Center(
+                    child: Container(
+                      margin: EdgeInsets.only(right: 10),
+                      child: Text(
+                        "process",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.5,
+                        ),
+                      ),
+                    ),
+                  ),
+          ),
+        ],
+        title: Text(
+          "Edit Professional Details",
+          style: TextStyle(
+              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
+        ),
+      ),
+      body: FutureBuilder(
+        future: fetchPhotos(),
+        builder: ((context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('An error has occurred!'),
+            );
+          } else if (snapshot.hasData) {
+            return buildEditDetails(context);
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        }),
+      ),
+    );
+  }
+
   openBusinessImages() {
     return Scaffold(
       appBar: AppBar(
@@ -792,6 +834,78 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         Navigator.pop(context);
       },
     );
+  }
+
+  Future updateUserBusinessDetails() async {
+    final prefs = await SharedPreferences.getInstance();
+    final _data = {
+      "phone": phoneController.text,
+      "business_descripition": businessDescription.text,
+      "business_category": businessCatorgyController.text,
+      "business_sub_category": businessSubCatorgyController.text,
+      "business_id": prefs.getInt("business_id"),
+      /*  profile.businessDescription != null
+          ? "business_descripition"
+          : businessDescription.text: "",
+      phoneController.text != null ? "phone" : phoneController.text: "",
+      businessCatorgyController.text != null
+          ? "business_category"
+          : businessCatorgyController.text: "",
+      businessSubCatorgyController.text != null
+          ? "business_sub_category"
+          : businessSubCatorgyController.text: "",
+      openingTime != null ? "opening_time" : openingTime.text: "",
+      closingTime.text != null
+          ? "closing_time"
+          : businessSubCatorgyController.text: "",
+      "business_id": prefs.getInt("business_id"),*/
+    };
+    print(_data);
+    final request = await http.post(
+      Uri.parse("http://localhost:8000/api/business/update/details"),
+      body: jsonEncode(_data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+
+    if (request.statusCode == 200) {
+      final data = json.decode(request.body);
+
+      print("data receieved from updating acc details${data}");
+
+      if (data["success"] == 1) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("details  succesfully updated"),
+          ),
+        );
+        Navigator.of(context).pop();
+        setState(() {
+          profileStream = fetchBusinessProfile();
+        });
+      } else {
+        debugPrint("error data ${data}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.black,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Active not Updated"),
+          ),
+        );
+        setState(() {
+          profileStream = fetchBusinessProfile();
+        });
+      }
+    } else {
+      print(request.body);
+    }
   }
 
   Widget changePickerAddress() {
@@ -1064,6 +1178,258 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     setState(() {});
   }
 
+  Widget buildEditDetails(context) {
+    return SingleChildScrollView(
+        child: Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            child: TextFormField(
+              controller: phoneController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter phone no';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                labelText: 'Phone*',
+                hintText: 'Please enter official phone...',
+                border: UnderlineInputBorder(),
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            child: TextFormField(
+              controller: businessDescription,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some description';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                // filled: true,
+                hintText: 'Please enter a short description...',
+                labelText: 'Description*',
+              ),
+              onChanged: (value) {
+                profile.description = value;
+              },
+              maxLines: 5,
+            ),
+          ),
+          /*  Container(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      'Opening Time',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    openingTime == null
+                        ? Icon(
+                            Icons.browse_gallery,
+                            size: 15,
+                          )
+                        : Text("${openingTime}")
+                  ],
+                ),
+                TextButton(
+                  child: const Text('Select*'),
+                  onPressed: () async {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return CupertinoActionSheet(
+                              actions: [buildOpeningTime()],
+                              cancelButton: CupertinoActionSheetAction(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Done")));
+                        });
+                  },
+                )
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      'Closing Time',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    closingTime == null
+                        ? Icon(
+                            Icons.browse_gallery,
+                            size: 15,
+                          )
+                        : Text("${closingTime}")
+                  ],
+                ),
+                TextButton(
+                  child: const Text('Select'),
+                  onPressed: () async {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return CupertinoActionSheet(
+                              actions: [buildClosingTime()],
+                              cancelButton: CupertinoActionSheetAction(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Done")));
+                        });
+                  },
+                )
+              ],
+            ),
+          ),*/
+          Container(
+            padding: EdgeInsets.all(8),
+            child: TextFormField(
+              controller: businessCatorgyController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select an option';
+                }
+                return null;
+              },
+              readOnly: true,
+              onTap: () {
+                showCupertinoModalPopup(
+                    context: context,
+                    builder: (context) {
+                      return CupertinoActionSheet(
+                        actions: [
+                          Container(
+                              height: MediaQuery.of(context)
+                                      .copyWith()
+                                      .size
+                                      .height *
+                                  0.25,
+                              color: Colors.white,
+                              child: CupertinoPicker(
+                                children: businessCategories,
+                                selectionOverlay:
+                                    CupertinoPickerDefaultSelectionOverlay(),
+                                onSelectedItemChanged: (value) {
+                                  Text text = businessCategories[value];
+                                  selectedValue = text.data!;
+                                  print(selectedValue);
+                                  businessCatorgyController.text =
+                                      selectedValue.toString();
+                                  setState(() {});
+                                },
+                                itemExtent: 25,
+                                diameterRatio: 1,
+                                useMagnifier: true,
+                                magnification: 1.3,
+                                looping: true,
+                              )),
+                        ],
+                        cancelButton: CupertinoActionSheetAction(
+                          child: Text("Done"),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      );
+                    });
+              },
+              decoration: InputDecoration(
+                labelText: 'Business Category*',
+                border: UnderlineInputBorder(),
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            child: TextFormField(
+              controller: businessSubCatorgyController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select an option';
+                }
+                return null;
+              },
+              readOnly: true,
+              onTap: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) {
+                    return CupertinoActionSheet(
+                      actions: [
+                        Container(
+                          height:
+                              MediaQuery.of(context).copyWith().size.height *
+                                  0.25,
+                          color: Colors.white,
+                          child: CupertinoPicker(
+                            children: businessSubCategories,
+                            selectionOverlay:
+                                CupertinoPickerDefaultSelectionOverlay(),
+                            onSelectedItemChanged: (value) {
+                              Text text = businessSubCategories[value];
+                              businessSubCatorgyController.text =
+                                  text.data!.toString();
+                              setState(() {});
+                            },
+                            itemExtent: 25,
+                            diameterRatio: 1,
+                            useMagnifier: true,
+                            magnification: 1.3,
+                            looping: true,
+                          ),
+                        ),
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: Text("Done"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+              decoration: InputDecoration(
+                labelText: 'Business SubCategory*',
+                border: UnderlineInputBorder(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ));
+  }
+
   Widget buildManagePhotos(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
@@ -1308,6 +1674,108 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         ],
       ),
     );
+  }
+
+  Future getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      userLocation = LatLng(position.latitude, position.longitude);
+      latitude = position.latitude;
+      longtitude = position.longitude;
+      print(userLocation);
+    });
+  }
+
+  updateActiveDays() async {
+    //print(_data);
+    final prefs = await SharedPreferences.getInstance();
+    final _data = {
+      "active_days": newselectedOpeningDayList,
+      "business_id": prefs.getInt("business_id")
+    };
+
+    final response = await http.post(
+      Uri.parse("http://localhost:8000/api/business/update/active_days"),
+      body: jsonEncode(_data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data["success"] == 1) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Active Days Updated"),
+          ),
+        );
+        setState(() {
+          profileStream = fetchBusinessProfile();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.black,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Active not Updated"),
+          ),
+        );
+      }
+    }
+  }
+
+  Stream fetchBusinessProfile() async* {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+
+    final int? business_id = localStorage.getInt("business_id");
+
+    final response = await http.get(
+      Uri.parse(
+          "http://localhost:8000/api/business-profile/fetch/${business_id}"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print("fetch business profile${data}");
+      // print("fetch business profile${data["profile"][0]["business_name"]}");
+      // print("image business profile${data["images"][0]["image_name"]}");
+      profile = BusinessProfile.fromJson(data["profile"][0]);
+
+      final images = data["images"];
+      for (var i = 0; i < images.length; i++) {
+        // print(images[i]);
+        String? image_name = images[i]["image_name"];
+        final index = images[i]["image_order_index"];
+        print(
+            "http://localhost:8000/api/fetch-business-acc-image/${image_name}");
+        String name =
+            "http://localhost:8000/api/fetch-business-acc-image/${image_name}";
+        businessImages.insert(i, name);
+      }
+      print(businessImages);
+      if (profile.businessDescription != null) {
+        businessDescription.text = profile.businessDescription;
+      }
+
+      if (profile.phoneController != null) {
+        phoneController.text = profile.phoneController;
+      }
+      yield data;
+    } else {
+      throw response.body.toString();
+    }
   }
 
   Future uploadBusinessPhotos(image, index) async {

@@ -275,8 +275,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 });
               },
               tabs: [
-                Tab(text: "Reviews"),
-                Tab(text: "Video"),
+                Tab(text: "Posted Reviews"),
+                Tab(text: "Vendors"),
               ],
             ),
           ],
@@ -408,7 +408,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Center(
-                child: Text("You don't have any videos"),
+                child: Text("You don't havent interacted with any vendors"),
               ),
             ],
           ),

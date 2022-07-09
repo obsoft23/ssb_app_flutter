@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: Colors.blue,
-        //  brightness: Brightness.dark,
+          //  brightness: Brightness.dark,
           /* textTheme: GoogleFonts.nunitoTextTheme(
             Theme.of(context)
                 .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
@@ -43,49 +43,7 @@ class MyApp extends StatelessWidget {
                 .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
           ),
         ),
-        home: ConfirmAuth());
+        home: LandingPage());
     //  home: PickAddress());
   }
-}
-
-class ConfirmAuth extends StatefulWidget {
-  @override
-  _ConfirmAuthState createState() => _ConfirmAuthState();
-}
-
-class _ConfirmAuthState extends State<ConfirmAuth> {
-  bool isAuth = false;
-  @override
-  void initState() {
-    super.initState();
-    _checkIfLoggedIn();
-  }
-
-  void _checkIfLoggedIn() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var token = localStorage.getString('token');
-    if (token != null) {
-      setState(() {});
-      isAuth = true;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget child = LandingPage();
-
-    if (isAuth) {
-      child = HomePage();
-      return child;
-    }
-
-    if (!isAuth) {
-      // child = LandingPage();
-      child = LoginPage();
-      return child;
-    }
-    return child;
-  }
-
-  /*  */
 }
