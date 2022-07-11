@@ -9,7 +9,7 @@ import 'package:flutter_application_1/screens/components/create_professional_acc
 import 'package:flutter_application_1/screens/components/manage_business_account.dart';
 import 'package:flutter_application_1/screens/components/pick_address_map.dart';
 import 'package:flutter_application_1/screens/components/upload.dart';
-import 'package:flutter_application_1/screens/components/upload_business_images.dart';
+import 'package:flutter_application_1/screens/components/old/upload_business_images.dart';
 import 'package:flutter_application_1/screens/home.dart';
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_application_1/network/api.dart';
 import 'package:flutter_application_1/screens/business_profile_slider.dart';
-import 'package:flutter_application_1/screens/components/edit_profile.dart';
+import 'package:flutter_application_1/screens/components/old/edit_profile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';

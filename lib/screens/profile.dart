@@ -9,7 +9,7 @@ import 'package:flutter_application_1/screens/components/manage_business_account
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_application_1/network/api.dart';
 import 'package:flutter_application_1/screens/business_profile_slider.dart';
-import 'package:flutter_application_1/screens/components/edit_profile.dart';
+import 'package:flutter_application_1/screens/components/old/edit_profile.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_application_1/screens/components/change_password.dart';
