@@ -27,6 +27,7 @@ class EditProfilePage extends StatefulWidget {
 
 var data;
 var id;
+late Stream mainProfileStream;
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formkey = GlobalKey<FormState>();
@@ -47,6 +48,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
+    mainProfileStream = _fetchUser();
   }
 
   @override
@@ -57,6 +59,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     phoneController.dispose();
     bioController.dispose();
     super.dispose();
+    mainProfileStream = _fetchUser();
   }
 
   void _getToken() async {
@@ -65,7 +68,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     token = prefs.getString('token');
   }
 
-  _fetchUser() async {
+  Stream _fetchUser() async* {
     try {
       final prefs = await SharedPreferences.getInstance();
       var response = await http
@@ -81,11 +84,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         emailController.text = data["email"];
         if (data["fullname"] != null) {
           fullNameController.text = data["fullname"];
-        } 
-         if (data["phone"] != null) {
+        }
+        if (data["phone"] != null) {
           phoneController.text = data["phone"];
-        } 
-         if (data["bio"] != null) {
+        }
+        if (data["bio"] != null) {
           bioController.text = data["bio"];
         }
 
@@ -97,7 +100,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
         /*  image = NetworkImage(
           "http://localhost:8000/api/public/profilepictures/${data["image"]}");*/
-        return data;
+        yield data;
       } else {
         throw Exception("failed to load data");
       }
@@ -109,223 +112,211 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder(
-      future: _fetchUser(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text('An error has occurred!'),
-          );
-        } else if (snapshot.hasData) {
-          return SingleChildScrollView(
-            child: Form(
-              key: _formkey,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: isLoading
-                                ? SizedBox(
-                                    width: 30,
-                                    height: 25,
-                                    child: Image.asset(
-                                        "assets/images/loader2.gif"),
-                                  )
-                                : Text(
-                                    "Close",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+        appBar: AppBar(
+          elevation: 1,
+          backgroundColor: Colors.white,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 8),
+              child: Center(
+                child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+              ),
+            ),
+          ),
+          title: Text("Manage Profile",
+              style: TextStyle(color: Colors.black, fontSize: 15)),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                updateProfile(
+                  fullNameController.text,
+                  nameController.text,
+                  emailController.text,
+                  phoneController.text,
+                  bioController.text,
+                );
+              },
+              child: isLoading
+                  ? SizedBox(
+                      width: 30,
+                      height: 25,
+                      child: Image.asset("assets/images/loader2.gif"),
+                    )
+                  : Center(
+                      child: Container(
+                        margin: EdgeInsets.only(right: 10),
+                        child: Text(
+                          "Done",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.5,
                           ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              isLoading = true;
-                              updateProfile(
+                        ),
+                      ),
+                    ),
+            ),
+          ],
+        ),
+        body: StreamBuilder(
+          stream: mainProfileStream,
+          builder: ((context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('An error has occurred!'),
+              );
+            } else if (snapshot.hasData) {
+              return editProfileMainPage(context);
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          }),
+        ));
+  }
+
+  SingleChildScrollView editProfileMainPage(BuildContext context) {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formkey,
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Center(
+                child: SizedBox(
+                  width: 115,
+                  height: 115,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    clipBehavior: Clip.none,
+                    children: [
+                      image == null
+                          ? CircleAvatar(
+                              child: Icon(Icons.person),
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.grey,
+                            )
+                          : CircleAvatar(
+                              backgroundImage: image,
+                            ),
+                      _pickprofileimage(),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: TextFormField(
+                  controller: fullNameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'full name',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: TextFormField(
+                  controller: nameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Username',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'email',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Phone',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  controller: bioController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Bio',
+
+                    /*  contentPadding: EdgeInsets.symmetric(
+                            vertical: 40, horizontal: 10),*/
+                  ),
+                  maxLines: 5,
+                ),
+              ),
+              /* isLoading
+                      ? SizedBox(
+                          width: 30,
+                          height: 25,
+                          child: Image.asset("assets/images/loader2.gif"),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            isLoading = true;
+                            updateProfile(
                                 fullNameController.text,
                                 nameController.text,
                                 emailController.text,
                                 phoneController.text,
-                                bioController.text,
-                              );
-                              setState(() {});
-                            },
-                            child: isLoading
-                                ? SizedBox(
-                                    width: 30,
-                                    height: 25,
-                                    child: Image.asset(
-                                        "assets/images/loader2.gif"),
-                                  )
-                                : Text(
-                                    "Done",
-                                    style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Divider(),
-                    Container(
-                      margin: EdgeInsets.only(right: 10),
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [],
-                      ),
-                    ),
-                    Center(
-                      child: SizedBox(
-                        width: 115,
-                        height: 115,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          clipBehavior: Clip.none,
-                          children: [
-                            image == null
-                                ? CircleAvatar(
-                                    child: Icon(Icons.person),
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: Colors.grey,
-                                  )
-                                : CircleAvatar(
-                                    backgroundImage: image,
-                                  ),
-                            _pickprofileimage(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: TextFormField(
-                        controller: fullNameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'full name',
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: TextFormField(
-                        controller: nameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Username',
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: TextFormField(
-                        controller: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'email',
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: TextFormField(
-                        controller: phoneController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Phone',
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: TextFormField(
-                        controller: bioController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Bio',
-
-                          /*  contentPadding: EdgeInsets.symmetric(
-                              vertical: 40, horizontal: 10),*/
-                        ),
-                        maxLines: 5,
-                      ),
-                    ),
-                    /* isLoading
-                        ? SizedBox(
-                            width: 30,
-                            height: 25,
-                            child: Image.asset("assets/images/loader2.gif"),
-                          )
-                        : ElevatedButton(
-                            onPressed: () {
-                              isLoading = true;
-                              updateProfile(
-                                  fullNameController.text,
-                                  nameController.text,
-                                  emailController.text,
-                                  phoneController.text,
-                                  bioController.text);
-                            },
-                            child: Text("Update profile"),
-                          ),*/
-                  ],
-                ),
-              ),
-            ),
-          );
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
-      }),
-    ));
+                                bioController.text);
+                          },
+                          child: Text("Update profile"),
+                        ),*/
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _pickprofileimage() => Positioned(
@@ -553,9 +544,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final update = jsonDecode(response.body);
     debugPrint("update data recived${update}");
     if (update["success"] == true) {
-       setState(() {});
+      setState(() {});
       Navigator.pop(context);
-     
+      mainProfileStream = _fetchUser();
     } else {
       final returnedError = jsonDecode(response.body);
       isLoading = false;

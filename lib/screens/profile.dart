@@ -1,21 +1,28 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, unused_local_variable, unused_element, avoid_print, unused_field, sized_box_for_whitespace, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, non_constant_identifier_names
 
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:typed_data';
 import 'package:flutter_application_1/screens/components/manage_business_account.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_application_1/network/api.dart';
 import 'package:flutter_application_1/screens/business_profile_slider.dart';
 import 'package:flutter_application_1/screens/components/edit_profile.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_application_1/screens/components/change_password.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http_parser/http_parser.dart';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -69,27 +76,29 @@ class Profile {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool isLoading = false;
   var token;
+  var id;
+  var image;
+  var imageTemp;
+  String? base64image;
+  var profilePicture;
   var createStatus = "0";
-
-  var listImage = [
-    "https://i.pinimg.com/originals/aa/eb/7f/aaeb7f3e5120d0a68f1b814a1af69539.png",
-    "https://cdn.fnmnl.tv/wp-content/uploads/2020/09/04145716/Stussy-FA20-Lookbook-D1-Mens-12.jpg",
-    "https://www.propermag.com/wp-content/uploads/2020/03/0x0-19.9.20_18908-683x1024.jpg",
-    "http://www.thefashionisto.com/wp-content/uploads/2014/06/Marc-by-Marc-Jacobs-Men-2015-Spring-Summer-Collection-Look-Book-001.jpg",
-    "https://im0-tub-ru.yandex.net/i?id=e2e0f873e86f34e5001ddc59b42e23a6-l&ref=rim&n=13&w=828&h=828",
-    "https://www.thefashionisto.com/wp-content/uploads/2013/07/w012-800x1200.jpg",
-    "https://manofmany.com/wp-content/uploads/2016/09/14374499_338627393149784_1311139926468722688_n.jpg",
-    "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2020%2F04%2Faries-fall-winter-2020-lookbook-first-look-14.jpg?q=75&w=800&cbr=1&fit=max",
-    "https://i.pinimg.com/originals/95/0f/4d/950f4df946e0a373e47df37fb07ea1f9.jpg",
-    "https://i.pinimg.com/736x/c4/03/c6/c403c63b8e1882b6f10c82f601180e2d.jpg",
-  ];
+  late Stream mainProfileStream;
 
   TabController? tabController;
   int selectedIndex = 0;
+
+  final _formkey = GlobalKey<FormState>();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController bioController = TextEditingController();
   @override
   void initState() {
     super.initState();
+    mainProfileStream = _fetchUser();
   }
 
   @override
@@ -103,6 +112,29 @@ class _ProfilePageState extends State<ProfilePage> {
     final response = await Network().fetchUser(token);
     if (response.statusCode == 200) {
       print(response.body);
+      data = jsonDecode(response.body);
+
+      nameController.text = data["name"];
+      emailController.text = data["email"];
+      if (data["fullname"] != null) {
+        fullNameController.text = data["fullname"];
+      }
+      if (data["phone"] != null) {
+        phoneController.text = data["phone"];
+      }
+      if (data["bio"] != null) {
+        bioController.text = data["bio"];
+      }
+
+      id = data["id"];
+      // print(""${data})
+      if (data["image"] != null) {
+        image = NetworkImage(
+            "http://localhost:8000/api/fetch-user-image/${data["image"]}");
+      }
+      /*  image = NetworkImage(
+          "http://localhost:8000/api/public/profilepictures/${data["image"]}");*/
+      yield data;
 
       userDetails = Profile.fromJson(jsonDecode(response.body));
       // print(userDetails.image);
@@ -127,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
       length: 2,
       child: Scaffold(
         body: StreamBuilder(
-          stream: _fetchUser(),
+          stream: mainProfileStream,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(
@@ -185,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
         userDetails.image == null
             ? CircleAvatar(
                 radius: 70,
-                child: Icon(Icons.person),
+                child: Icon(Icons.person, size: 70),
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.grey,
               )
@@ -195,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   "http://localhost:8000/api/fetch-user-image/${userDetails.image}",
                 ),
               ),
-        SizedBox(height: 20.0),
+        SizedBox(height: 10.0),
         Text(
           "@${userDetails.email}",
           style: TextStyle(
@@ -203,19 +235,19 @@ class _ProfilePageState extends State<ProfilePage> {
             fontSize: 18.0,
           ),
         ),
-        SizedBox(height: 30.0),
         userDetails.bio != null
             ? Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12),
                 child: Text(
                   " ${userDetails.bio}",
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
-                    fontSize: 16.0,
+                    fontSize: 15,
                   ),
                 ),
               )
             : Container(child: null),
+        SizedBox(height: 10.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -258,6 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
+        SizedBox(height: 15),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -281,6 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
+        SizedBox(height: 10),
         Expanded(
           child: TabBarView(
             controller: tabController,
@@ -288,98 +322,6 @@ class _ProfilePageState extends State<ProfilePage> {
               SingleChildScrollView(
                 child: Column(
                   children: [
-                    ListTile(
-                      leading: FlutterLogo(size: 72.0),
-                      title: Text('Three-line ListTile'),
-                      subtitle: Text(
-                          'A sufficiently long subtitle warrants three lines.'),
-                      trailing: RatingBar.builder(
-                        initialRating: 4,
-                        minRating: 3,
-                        itemSize: 10,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        onRatingUpdate: (rating) {
-                          print(rating);
-                        },
-                      ),
-                      isThreeLine: true,
-                    ),
-                    ListTile(
-                      leading: FlutterLogo(size: 72.0),
-                      title: Text('Three-line ListTile'),
-                      subtitle: Text(
-                          'A sufficiently long subtitle warrants three lines.'),
-                      trailing: RatingBar.builder(
-                        initialRating: 4,
-                        minRating: 3,
-                        itemSize: 10,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        onRatingUpdate: (rating) {
-                          print(rating);
-                        },
-                      ),
-                      isThreeLine: true,
-                    ),
-                    ListTile(
-                      leading: FlutterLogo(size: 72.0),
-                      title: Text('Three-line ListTile'),
-                      subtitle: Text(
-                          'A sufficiently long subtitle warrants three lines.'),
-                      trailing: RatingBar.builder(
-                        initialRating: 4,
-                        minRating: 3,
-                        itemSize: 10,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        onRatingUpdate: (rating) {
-                          print(rating);
-                        },
-                      ),
-                      isThreeLine: true,
-                    ),
-                    ListTile(
-                      leading: FlutterLogo(size: 72.0),
-                      title: Text('Three-line ListTile'),
-                      subtitle: Text(
-                          'A sufficiently long subtitle warrants three lines.'),
-                      trailing: RatingBar.builder(
-                        initialRating: 4,
-                        minRating: 3,
-                        itemSize: 10,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        onRatingUpdate: (rating) {
-                          print(rating);
-                        },
-                      ),
-                      isThreeLine: true,
-                    ),
                     ListTile(
                       leading: FlutterLogo(size: 72.0),
                       title: Text('Three-line ListTile'),
@@ -415,6 +357,73 @@ class _ProfilePageState extends State<ProfilePage> {
         )
       ],
     );
+  }
+
+  editPage() {
+    return Scaffold(
+        appBar: AppBar(
+          elevation: 1,
+          backgroundColor: Colors.white,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 8),
+              child: Center(
+                child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+              ),
+            ),
+          ),
+          title: Text("Manage Profile",
+              style: TextStyle(color: Colors.black, fontSize: 15)),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                updateProfile(
+                  fullNameController.text,
+                  nameController.text,
+                  emailController.text,
+                  phoneController.text,
+                  bioController.text,
+                );
+              },
+              child: isLoading
+                  ? SizedBox(
+                      width: 30,
+                      height: 25,
+                      child: Image.asset("assets/images/loader2.gif"),
+                    )
+                  : Center(
+                      child: Container(
+                        margin: EdgeInsets.only(right: 10),
+                        child: Text(
+                          "Done",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.5,
+                          ),
+                        ),
+                      ),
+                    ),
+            ),
+          ],
+        ),
+        body: StreamBuilder(
+          stream: _fetchUser(),
+          builder: ((context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('An error has occurred!'),
+              );
+            } else if (snapshot.hasData) {
+              return editProfileMainPage(context);
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          }),
+        ));
   }
 
   buildSocialIcons(IconData icon) => CircleAvatar(
@@ -457,10 +466,14 @@ class _ProfilePageState extends State<ProfilePage> {
             title: Text('Edit Profile'),
             onTap: () {
               Navigator.pop(context);
-              showBarModalBottomSheet(
+              /* showBarModalBottomSheet(
                 context: context,
                 builder: (context) =>
                     Expanded(child: EditProfilePage(user: userDetails)),
+              );*/
+              showMaterialModalBottomSheet(
+                context: context,
+                builder: (context) => editPage(),
               );
             },
           ),
@@ -531,5 +544,390 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       },
     );
+  }
+
+  SingleChildScrollView editProfileMainPage(BuildContext context) {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formkey,
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              SizedBox(height: 24),
+              Center(
+                child: SizedBox(
+                  width: 115,
+                  height: 115,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    clipBehavior: Clip.none,
+                    children: [
+                      image == null
+                          ? CircleAvatar(
+                              child: Icon(Icons.person),
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.grey,
+                            )
+                          : CircleAvatar(
+                              backgroundImage: image,
+                            ),
+                      _pickprofileimage(),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: TextFormField(
+                  controller: fullNameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'full name',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: TextFormField(
+                  controller: nameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Username',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'email',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Phone',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  controller: bioController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Bio',
+
+                    /*  contentPadding: EdgeInsets.symmetric(
+                            vertical: 40, horizontal: 10),*/
+                  ),
+                  maxLines: 5,
+                ),
+              ),
+              /* isLoading
+                      ? SizedBox(
+                          width: 30,
+                          height: 25,
+                          child: Image.asset("assets/images/loader2.gif"),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            isLoading = true;
+                            updateProfile(
+                                fullNameController.text,
+                                nameController.text,
+                                emailController.text,
+                                phoneController.text,
+                                bioController.text);
+                          },
+                          child: Text("Update profile"),
+                        ),*/
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _pickprofileimage() => Positioned(
+        right: -1,
+        bottom: -7,
+        child: SizedBox(
+          height: 46,
+          width: 46,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              shape: BoxShape.circle,
+              border: Border.all(
+                width: 3,
+                color: Colors.white,
+              ),
+            ),
+            child: IconButton(
+              color: Colors.white,
+              iconSize: 16,
+              icon: Icon(Icons.camera_alt_rounded),
+              onPressed: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20))),
+                    context: context,
+                    builder: (context) => sourceList());
+              },
+            ),
+          ),
+        ),
+      );
+
+  Container sourceList() {
+    return Container(
+      height: 150,
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            width: 45,
+            height: 5,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+            child: Container(
+              color: Colors.grey[400],
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.camera),
+            title: Text('Camera'),
+            onTap: () {
+              getImage();
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.image),
+            title: Text('Gallery'),
+            onTap: () {
+              Navigator.pop(context);
+              chooseImage();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  displayInternalImage(route) async {
+    var asset = route;
+    if (asset != null) {
+      image = Image.file(
+        asset!,
+        fit: BoxFit.cover,
+      ).image;
+    }
+
+    return;
+  }
+
+  getImage() async {
+    /*  var pickedImage = await ImagePicker().pickImage(source: ImageSource.camera);
+
+    imageTemp = File(pickedImage!.path);
+
+    //base64image = base64Encode(imageTemp.readAsBytesSync());
+    setState(() {
+      displayInternalImage(imageTemp);
+    });
+    uploadImage(imageTemp);*/
+  }
+
+  chooseImage() async {
+    try {
+      final pickedImage =
+          await ImagePicker().getImage(source: ImageSource.gallery);
+      print(pickedImage);
+      if (pickedImage != null) {
+        var cropped = await ImageCropper().cropImage(
+          sourcePath: pickedImage.path,
+          aspectRatio: CropAspectRatio(
+            ratioX: 1,
+            ratioY: 1,
+          ),
+          compressQuality: 100,
+          maxHeight: 700,
+          maxWidth: 700,
+          compressFormat: ImageCompressFormat.jpg,
+          uiSettings: [
+            AndroidUiSettings(
+                toolbarTitle: 'Crop Image',
+                toolbarColor: Colors.blue,
+                toolbarWidgetColor: Colors.white,
+                initAspectRatio: CropAspectRatioPreset.original,
+                lockAspectRatio: false),
+            IOSUiSettings(
+              title: 'Cropper',
+            )
+          ],
+        );
+        if (cropped != null) {
+          imageTemp = File(cropped.path);
+        } else {
+          return;
+        }
+
+        setState(() {
+          image = Image.file(
+            imageTemp,
+            fit: BoxFit.cover,
+          ).image;
+          uploadImage(cropped);
+        });
+      }
+    } catch (error) {
+      print("error is${error}");
+    }
+  }
+
+  Future uploadImage(file) async {
+    String filename = file.path.split('/').last;
+    final prefs = await SharedPreferences.getInstance();
+    final _id = prefs.getInt("id");
+
+    final _token = prefs.getString("token");
+    FormData _data = FormData.fromMap({
+      "image": await MultipartFile.fromFile(
+        file.path,
+        filename: filename,
+        contentType: MediaType("image", "jpg"),
+      ),
+      "filename": filename,
+    });
+    //  print(file.path);
+    try {
+      final request = await Dio()
+          .post(
+            "http://localhost:8000/api/profile/image/${_id}",
+            data: _data,
+            options: Options(
+              headers: {'Authorization': 'Bearer ${prefs.getString("token")}'},
+            ),
+          )
+          .then((response) => ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.green,
+                  elevation: 30,
+                  behavior: SnackBarBehavior.floating,
+                  content: Text("image successfully uploaded"),
+                ),
+              ))
+          .catchError((error) => ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.red,
+                  elevation: 30,
+                  behavior: SnackBarBehavior.floating,
+                  content: Text("${error}"),
+                ),
+              ));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          elevation: 30,
+          behavior: SnackBarBehavior.floating,
+          content: Text("${error}"),
+        ),
+      );
+    }
+  }
+
+  void updateProfile(fullname, name, email, phone, bio) async {
+    isLoading = true;
+    final prefs = await SharedPreferences.getInstance();
+    final _data;
+    image == null
+        ? _data = {
+            "fullname": fullname,
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "bio": bio,
+            "id": id,
+          }
+        : _data = {
+            "fullname": fullname,
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "bio": bio,
+            "id": id,
+          };
+
+    final response = await http.put(
+        Uri.parse("http://localhost:8000/api/profile/update/${id}"),
+        body: jsonEncode(_data),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${prefs.getString("token")}'
+        });
+
+    final update = jsonDecode(response.body);
+    debugPrint("update data recived${update}");
+    isLoading = false;
+    if (update["success"] == true) {
+      setState(() {});
+      Navigator.pop(context);
+      mainProfileStream = _fetchUser();
+    } else {
+      final returnedError = jsonDecode(response.body);
+      isLoading = false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          elevation: 30,
+          behavior: SnackBarBehavior.floating,
+          content: Text("${returnedError.values.first[0]}"),
+        ),
+      );
+    }
   }
 }

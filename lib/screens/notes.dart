@@ -2482,7 +2482,72 @@ if (pics != null && pics.length < 2) {
       ),
            
            
-           
+           /*Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        mainProfileStream = _fetchUser();
+                      },
+                      child: isLoading
+                          ? SizedBox(
+                              width: 30,
+                              height: 25,
+                              child: Image.asset("assets/images/loader2.gif"),
+                            )
+                          : Text(
+                              "Close",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                    ),
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        isLoading = true;
+                        updateProfile(
+                          fullNameController.text,
+                          nameController.text,
+                          emailController.text,
+                          phoneController.text,
+                          bioController.text,
+                        );
+                        setState(() {});
+                      },
+                      child: isLoading
+                          ? SizedBox(
+                              width: 30,
+                              height: 25,
+                              child: Image.asset("assets/images/loader2.gif"),
+                            )
+                          : Text(
+                              "Done",
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                    )
+                  ],
+                ),
+              ),
+              Divider(),
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [],
+                ),
+              ),*/
+
+
+
+              
            
            
            
