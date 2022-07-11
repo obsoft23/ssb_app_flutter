@@ -40,8 +40,13 @@ class ManageBusinessAccount extends StatefulWidget {
   _ManageBusinessAccountState createState() => _ManageBusinessAccountState();
 }
 
+late List<String> searchResults = [];
+TextEditingController businessSubCatorgyController = TextEditingController();
+
 class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   late Stream profileStream;
+  late Stream photosStream;
+
   var profile;
   DateTime _dateTime = DateTime.now();
   bool isLoading = false;
@@ -84,9 +89,6 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
   StreamController? streamController;
 
-  TextEditingController businessCatorgyController = TextEditingController();
-  TextEditingController businessSubCatorgyController = TextEditingController();
-
   List<Text> businessCategories = [
     Text("Select"),
     Text("Health"),
@@ -114,9 +116,11 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
   @override
   void initState() {
-    getCurrentLocation();
+    // getCurrentLocation();
+    getVocationsList();
     super.initState();
     profileStream = fetchBusinessProfile();
+    photosStream = fetchPhotos();
   }
 
   @override
@@ -325,7 +329,6 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                         builder: (context) => openEditDetails(),
                       );
                       // Respond to button press
-                      setState(() {});
                     },
                     label: Text("Edit Professional Details"),
                     icon: Icon(Icons.add, size: 18),
@@ -381,54 +384,58 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   dense: true,
                 )
               : Container(child: null),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                "Bio ",
-                style: TextStyle(fontSize: 17),
-              ),
-              Container(
-                height: 0.2,
-                width: MediaQuery.of(context).size.width * .50,
-                color: Color(0xffA2A2A2),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-            ],
+          Container(
+            height: 50,
+            color: Colors.grey[400],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Bio ",
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
           profile.businessDescription != null
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    '${profile.businessDescription}',
-                    style: TextStyle(fontSize: 16),
-                  ),
+              ? Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: Text(
+                        '${profile.businessDescription}',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
                 )
               : Container(child: null),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                "Details   ",
-                style: TextStyle(fontSize: 17),
-              ),
-              Container(
-                height: 0.2,
-                width: MediaQuery.of(context).size.width * .50,
-                color: Color(0xffA2A2A2),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-            ],
+          Container(
+            height: 50,
+            color: Colors.grey[400],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Business Description ",
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
-          profile.businessCatorgyController != null
+          profile.businessSubCatorgyController != null
               ? ListTile(
                   leading: Icon(Icons.lock_person_outlined),
                   title: Text(
-                    'Category : ${profile.businessCatorgyController}',
+                    'Category : ${profile.businessSubCatorgyController}',
                     style: TextStyle(fontSize: 17),
                   ),
                   onTap: () {},
@@ -460,23 +467,24 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           SizedBox(
             height: 20,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                "Reviews and Rating   ",
-                style: TextStyle(fontSize: 17),
-              ),
-              Container(
-                height: 0.2,
-                width: MediaQuery.of(context).size.width * .50,
-                color: Color(0xffA2A2A2),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-            ],
+          Container(
+            height: 50,
+            color: Colors.grey[400],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Reviews and Rating ",
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
+          SizedBox(height: 10),
           ListTile(
             leading: FlutterLogo(size: 72.0),
             title: Text('Three-line ListTile'),
@@ -732,7 +740,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                     child: Container(
                       margin: EdgeInsets.only(right: 10),
                       child: Text(
-                        "process",
+                        "Done",
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
@@ -749,8 +757,8 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
         ),
       ),
-      body: FutureBuilder(
-        future: fetchPhotos(),
+      body: StreamBuilder(
+        stream: fetchBusinessProfile(),
         builder: ((context, snapshot) {
           if (snapshot.hasError) {
             return const Center(
@@ -766,6 +774,33 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     );
   }
 
+  Future getVocationsList() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+
+    final response = await http.get(
+      Uri.parse("http://localhost:8000/api/vocations/fetch"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        for (var i = 0; i < data.length; i++) {
+          final vocation = data[i]["vocations"];
+          searchResults.add(vocation);
+          print(data[i]["vocations"]);
+        }
+        //setState(() {});
+      }
+
+      return data;
+    } else {
+      debugPrint(response.body);
+    }
+  }
+
   openBusinessImages() {
     return Scaffold(
       appBar: AppBar(
@@ -775,7 +810,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           onTap: () {
             Navigator.pop(context);
             setState(() {
-              fetchBusinessProfile();
+              profileStream = fetchBusinessProfile();
             });
           },
           child: Container(
@@ -791,8 +826,8 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
         ),
       ),
-      body: FutureBuilder(
-        future: fetchPhotos(),
+      body: StreamBuilder(
+        stream: photosStream,
         builder: ((context, snapshot) {
           if (snapshot.hasError) {
             return const Center(
@@ -841,24 +876,8 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     final _data = {
       "phone": phoneController.text,
       "business_descripition": businessDescription.text,
-      "business_category": businessCatorgyController.text,
       "business_sub_category": businessSubCatorgyController.text,
       "business_id": prefs.getInt("business_id"),
-      /*  profile.businessDescription != null
-          ? "business_descripition"
-          : businessDescription.text: "",
-      phoneController.text != null ? "phone" : phoneController.text: "",
-      businessCatorgyController.text != null
-          ? "business_category"
-          : businessCatorgyController.text: "",
-      businessSubCatorgyController.text != null
-          ? "business_sub_category"
-          : businessSubCatorgyController.text: "",
-      openingTime != null ? "opening_time" : openingTime.text: "",
-      closingTime.text != null
-          ? "closing_time"
-          : businessSubCatorgyController.text: "",
-      "business_id": prefs.getInt("business_id"),*/
     };
     print(_data);
     final request = await http.post(
@@ -1027,7 +1046,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     }
   }
 
-  fetchPhotos() async {
+  Stream fetchPhotos() async* {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     final int? business_id = localStorage.getInt("business_id");
     final response = await http.get(
@@ -1090,12 +1109,12 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             }
           }
         }
-        return data;
+        yield data;
       } catch (error) {
         print(error);
       }
     } else {
-      return print(response.body);
+      yield response.body;
     }
   }
 
@@ -1138,7 +1157,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               imageTemp!,
               fit: BoxFit.cover,
             );
-            setState(() {});
+
             uploadBusinessPhotos(cropped, index);
             break;
           case 2:
@@ -1225,152 +1244,9 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               maxLines: 5,
             ),
           ),
-          /*  Container(
-            padding: EdgeInsets.all(10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      'Opening Time',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    openingTime == null
-                        ? Icon(
-                            Icons.browse_gallery,
-                            size: 15,
-                          )
-                        : Text("${openingTime}")
-                  ],
-                ),
-                TextButton(
-                  child: const Text('Select*'),
-                  onPressed: () async {
-                    showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) {
-                          return CupertinoActionSheet(
-                              actions: [buildOpeningTime()],
-                              cancelButton: CupertinoActionSheetAction(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Done")));
-                        });
-                  },
-                )
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      'Closing Time',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    closingTime == null
-                        ? Icon(
-                            Icons.browse_gallery,
-                            size: 15,
-                          )
-                        : Text("${closingTime}")
-                  ],
-                ),
-                TextButton(
-                  child: const Text('Select'),
-                  onPressed: () async {
-                    showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) {
-                          return CupertinoActionSheet(
-                              actions: [buildClosingTime()],
-                              cancelButton: CupertinoActionSheetAction(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Done")));
-                        });
-                  },
-                )
-              ],
-            ),
-          ),*/
           Container(
             padding: EdgeInsets.all(8),
-            child: TextFormField(
-              controller: businessCatorgyController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select an option';
-                }
-                return null;
-              },
-              readOnly: true,
-              onTap: () {
-                showCupertinoModalPopup(
-                    context: context,
-                    builder: (context) {
-                      return CupertinoActionSheet(
-                        actions: [
-                          Container(
-                              height: MediaQuery.of(context)
-                                      .copyWith()
-                                      .size
-                                      .height *
-                                  0.25,
-                              color: Colors.white,
-                              child: CupertinoPicker(
-                                children: businessCategories,
-                                selectionOverlay:
-                                    CupertinoPickerDefaultSelectionOverlay(),
-                                onSelectedItemChanged: (value) {
-                                  Text text = businessCategories[value];
-                                  selectedValue = text.data!;
-                                  print(selectedValue);
-                                  businessCatorgyController.text =
-                                      selectedValue.toString();
-                                  setState(() {});
-                                },
-                                itemExtent: 25,
-                                diameterRatio: 1,
-                                useMagnifier: true,
-                                magnification: 1.3,
-                                looping: true,
-                              )),
-                        ],
-                        cancelButton: CupertinoActionSheetAction(
-                          child: Text("Done"),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      );
-                    });
-              },
-              decoration: InputDecoration(
-                labelText: 'Business Category*',
-                border: UnderlineInputBorder(),
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
+            //color: Colors.black,
             child: TextFormField(
               controller: businessSubCatorgyController,
               validator: (value) {
@@ -1381,46 +1257,10 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               },
               readOnly: true,
               onTap: () {
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) {
-                    return CupertinoActionSheet(
-                      actions: [
-                        Container(
-                          height:
-                              MediaQuery.of(context).copyWith().size.height *
-                                  0.25,
-                          color: Colors.white,
-                          child: CupertinoPicker(
-                            children: businessSubCategories,
-                            selectionOverlay:
-                                CupertinoPickerDefaultSelectionOverlay(),
-                            onSelectedItemChanged: (value) {
-                              Text text = businessSubCategories[value];
-                              businessSubCatorgyController.text =
-                                  text.data!.toString();
-                              setState(() {});
-                            },
-                            itemExtent: 25,
-                            diameterRatio: 1,
-                            useMagnifier: true,
-                            magnification: 1.3,
-                            looping: true,
-                          ),
-                        ),
-                      ],
-                      cancelButton: CupertinoActionSheetAction(
-                        child: Text("Done"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  },
-                );
+                showSearch(context: context, delegate: MySearchDelegate());
               },
               decoration: InputDecoration(
-                labelText: 'Business SubCategory*',
+                labelText: 'Profession*',
                 border: UnderlineInputBorder(),
               ),
             ),
@@ -1439,13 +1279,20 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           children: <Widget>[
             //image 1
             Container(
-              padding: EdgeInsets.all(8),
-              child: Center(
-                child: Text(
-                  "click above to add or remove Photos 1",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.grey),
-                ),
+              height: 50,
+              color: Colors.grey[400],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Image  - 1 ",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
             InkWell(
@@ -1482,13 +1329,20 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
             //adding image 2
             Container(
-              padding: EdgeInsets.all(8),
-              child: Center(
-                child: Text(
-                  "click above to add or remove Photos 2",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.grey),
-                ),
+              height: 50,
+              color: Colors.grey[400],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Image - 2 ",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
             InkWell(
@@ -1525,13 +1379,20 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
             //adding image 3
             Container(
-              padding: EdgeInsets.all(8),
-              child: Center(
-                child: Text(
-                  "click above to add or remove Photos 3",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.grey),
-                ),
+              height: 50,
+              color: Colors.grey[400],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Image  - 3 ",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
             InkWell(
@@ -1568,15 +1429,23 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
             //adding image 4
             Container(
-              padding: EdgeInsets.all(8),
-              child: Center(
-                child: Text(
-                  "click above to add or remove Photos 4",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.grey),
-                ),
+              height: 50,
+              color: Colors.grey[400],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Image  - 4 ",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
+            SizedBox(height: 5),
             InkWell(
               onTap: () {
                 showModalBottomSheet(
@@ -1814,6 +1683,9 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               duration: const Duration(seconds: 6),
             ),
           );
+          setState(() {
+            photosStream = fetchPhotos();
+          });
         } else {
           print(response);
         }
@@ -1899,7 +1771,7 @@ class BusinessProfile {
   final String? countyController;
   final String? countryController;
   final String? houseNoController;
-  final String? businessCatorgyController;
+
   final String? businessSubCatorgyController;
   final String? latitude;
   final String? longtitude;
@@ -1920,7 +1792,6 @@ class BusinessProfile {
       this.countyController,
       this.countryController,
       this.houseNoController,
-      this.businessCatorgyController,
       this.businessSubCatorgyController,
       this.latitude,
       this.longtitude,
@@ -1942,13 +1813,74 @@ class BusinessProfile {
       countyController: json["county_locality"],
       countryController: json["country_nation"],
       houseNoController: json["house_no"],
-      businessCatorgyController: json["business_category"],
       businessSubCatorgyController: json["business_sub_category"],
       latitude: json["latitude"],
       longtitude: json["longtitude"],
       rating: json["rating"],
       joined: json["created_at"],
       activeDays: json["active_days"].toList(),
+    );
+  }
+}
+
+class MySearchDelegate extends SearchDelegate {
+  late List<String> suggestions;
+
+  // final response = await http.get(Uri.parse(""));
+
+  @override
+  Widget? buildLeading(context) => IconButton(
+        onPressed: () {
+          close(context, null);
+        },
+        icon: const Icon(Icons.arrow_back_ios, size: 15),
+      );
+  @override
+  List<Widget>? buildActions(context) => [
+        IconButton(
+          onPressed: () {
+            query.isEmpty ? close(context, null) : query = '';
+          },
+          icon: Icon(Icons.clear),
+        )
+      ];
+  @override
+  buildResults(context) {
+    return Center(child: Text(query, style: const TextStyle(fontSize: 64)));
+    //  businessSubCatorgyController.text = query;
+  }
+
+  selectAction() {}
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    suggestions = searchResults.where((searchResults) {
+      final result = searchResults.toLowerCase();
+      final input = query.toLowerCase();
+      return result.contains(input);
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final suggestion = suggestions[index];
+        return Expanded(
+          child: Column(
+            children: [
+              ListTile(
+                title: Text(suggestion),
+                onTap: () {
+                  query = suggestion;
+                  businessSubCatorgyController.text = query;
+                  print(suggestion);
+                  close(context, null);
+                },
+              ),
+              Divider()
+            ],
+          ),
+        );
+      },
     );
   }
 }

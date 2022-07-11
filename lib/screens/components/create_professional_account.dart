@@ -37,6 +37,11 @@ class Professional extends StatefulWidget {
   _ProfessionalState createState() => _ProfessionalState();
 }
 
+TextEditingController businessSubCatorgyController = TextEditingController();
+TextEditingController scrollController = TextEditingController();
+
+late List<String> searchResults = [];
+
 class _ProfessionalState extends State<Professional> {
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
@@ -48,6 +53,9 @@ class _ProfessionalState extends State<Professional> {
   var closingTime;
   double? latitude;
   double? longtitude;
+
+  var businessLatitude;
+  var businessLongtitude;
 
   String title = '';
   var description;
@@ -68,32 +76,6 @@ class _ProfessionalState extends State<Professional> {
   TextEditingController houseNoController = TextEditingController();
 
   TextEditingController businessCatorgyController = TextEditingController();
-  TextEditingController businessSubCatorgyController = TextEditingController();
-
-  List<Text> businessCategories = [
-    Text("Select"),
-    Text("Health"),
-    Text("Academics"),
-    Text("Technology"),
-    Text("Enterpreneur"),
-    Text("Freelance"),
-    Text("Engineering"),
-    Text("Domestics"),
-  ];
-
-  List<Text> businessSubCategories = [
-    Text("Nursing"),
-    Text("Medicine"),
-    Text("Physiotherapist"),
-    Text("Uk"),
-    Text("Australia"),
-    Text("Africa"),
-    Text("New zealand"),
-    Text("Germany"),
-    Text("Italy"),
-    Text("Russia"),
-    Text("China"),
-  ];
 
   var addressList;
   var selectedOpeningDayList = [];
@@ -126,6 +108,7 @@ class _ProfessionalState extends State<Professional> {
   @override
   void initState() {
     getCurrentLocation();
+    getVocationsList();
     super.initState();
     // setUserEmail();
   }
@@ -160,6 +143,33 @@ class _ProfessionalState extends State<Professional> {
         //setState(() {});
       }
       emailController.text = data["email"];
+
+      return data;
+    } else {
+      debugPrint(response.body);
+    }
+  }
+
+  Future getVocationsList() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+
+    final response = await http.get(
+      Uri.parse("http://localhost:8000/api/vocations/fetch"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        for (var i = 0; i < data.length; i++) {
+          final vocation = data[i]["vocations"];
+          searchResults.add(vocation);
+          print(data[i]["vocations"]);
+        }
+        //setState(() {});
+      }
 
       return data;
     } else {
@@ -226,7 +236,6 @@ class _ProfessionalState extends State<Professional> {
                     closingTime,
                     emailController.text,
                     phoneController.text,
-                    businessCatorgyController.text,
                     businessSubCatorgyController.text,
                     addressController.text,
                     houseNoController.text,
@@ -470,65 +479,6 @@ class _ProfessionalState extends State<Professional> {
                         Container(
                           padding: EdgeInsets.all(8),
                           child: TextFormField(
-                            controller: businessCatorgyController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select an option';
-                              }
-                              return null;
-                            },
-                            readOnly: true,
-                            onTap: () {
-                              showCupertinoModalPopup(
-                                  context: context,
-                                  builder: (context) {
-                                    return CupertinoActionSheet(
-                                      actions: [
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .copyWith()
-                                                    .size
-                                                    .height *
-                                                0.25,
-                                            color: Colors.white,
-                                            child: CupertinoPicker(
-                                              children: businessCategories,
-                                              selectionOverlay:
-                                                  CupertinoPickerDefaultSelectionOverlay(),
-                                              onSelectedItemChanged: (value) {
-                                                Text text =
-                                                    businessCategories[value];
-                                                selectedValue = text.data!;
-                                                print(selectedValue);
-                                                businessCatorgyController.text =
-                                                    selectedValue.toString();
-                                                setState(() {});
-                                              },
-                                              itemExtent: 25,
-                                              diameterRatio: 1,
-                                              useMagnifier: true,
-                                              magnification: 1.3,
-                                              looping: true,
-                                            )),
-                                      ],
-                                      cancelButton: CupertinoActionSheetAction(
-                                        child: Text("Done"),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    );
-                                  });
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Business Category*',
-                              border: UnderlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          child: TextFormField(
                             controller: businessSubCatorgyController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -538,49 +488,12 @@ class _ProfessionalState extends State<Professional> {
                             },
                             readOnly: true,
                             onTap: () {
-                              showCupertinoModalPopup(
-                                context: context,
-                                builder: (context) {
-                                  return CupertinoActionSheet(
-                                    actions: [
-                                      Container(
-                                        height: MediaQuery.of(context)
-                                                .copyWith()
-                                                .size
-                                                .height *
-                                            0.25,
-                                        color: Colors.white,
-                                        child: CupertinoPicker(
-                                          children: businessSubCategories,
-                                          selectionOverlay:
-                                              CupertinoPickerDefaultSelectionOverlay(),
-                                          onSelectedItemChanged: (value) {
-                                            Text text =
-                                                businessSubCategories[value];
-                                            businessSubCatorgyController.text =
-                                                text.data!.toString();
-                                            setState(() {});
-                                          },
-                                          itemExtent: 25,
-                                          diameterRatio: 1,
-                                          useMagnifier: true,
-                                          magnification: 1.3,
-                                          looping: true,
-                                        ),
-                                      ),
-                                    ],
-                                    cancelButton: CupertinoActionSheetAction(
-                                      child: Text("Done"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  );
-                                },
-                              );
+                              showSearch(
+                                  context: context,
+                                  delegate: MySearchDelegate());
                             },
                             decoration: InputDecoration(
-                              labelText: 'Business SubCategory*',
+                              labelText: 'Profession*',
                               border: UnderlineInputBorder(),
                             ),
                           ),
@@ -618,10 +531,10 @@ class _ProfessionalState extends State<Professional> {
                                       onPlacePicked: (result) {
                                         addressController.text =
                                             result.formattedAddress!;
-                                        final businessLatitude = result
+                                        businessLatitude = result
                                             .geometry!.location.lat
                                             .toString();
-                                        final businessLongtitude = result
+                                        businessLongtitude = result
                                             .geometry!.location.lng
                                             .toString();
 
@@ -793,7 +706,6 @@ class _ProfessionalState extends State<Professional> {
     closingTime,
     email,
     phone,
-    businessCatorgy,
     businessSubCatorgy,
     address,
     houseNo,
@@ -810,7 +722,6 @@ class _ProfessionalState extends State<Professional> {
         "closing_time": postClosingTime,
         "email": email,
         "phone": phone,
-        "business_category": businessCatorgy,
         "business_sub_category": businessSubCatorgy,
         "full_address": address,
         "house_no": houseNo,
@@ -818,8 +729,8 @@ class _ProfessionalState extends State<Professional> {
         "city_or_town": city,
         "county_locality": county,
         "country_nation": country,
-        "latitude": latitude,
-        "longtitude": longtitude,
+        "latitude": businessLatitude,
+        "longtitude": businessLongtitude,
         "active_days": newselectedOpeningDayList,
       };
 
@@ -850,6 +761,7 @@ class _ProfessionalState extends State<Professional> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            duration: Duration(milliseconds: 1),
             backgroundColor: Colors.red,
             elevation: 30,
             behavior: SnackBarBehavior.floating,
@@ -1022,3 +934,64 @@ List<closingDay> closeDayList = [
   closingDay(weekDay: "Friday ", avatar: ""),
   closingDay(weekDay: "Saturday ", avatar: ""),
 ];
+
+class MySearchDelegate extends SearchDelegate {
+  late List<String> suggestions;
+
+  // final response = await http.get(Uri.parse(""));
+
+  @override
+  Widget? buildLeading(context) => IconButton(
+        onPressed: () {
+          close(context, null);
+        },
+        icon: const Icon(Icons.arrow_back_ios, size: 15),
+      );
+  @override
+  List<Widget>? buildActions(context) => [
+        IconButton(
+          onPressed: () {
+            query.isEmpty ? close(context, null) : query = '';
+          },
+          icon: Icon(Icons.clear),
+        )
+      ];
+  @override
+  buildResults(context) {
+    return Center(child: Text(query, style: const TextStyle(fontSize: 64)));
+    //  businessSubCatorgyController.text = query;
+  }
+
+  selectAction() {}
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    suggestions = searchResults.where((searchResults) {
+      final result = searchResults.toLowerCase();
+      final input = query.toLowerCase();
+      return result.contains(input);
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final suggestion = suggestions[index];
+        return Expanded(
+          child: Column(
+            children: [
+              ListTile(
+                title: Text(suggestion),
+                onTap: () {
+                  query = suggestion;
+                  businessSubCatorgyController.text = query;
+                  close(context, null);
+                },
+              ),
+              Divider()
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

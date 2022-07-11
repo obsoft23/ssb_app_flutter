@@ -2657,3 +2657,109 @@ Row(
             ],
           ),
   }*/          
+
+  /*  Container(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      'Opening Time',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    openingTime == null
+                        ? Icon(
+                            Icons.browse_gallery,
+                            size: 15,
+                          )
+                        : Text("${openingTime}")
+                  ],
+                ),
+                TextButton(
+                  child: const Text('Select*'),
+                  onPressed: () async {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return CupertinoActionSheet(
+                              actions: [buildOpeningTime()],
+                              cancelButton: CupertinoActionSheetAction(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Done")));
+                        });
+                  },
+                )
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      'Closing Time',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    closingTime == null
+                        ? Icon(
+                            Icons.browse_gallery,
+                            size: 15,
+                          )
+                        : Text("${closingTime}")
+                  ],
+                ),
+                TextButton(
+                  child: const Text('Select'),
+                  onPressed: () async {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return CupertinoActionSheet(
+                              actions: [buildClosingTime()],
+                              cancelButton: CupertinoActionSheetAction(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Done")));
+                        });
+                  },
+                )
+              ],
+            ),
+          ),
+          
+          /*  profile.businessDescription != null
+          ? "business_descripition"
+          : businessDescription.text: "",
+      phoneController.text != null ? "phone" : phoneController.text: "",
+      businessCatorgyController.text != null
+          ? "business_category"
+          : businessCatorgyController.text: "",
+      businessSubCatorgyController.text != null
+          ? "business_sub_category"
+          : businessSubCatorgyController.text: "",
+      openingTime != null ? "opening_time" : openingTime.text: "",
+      closingTime.text != null
+          ? "closing_time"
+          : businessSubCatorgyController.text: "",
+      "business_id": prefs.getInt("business_id"),*/
+          
+          
+          */
