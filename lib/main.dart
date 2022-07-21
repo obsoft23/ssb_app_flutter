@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         title: 'Workspace',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primaryColor: Colors.blue,
+          primaryColor: Colors.white,
           //  brightness: Brightness.dark,
           /* textTheme: GoogleFonts.nunitoTextTheme(
             Theme.of(context)
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
                 .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
           ),
         ),
-        home: LandingPage());
+        home: ManageBusinessAccount());
     //  home: PickAddress());
   }
 }

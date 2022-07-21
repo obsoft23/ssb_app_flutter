@@ -2547,7 +2547,7 @@ if (pics != null && pics.length < 2) {
 
 
 
-              
+
            
            
            
@@ -2827,4 +2827,200 @@ Row(
       "business_id": prefs.getInt("business_id"),*/
           
           
+
+
+
+
+           showBarModalBottomSheet(
+            context: context,
+            builder: (context) => Container(
+                child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        Icons.cancel,
+                        size: 28,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                    height: 360,
+                    child: Image.network("https://i.gifer.com/ZF6H.gif")),
+                Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "SEARCHING",
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      width: 35,
+                      child: LoadingIndicator(
+                        indicatorType: Indicator.ballBeat,
+                        colors: [Colors.red],
+                        strokeWidth: 1,
+                        backgroundColor: Colors.transparent,
+                        pathBackgroundColor: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                //SizedBox(height: MediaQuery.of(context).size.height * .070),
+                Divider(),
+                ElevatedButton(
+                    onPressed: () {
+                      showAlertDialog(context);
+                    },
+                    child: Text("Cancel"),
+                    style: ElevatedButton.styleFrom(primary: Colors.red))
+              ],
+            )),
+          );
+
+
+
+
+
+
+
+
+
+
+
+
+          AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 8),
+              child: Center(
+                child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+              ),
+            ),
+          ),
+          title: Text(
+            "",
+            style: TextStyle(
+                color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: () {},
+              child: isLoading
+                  ? SizedBox(
+                      width: 30,
+                      height: 25,
+                      child: Image.asset("assets/images/loader2.gif"),
+                    )
+                  : Center(
+                      child: IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20))),
+                                context: context,
+                                builder: (context) => optionList());
+                          },
+                          icon: Icon(
+                            FontAwesomeIcons.ellipsis,
+                            color: Colors.blue,
+                            size: 15,
+                          )),
+                    ),
+            ),
+          ],
+        ),
+
+
+ /* GestureDetector(
+            onTap: () {
+              if (_formKey.currentState!.validate()) {
+                updateUserBusinessDetails();
+              } else {}
+            },
+            child: isLoading
+                ? SizedBox(
+                    width: 30,
+                    height: 25,
+                    child: Image.asset("assets/images/loader2.gif"),
+                  )
+                : Center(
+                    child: Container(
+                      margin: EdgeInsets.only(right: 10),
+                      child: Text(
+                        "Done",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.5,
+                        ),
+                      ),
+                    ),
+                  ),
+          ),*/
+
+
+
+
+
+
+         /* return Scaffold(
+      appBar: AppBar(
+          elevation: 1,
+          title: Text('$title',
+              style: TextStyle(color: Colors.black87, fontSize: 17)),
+          backgroundColor: Colors.white,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 8),
+              child: Center(
+                child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+              ),
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search),
+              color: Colors.blueAccent,
+              onPressed: () {
+                showSearch(context: context, delegate: MySearchDelegate());
+              },
+            ),
+          ]),
+      body: StreamBuilder(
+        stream: findUserRequest(title),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error"),
+            );
+          } else if (snapshot.hasData) {
+            return Text("");
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: Text("connecting."));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );*/
           */

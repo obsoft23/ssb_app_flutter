@@ -362,7 +362,7 @@ class _ProfilePageState extends State<ProfilePage> {
   editPage() {
     return Scaffold(
         appBar: AppBar(
-          elevation: 1,
+          elevation: 0,
           backgroundColor: Colors.white,
           leading: GestureDetector(
             onTap: () {

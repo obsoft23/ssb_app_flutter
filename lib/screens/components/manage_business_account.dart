@@ -32,6 +32,7 @@ import 'package:filter_list/filter_list.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_application_1/screens/components/form_date.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class ManageBusinessAccount extends StatefulWidget {
   const ManageBusinessAccount({Key? key}) : super(key: key);
@@ -42,6 +43,11 @@ class ManageBusinessAccount extends StatefulWidget {
 
 late List<String> searchResults = [];
 TextEditingController businessSubCatorgyController = TextEditingController();
+
+//hours
+TextEditingController openinghoursController = TextEditingController();
+
+TextEditingController closinghoursController = TextEditingController();
 
 class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   late Stream profileStream;
@@ -73,6 +79,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   final singlePicker = ImagePicker();
   final CarouselController _controller = CarouselController();
   final _formKey = GlobalKey<FormState>();
+  final _key1 = GlobalKey<FormState>();
 
   //import 'package:
 
@@ -88,17 +95,6 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   TextEditingController houseNoController = TextEditingController();
 
   StreamController? streamController;
-
-  List<Text> businessCategories = [
-    Text("Select"),
-    Text("Health"),
-    Text("Academics"),
-    Text("Technology"),
-    Text("Enterpreneur"),
-    Text("Freelance"),
-    Text("Engineering"),
-    Text("Domestics"),
-  ];
 
   List<Text> businessSubCategories = [
     Text("Nursing"),
@@ -116,11 +112,12 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
   @override
   void initState() {
-    // getCurrentLocation();
+    getCurrentLocation();
     getVocationsList();
-    super.initState();
     profileStream = fetchBusinessProfile();
     photosStream = fetchPhotos();
+
+    super.initState();
   }
 
   @override
@@ -132,71 +129,81 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 1,
-        backgroundColor: Colors.white,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Container(
-            margin: EdgeInsets.only(left: 8),
-            child: Center(
-              child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
-            ),
-          ),
-        ),
-        title: Text(
-          "Manage Professional Account",
-          style: TextStyle(
-              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () {},
-            child: isLoading
-                ? SizedBox(
-                    width: 30,
-                    height: 25,
-                    child: Image.asset("assets/images/loader2.gif"),
-                  )
-                : Center(
-                    child: IconButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20))),
-                              context: context,
-                              builder: (context) => optionList());
-                        },
-                        icon: Icon(
-                          FontAwesomeIcons.ellipsis,
-                          color: Colors.blue,
-                          size: 15,
-                        )),
+      body: NestedScrollView(
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                floating: true,
+                forceElevated: innerBoxIsScrolled,
+                leading: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 8),
+                    child: Center(
+                      child: Icon(Icons.arrow_back_ios,
+                          color: Colors.blue, size: 16),
+                    ),
                   ),
-          ),
-        ],
-      ),
-      body: StreamBuilder(
-        stream: profileStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Error"),
-            );
-          } else if (snapshot.hasData) {
-            return businessPage();
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.connectionState == ConnectionState.active) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+                ),
+                title: Text(
+                  "Manage Professional Account",
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600),
+                ),
+                actions: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: isLoading
+                        ? SizedBox(
+                            width: 30,
+                            height: 25,
+                            child: Image.asset("assets/images/loader2.gif"),
+                          )
+                        : Center(
+                            child: IconButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(20))),
+                                      context: context,
+                                      builder: (context) => optionList());
+                                },
+                                icon: Icon(
+                                  FontAwesomeIcons.ellipsis,
+                                  color: Colors.blue,
+                                  size: 15,
+                                )),
+                          ),
+                  ),
+                ],
+              ),
+            ];
+          },
+          body: StreamBuilder(
+            stream: profileStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text("Error"),
+                );
+              } else if (snapshot.hasData) {
+                return businessPage();
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.connectionState == ConnectionState.active) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          )),
     );
   }
 
@@ -204,8 +211,10 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          // SizedBox(height: 24),
           Stack(
             children: [
+              SizedBox(height: 24),
               Container(
                 margin: EdgeInsets.only(top: 0),
                 padding: const EdgeInsets.only(right: 8.0, left: 8.0),
@@ -218,7 +227,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)),
                                 child: Container(
-                                  padding: EdgeInsets.all(10),
+                                  //  padding: EdgeInsets.all(10),
                                   width: MediaQuery.of(context).size.width,
                                   height:
                                       MediaQuery.of(context).size.height * .40,
@@ -258,7 +267,6 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                                 )),
                           )
                         : Container(
-                            padding: EdgeInsets.all(10),
                             width: 600,
                             height: MediaQuery.of(context).size.height * .30,
                             color: Colors.grey,
@@ -330,7 +338,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                       );
                       // Respond to button press
                     },
-                    label: Text("Edit Professional Details"),
+                    label: Text("Edit Personal Details"),
                     icon: Icon(Icons.add, size: 18),
                   ),
                 ),
@@ -347,6 +355,23 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               ],
             ),
           ),
+          /* Container(
+            height: 50,
+            color: Colors.grey[400],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Professional Details ",
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),*/
           profile.phoneController != null
               ? ListTile(
                   leading: Icon(CupertinoIcons.phone),
@@ -384,22 +409,28 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   dense: true,
                 )
               : Container(child: null),
-          Container(
-            height: 50,
-            color: Colors.grey[400],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Bio ",
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+          Stack(
+            children: [
+              Container(
+                height: 50,
+                color: Colors.grey[300],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Bio ",
+                      style: GoogleFonts.acme(
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           profile.businessDescription != null
               ? Row(
@@ -414,22 +445,28 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   ],
                 )
               : Container(child: null),
-          Container(
-            height: 50,
-            color: Colors.grey[400],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Business Description ",
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+          Stack(
+            children: [
+              Container(
+                height: 50,
+                color: Colors.grey[300],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Business Description ",
+                      style: GoogleFonts.acme(
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           profile.businessSubCatorgyController != null
               ? ListTile(
@@ -467,22 +504,28 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           SizedBox(
             height: 20,
           ),
-          Container(
-            height: 50,
-            color: Colors.grey[400],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Reviews and Rating ",
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+          Stack(
+            children: [
+              Container(
+                height: 50,
+                color: Colors.grey[300],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Reviews and Rating ",
+                      style: GoogleFonts.acme(
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           SizedBox(height: 10),
           ListTile(
@@ -606,6 +649,17 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               },
             ),
             ListTile(
+              leading: Icon(CupertinoIcons.clock),
+              title: Text('Manage Business Hours'),
+              onTap: () {
+                Navigator.pop(context);
+                showMaterialModalBottomSheet(
+                  context: context,
+                  builder: (context) => businessHours(),
+                );
+              },
+            ),
+            ListTile(
               leading: Icon(CupertinoIcons.calendar_badge_plus),
               title: Text('Manage Active Days'),
               onTap: () {
@@ -658,48 +712,128 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     );
   }
 
-  buildOpeningTime() {
-    return SizedBox(
-      height: 200,
-      child: CupertinoDatePicker(
-          initialDateTime: _dateTime,
-          use24hFormat: true,
-          mode: CupertinoDatePickerMode.time,
-          onDateTimeChanged: (dateTime) {
-            setState(() {
-              _dateTime = dateTime;
-              final value = intl.DateFormat('HH:mm').format(_dateTime);
-              print(value);
-              postOpeningTime = value;
-              if (_dateTime.hour > 12) {
-                openingTime = value + " pm";
-              } else {
-                openingTime = value + " am";
-              }
-            });
-          }),
-    );
-  }
+  editActiveTimes() {}
 
-  buildClosingTime() {
-    return SizedBox(
-      height: 200,
-      child: CupertinoDatePicker(
-        initialDateTime: _dateTime,
-        use24hFormat: true,
-        mode: CupertinoDatePickerMode.time,
-        onDateTimeChanged: (dateTime) {
-          setState(() {
-            _dateTime = dateTime;
-            final value = intl.DateFormat('HH:mm').format(_dateTime);
-            postClosingTime = value;
-            if (_dateTime.hour > 12) {
-              closingTime = value + " pm";
-            } else {
-              closingTime = value + " am";
-            }
-          });
-        },
+  buildClosingTime() {}
+
+  Widget businessHours() {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+            setState(() {
+              fetchBusinessProfile();
+            });
+          },
+          child: Container(
+            margin: EdgeInsets.only(left: 8),
+            child: Center(
+              child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+            ),
+          ),
+        ),
+        actions: [],
+        title: Text(
+          "Manage Business Hours",
+          style: TextStyle(
+              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
+        ),
+      ),
+      body: Column(
+        children: [
+          Form(
+            key: _key1,
+            child: Container(
+              padding: EdgeInsets.all(8),
+              child: TextFormField(
+                readOnly: true,
+                controller: openinghoursController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select opening hours';
+                  }
+                  return null;
+                },
+                onTap: () {
+                  DatePicker.showTimePicker(
+                    context,
+                    showTitleActions: true,
+                    onChanged: (date) {
+                      print(date);
+                    },
+                    onConfirm: (date) {
+                      var newOpeningDate;
+                      /* if (date.microsecond.toString() == "0") {
+                        newOpeningDate =
+                            date.hour.toString() + ":" + date.minute.toString();
+                      } else {
+                        newOpeningDate = date.hour.toString() +
+                            ":" +
+                            date.minute.toString() +
+                            ":" +
+                            date.microsecond.toString();
+                      }*/
+                      newOpeningDate = date.toString();
+                      openinghoursController.text = newOpeningDate;
+                    },
+                    currentTime: DateTime.now(),
+                  );
+                },
+                decoration: InputDecoration(
+                  labelText: 'Opening Hours*',
+                  border: UnderlineInputBorder(),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            child: TextFormField(
+              controller: closinghoursController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select  closing hours';
+                }
+                return null;
+              },
+              readOnly: true,
+              onTap: () {
+                DatePicker.showTimePicker(
+                  context,
+                  showTitleActions: true,
+                  onChanged: (date) {
+                    print('change $date');
+                  },
+                  onConfirm: (date) {
+                    var newClosingTime;
+                    newClosingTime = date.toString();
+                    closinghoursController.text = newClosingTime;
+                  },
+                  currentTime: DateTime.now(),
+                  locale: LocaleType.en,
+                );
+              },
+              decoration: InputDecoration(
+                labelText: 'Closing Hours*',
+                border: UnderlineInputBorder(),
+              ),
+            ),
+          ),
+          TextButton(
+              onPressed: () {
+                if (_key1.currentState!.validate()) {
+                  updateBusinessHours(
+                      openinghoursController.text, closinghoursController.text);
+                }
+              },
+              child: Text(
+                'Update Business Hours',
+                style: TextStyle(color: Colors.blue),
+              )),
+        ],
       ),
     );
   }
@@ -707,7 +841,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   Widget openEditDetails() {
     return Scaffold(
       appBar: AppBar(
-        elevation: 1,
+        elevation: 0,
         backgroundColor: Colors.white,
         leading: GestureDetector(
           onTap: () {
@@ -827,7 +961,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         ),
       ),
       body: StreamBuilder(
-        stream: photosStream,
+        stream: fetchPhotos(),
         builder: ((context, snapshot) {
           if (snapshot.hasError) {
             return const Center(
@@ -981,6 +1115,57 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           );
           Navigator.pop(context);
         });
+  }
+
+  updateBusinessHours(openingTime, closingTime) async {
+    final prefs = await SharedPreferences.getInstance();
+    final _data = {
+      "opening_time": openingTime,
+      "closing_time": closingTime,
+      "business_id": prefs.getInt("business_id"),
+    };
+
+    final request = await http.post(
+      Uri.parse("http://localhost:8000/api/business/update/hours"),
+      body: jsonEncode(_data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+
+    if (request.statusCode == 200) {
+      final data = json.decode(request.body);
+      print("data receieved from updating address${data}");
+      if (data["success"] == 1) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Business Hours succesfully updated"),
+          ),
+        );
+        Navigator.pop(context);
+        setState(() {
+          profileStream = fetchBusinessProfile();
+        });
+      } else {
+        debugPrint(data);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.black,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Business Hours not updated"),
+          ),
+        );
+        setState(() {
+          profileStream = fetchBusinessProfile();
+        });
+      }
+    }
   }
 
   updateBusinessAddress(
@@ -1159,30 +1344,34 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             );
 
             uploadBusinessPhotos(cropped, index);
+            setState(() {});
             break;
           case 2:
             secondImage = Image.file(
               imageTemp!,
               fit: BoxFit.cover,
             );
-            setState(() {});
+
             uploadBusinessPhotos(cropped, index);
+            setState(() {});
             break;
           case 3:
             thirdImage = Image.file(
               imageTemp!,
               fit: BoxFit.cover,
             );
-            setState(() {});
+
             uploadBusinessPhotos(cropped, index);
+            setState(() {});
             break;
           case 4:
             fourthImage = Image.file(
               imageTemp!,
               fit: BoxFit.cover,
             );
-            setState(() {});
+
             uploadBusinessPhotos(cropped, index);
+            setState(() {});
             break;
           default:
             print("index inserted is${index} but  no match");
@@ -1288,13 +1477,14 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                     "Image  - 1 ",
                     style: TextStyle(
                       fontSize: 17,
-                      color: Colors.black,
+                      color: Colors.black54,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(height: 5),
             InkWell(
               onTap: () {
                 showModalBottomSheet(
@@ -1338,13 +1528,14 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                     "Image - 2 ",
                     style: TextStyle(
                       fontSize: 17,
-                      color: Colors.black,
+                      color: Colors.black54,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(height: 5),
             InkWell(
               onTap: () {
                 showModalBottomSheet(
@@ -1388,13 +1579,14 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                     "Image  - 3 ",
                     style: TextStyle(
                       fontSize: 17,
-                      color: Colors.black,
+                      color: Colors.black54,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(height: 5),
             InkWell(
               onTap: () {
                 showModalBottomSheet(
@@ -1438,7 +1630,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                     "Image  - 4 ",
                     style: TextStyle(
                       fontSize: 17,
-                      color: Colors.black,
+                      color: Colors.black54,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1641,6 +1833,14 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
       if (profile.phoneController != null) {
         phoneController.text = profile.phoneController;
       }
+
+      if (profile.openingTime != null) {
+        openinghoursController.text = profile.openingTime;
+      }
+
+      if (profile.closingTime != null) {
+        closinghoursController.text = profile.closingTime;
+      }
       yield data;
     } else {
       throw response.body.toString();
@@ -1683,9 +1883,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               duration: const Duration(seconds: 6),
             ),
           );
-          setState(() {
-            photosStream = fetchPhotos();
-          });
+          setState(() {});
         } else {
           print(response);
         }
@@ -1882,5 +2080,70 @@ class MySearchDelegate extends SearchDelegate {
         );
       },
     );
+  }
+}
+
+class CustomPicker extends DatePickerModel {
+  String digits(int value, int length) {
+    return '$value'.padLeft(length, "0");
+  }
+
+  CustomPicker({DateTime? currentTime, LocaleType? locale})
+      : super(locale: locale) {
+    this.currentTime = currentTime ?? DateTime.now();
+    setLeftIndex(this.currentTime.hour);
+    setMiddleIndex(this.currentTime.minute);
+    setRightIndex(this.currentTime.second);
+  }
+
+  @override
+  String? leftStringAtIndex(int index) {
+    if (index >= 0 && index < 24) {
+      return digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String? middleStringAtIndex(int index) {
+    if (index >= 0 && index < 60) {
+      return digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String? rightStringAtIndex(int index) {
+    if (index >= 0 && index < 60) {
+      return digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String leftDivider() {
+    return "|";
+  }
+
+  @override
+  String rightDivider() {
+    return "|";
+  }
+
+  @override
+  List<int> layoutProportions() {
+    return [1, 2, 1];
+  }
+
+  @override
+  DateTime finalTime() {
+    return currentTime.isUtc
+        ? DateTime.utc(
+            currentLeftIndex(), currentMiddleIndex(), currentRightIndex())
+        : DateTime(
+            currentLeftIndex(), currentMiddleIndex(), currentRightIndex());
   }
 }

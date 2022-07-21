@@ -1,8 +1,15 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, unused_local_variable, unused_element, avoid_print, use_key_in_widget_constructors, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, unused_local_variable, unused_element, avoid_print, use_key_in_widget_constructors, avoid_unnecessary_containers, unnecessary_brace_in_string_interps
+
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/profile.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+import '../search.dart';
 
 class SearchPageBody extends StatelessWidget {
   const SearchPageBody({Key? key}) : super(key: key);
@@ -53,13 +60,13 @@ class Categories extends StatefulWidget {
 
 class _CategoriesState extends State<Categories> {
   List<String> categories = [
-    "common",
-    "vocation",
-    "social",
+    "Common",
+    "Entertainment",
+    "Places",
     "religion",
-    "mosque",
+    "Food and Drinks",
     "electrician",
-    "electrician",
+    "Housing",
     "electrician",
   ];
   int selectedIndex = 0;
@@ -81,6 +88,7 @@ class _CategoriesState extends State<Categories> {
     return GestureDetector(
       onTap: () {
         setState(() {});
+        print("hello");
         selectedIndex = index;
       },
       child: Padding(
@@ -126,74 +134,20 @@ class ItemTile extends StatelessWidget {
       child: ListTile(
         tileColor: color.withOpacity(0.3),
         onTap: () {
-          showBarModalBottomSheet(
+          print(searchResults[itemNo]);
+          showMaterialModalBottomSheet(
             context: context,
-            builder: (context) => Container(
-                child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 28,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                    height: 360,
-                    child: Image.network("https://i.gifer.com/ZF6H.gif")),
-                Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "SEARCHING",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      width: 35,
-                      child: LoadingIndicator(
-                        indicatorType: Indicator.ballBeat,
-                        colors: [Colors.red],
-                        strokeWidth: 1,
-                        backgroundColor: Colors.transparent,
-                        pathBackgroundColor: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                //SizedBox(height: MediaQuery.of(context).size.height * .070),
-                Divider(),
-                ElevatedButton(
-                    onPressed: () {
-                      showAlertDialog(context);
-                    },
-                    child: Text("Cancel"),
-                    style: ElevatedButton.styleFrom(primary: Colors.red))
-              ],
-            )),
+            builder: (context) =>
+                searchVocation(context, searchResults[itemNo]),
           );
         },
-        leading: Container(
-          width: 50,
-          height: 50,
-          color: color.withOpacity(0.5),
-          child: Placeholder(
-            color: color,
-          ),
-        ),
-        title: Text(
-          'Product $itemNo',
-          key: Key('text_$itemNo'),
+        title: Center(
+          child: searchResults.isNotEmpty
+              ? Text(
+                  ' ${searchResults[itemNo]}',
+                  key: Key('text_$itemNo'),
+                )
+              : null,
         ),
       ),
     );
@@ -230,6 +184,224 @@ class ItemTile extends StatelessWidget {
       builder: (BuildContext context) {
         return alert;
       },
+    );
+  }
+
+  searchVocation(context, title) {
+    return Scaffold(
+      body: NestedScrollView(
+        // Setting floatHeaderSlivers to true is required in order to float
+        // the outer slivers over the inner scrollable.
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.white,
+              elevation: 1,
+              leading: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(left: 8),
+                  child: Center(
+                    child: Icon(Icons.arrow_back_ios,
+                        color: Colors.blue, size: 16),
+                  ),
+                ),
+              ),
+              title: Text('$title',
+                  style: TextStyle(color: Colors.black54, fontSize: 16)),
+              floating: true,
+              forceElevated: innerBoxIsScrolled,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.search),
+                  color: Colors.blueAccent,
+                  onPressed: () {
+                    showSearch(context: context, delegate: MySearchDelegate());
+                  },
+                ),
+              ],
+            ),
+          ];
+        },
+        body: StreamBuilder(
+          stream: findUserRequest(title),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("Error"),
+              );
+            } else if (snapshot.hasData) {
+              return MyStatelessWidget();
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: Text("connecting."));
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+Stream findUserRequest(title) async* {
+  SharedPreferences localStorage = await SharedPreferences.getInstance();
+  final _data = {
+    "sub_category": title,
+    "latitude": latitude,
+    "longtitude": longtitude,
+  };
+  print("query to be sent to DB${_data}");
+  final response = await http.post(
+    Uri.parse("http://localhost:8000/api/vocations/find"),
+    body: jsonEncode(_data),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    print(data);
+
+    // Profile().fromJson(data["profiles"][0]);
+  }
+}
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  static const String _title = 'Flutter Code Sample';
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: _title,
+      home: Scaffold(
+        appBar: AppBar(title: const Text(_title)),
+        body: const MyStatelessWidget(),
+      ),
+    );
+  }
+}
+
+class CustomListItem extends StatelessWidget {
+  const CustomListItem({
+    Key? key,
+    required this.thumbnail,
+    required this.title,
+    required this.user,
+    required this.viewCount,
+  }) : super(key: key);
+
+  final Widget thumbnail;
+  final String title;
+  final String user;
+  final int viewCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: thumbnail,
+          ),
+          Expanded(
+            flex: 3,
+            child: _VideoDescription(
+              title: title,
+              user: user,
+              viewCount: viewCount,
+            ),
+          ),
+          const Icon(
+            Icons.more_vert,
+            size: 16.0,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VideoDescription extends StatelessWidget {
+  const _VideoDescription({
+    Key? key,
+    required this.title,
+    required this.user,
+    required this.viewCount,
+  }) : super(key: key);
+
+  final String title;
+  final String user;
+  final int viewCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14.0,
+            ),
+          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
+          Text(
+            user,
+            style: const TextStyle(fontSize: 10.0),
+          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
+          Text(
+            '$viewCount views',
+            style: const TextStyle(fontSize: 10.0),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyStatelessWidget extends StatelessWidget {
+  const MyStatelessWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(8.0),
+      itemExtent: 106.0,
+      children: <CustomListItem>[
+        CustomListItem(
+          user: 'Flutter',
+          viewCount: 999000,
+          thumbnail: Container(
+            decoration: const BoxDecoration(color: Colors.blue),
+          ),
+          title: 'The Flutter YouTube Channel',
+        ),
+        CustomListItem(
+          user: 'Dash',
+          viewCount: 884000,
+          thumbnail: Container(
+            decoration: const BoxDecoration(color: Colors.yellow),
+          ),
+          title: 'Announcing Flutter 1.0',
+        ),
+      ],
     );
   }
 }

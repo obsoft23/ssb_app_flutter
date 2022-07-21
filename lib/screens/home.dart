@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final prefs = SharedPreferences.getInstance();
-  int _selectedIndex = 3;
+  int _selectedIndex = 1;
   var _gottenToken;
   final possibleColor = Color(0xff26A9FF);
 
