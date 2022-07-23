@@ -130,80 +130,81 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
-          floatHeaderSlivers: true,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                backgroundColor: Colors.transparent,
-                floating: true,
-                forceElevated: innerBoxIsScrolled,
-                leading: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(left: 8),
-                    child: Center(
-                      child: Icon(Icons.arrow_back_ios,
-                          color: Colors.blue, size: 16),
-                    ),
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.transparent,
+              floating: true,
+              forceElevated: innerBoxIsScrolled,
+              leading: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(left: 8),
+                  child: Center(
+                    child: Icon(Icons.arrow_back_ios,
+                        color: Colors.blue, size: 16),
                   ),
                 ),
-                title: Text(
-                  "Manage Professional Account",
-                  style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600),
-                ),
-                actions: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: isLoading
-                        ? SizedBox(
-                            width: 30,
-                            height: 25,
-                            child: Image.asset("assets/images/loader2.gif"),
-                          )
-                        : Center(
-                            child: IconButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(20))),
-                                      context: context,
-                                      builder: (context) => optionList());
-                                },
-                                icon: Icon(
-                                  FontAwesomeIcons.ellipsis,
-                                  color: Colors.blue,
-                                  size: 15,
-                                )),
-                          ),
-                  ),
-                ],
               ),
-            ];
+              title: Text(
+                "Manage Professional Account",
+                style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600),
+              ),
+              actions: [
+                GestureDetector(
+                  onTap: () {},
+                  child: isLoading
+                      ? SizedBox(
+                          width: 30,
+                          height: 25,
+                          child: Image.asset("assets/images/loader2.gif"),
+                        )
+                      : Center(
+                          child: IconButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20))),
+                                    context: context,
+                                    builder: (context) => optionList());
+                              },
+                              icon: Icon(
+                                FontAwesomeIcons.ellipsis,
+                                color: Colors.blue,
+                                size: 15,
+                              )),
+                        ),
+                ),
+              ],
+            ),
+          ];
+        },
+        body: StreamBuilder(
+          stream: profileStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("Error"),
+              );
+            } else if (snapshot.hasData) {
+              return businessPage();
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.connectionState == ConnectionState.active) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
           },
-          body: StreamBuilder(
-            stream: profileStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text("Error"),
-                );
-              } else if (snapshot.hasData) {
-                return businessPage();
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.connectionState == ConnectionState.active) {
-                return Center(child: CircularProgressIndicator());
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          )),
+        ),
+      ),
     );
   }
 
@@ -1973,7 +1974,7 @@ class BusinessProfile {
   final String? businessSubCatorgyController;
   final String? latitude;
   final String? longtitude;
-  final String? rating;
+  final double? rating;
   final String? joined;
   final List<dynamic>? activeDays;
 

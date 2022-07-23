@@ -128,7 +128,7 @@ class MySearchDelegate extends SearchDelegate {
         )
       ];
   @override
-  Widget buildResults(BuildContext context) => MyStatelessWidget();
+  Widget buildResults(BuildContext context) => businessList();
   @override
   Widget buildSuggestions(BuildContext context) {
     suggestions = searchResults.where((searchResults) {

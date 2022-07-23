@@ -3023,4 +3023,235 @@ Row(
         },
       ),
     );*/
+
+
+
+
+
+
+
+
+
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: MyStatelessWidget(),
+    );
+  }
+}
+
+class CustomListItem extends StatelessWidget {
+  const CustomListItem({
+    Key? key,
+    required this.thumbnail,
+    required this.title,
+    required this.user,
+    required this.viewCount,
+  }) : super(key: key);
+
+  final Widget thumbnail;
+  final String title;
+  final String user;
+  final int viewCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: thumbnail,
+          ),
+          Expanded(
+            flex: 3,
+            child: _VideoDescription(
+              title: title,
+              user: user,
+              viewCount: viewCount,
+            ),
+          ),
+          const Icon(
+            Icons.more_vert,
+            size: 16.0,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VideoDescription extends StatelessWidget {
+  const _VideoDescription({
+    Key? key,
+    required this.title,
+    required this.user,
+    required this.viewCount,
+  }) : super(key: key);
+
+  final String title;
+  final String user;
+  final int viewCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14.0,
+            ),
+          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
+          Text(
+            user,
+            style: const TextStyle(fontSize: 10.0),
+          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
+          Text(
+            '$viewCount views',
+            style: const TextStyle(fontSize: 10.0),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyStatelessWidget extends StatelessWidget {
+  const MyStatelessWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(8.0),
+      itemExtent: 106.0,
+      children: <CustomListItem>[
+        CustomListItem(
+          user: 'Flutter',
+          viewCount: 999000,
+          thumbnail: Container(
+            decoration: const BoxDecoration(color: Colors.blue),
+          ),
+          title: 'The Flutter YouTube Channel',
+        ),
+        CustomListItem(
+          user: 'Dash',
+          viewCount: 884000,
+          thumbnail: Container(
+            decoration: const BoxDecoration(color: Colors.yellow),
+          ),
+          title: 'Announcing Flutter 1.0',
+        ),
+      ],
+    );
+  }
+}
+
+
+
+    return Scaffold(
+      body: NestedScrollView(
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(left: 8),
+                  child: Center(
+                    child: Icon(Icons.arrow_back_ios,
+                        color: Colors.blue, size: 16),
+                  ),
+                ),
+              ),
+              title: Text('$title',
+                  style: TextStyle(color: Colors.black54, fontSize: 16)),
+              floating: true,
+              forceElevated: innerBoxIsScrolled,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.search),
+                  color: Colors.blueAccent,
+                  onPressed: () {
+                    showSearch(context: context, delegate: MySearchDelegate());
+                  },
+                ),
+              ],
+            ),
+          ];
+        },
+        body: StreamBuilder(
+          stream: findUserRequest(title),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("Error"),
+              );
+            } else if (snapshot.hasData) {
+              return businessList();
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: Text("connecting."));
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
+
+]
+
+/  data.map<Autogenerated>(Autogenerated.fromJson).toList();
+    //) Autogenerated.fromJson(data[0]);
+
+ showAlertDialog(BuildContext context) {
+    // set up the buttons
+
+    Widget cancelButton = TextButton(
+      child: Text("Yes"),
+      onPressed: () {
+        Navigator.pop(context);
+        Navigator.pop(context);
+      },
+    );
+    Widget launchButton = TextButton(
+      child: Text("No"),
+      onPressed: () {},
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Center(child: Text("WorkSpace Search")),
+      content: Text("Do you want to cancel search..."),
+      actions: [
+        cancelButton,
+        launchButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
           */
