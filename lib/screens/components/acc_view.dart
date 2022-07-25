@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_typing_uninitialized_variables
+// ignore_for_file: must_be_immutable, prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
 
@@ -7,7 +7,7 @@ class _ArticleDescription extends StatelessWidget {
   final String? subtitle;
   final String? author;
   final String? publishDate;
-  var readDuration;
+  final String? readDuration;
 
   _ArticleDescription({
     Key? key,
@@ -32,16 +32,18 @@ class _ArticleDescription extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey,
                 ),
               ),
-              const Padding(padding: EdgeInsets.only(bottom: 2.0)),
+              const Padding(padding: EdgeInsets.only(bottom: 4.0)),
               Text(
                 subtitle!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12.0,
+                style: TextStyle(
+                  fontSize: 11,
                   color: Colors.black54,
                 ),
               ),
@@ -57,7 +59,7 @@ class _ArticleDescription extends StatelessWidget {
                   ? Text(
                       author!,
                       style: const TextStyle(
-                        fontSize: 12.0,
+                        fontSize: 13.0,
                         color: Colors.black87,
                       ),
                     )
@@ -65,8 +67,8 @@ class _ArticleDescription extends StatelessWidget {
               Text(
                 '$publishDate - $readDuration',
                 style: const TextStyle(
-                  fontSize: 12.0,
-                  color: Colors.black54,
+                  fontSize: 13.0,
+                  color: Colors.black87,
                 ),
               ),
             ],
@@ -83,7 +85,7 @@ class CustomListItemTwo extends StatelessWidget {
   final String? subtitle;
   final String? author;
   final String? publishDate;
-  var readDuration;
+  final String? readDuration;
 
   CustomListItemTwo({
     Key? key,
@@ -97,8 +99,8 @@ class CustomListItemTwo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+    return ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(8)),
       child: SizedBox(
         height: 100,
         child: Row(

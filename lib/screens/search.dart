@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/screens/components/search_page_body.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -21,6 +22,9 @@ late List<String> searchResults = [];
 var latitude;
 var longtitude;
 var userLocation;
+var town;
+var area;
+var country;
 
 class _SearchPageState extends State<SearchPage> {
   @override
@@ -69,15 +73,37 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    try {
+      LocationPermission permission;
+      bool serviceEnabled;
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print("enable locations");
+      }
+      permission = await Geolocator.checkPermission();
+      if (permission != LocationPermission.denied ||
+          permission != LocationPermission.deniedForever) {
+        final position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
 
-    setState(() {
-      userLocation = LatLng(position.latitude, position.longitude);
-      latitude = position.latitude;
-      longtitude = position.longitude;
-      print(userLocation);
-    });
+        userLocation = LatLng(position.latitude, position.longitude);
+        latitude = position.latitude;
+        longtitude = position.longitude;
+        print(userLocation);
+
+        List placemarks = await placemarkFromCoordinates(
+            position.latitude, position.longitude,
+            localeIdentifier: "en_UK]");
+        // List placemarks = await placemarkFromCoordinates(54.1113876, -3.2178761, localeIdentifier: "en_UK]");
+        print(" lets get user locations${placemarks[0].toString()}");
+        country = placemarks[0].country.toString();
+        town = placemarks[0].locality.toString();
+      } else {
+        print("please enable location");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future getVocationsList() async {
@@ -128,7 +154,26 @@ class MySearchDelegate extends SearchDelegate {
         )
       ];
   @override
-  Widget buildResults(BuildContext context) => businessList();
+  Widget buildResults(BuildContext context) => StreamBuilder(
+        stream: findUserRequest(query),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error"),
+            );
+          } else if (snapshot.hasData) {
+            return businessList();
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+                child: CircularProgressIndicator(
+              color: Colors.green,
+            ));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      );
+
   @override
   Widget buildSuggestions(BuildContext context) {
     suggestions = searchResults.where((searchResults) {

@@ -3254,4 +3254,54 @@ class MyStatelessWidget extends StatelessWidget {
       },
     );
   }
+
+
+  /*return ListTile(
+        leading: acc.image == null
+            ? FlutterLogo(
+                size: 72,
+              )
+            : CircleAvatar(
+                radius: 70,
+                backgroundImage: NetworkImage(
+                  "http://localhost:8000/api/fetch-user-image/${userDetails.image}",
+                ),
+              ),
+        title: acc.businessName!.toUpperCase() != null
+            ? Text(
+                acc.businessName!,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+            : Text(""),
+        subtitle: Text(
+          acc.businessDescripition!,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            color: Color(0xFF212121),
+          ),
+        ),
+        trailing: Icon(CupertinoIcons.heart),
+        isThreeLine: true,
+      );
+      
+      
+      RatingBar.builder(
+            initialRating: 4,
+            minRating: 3,
+            itemSize: 10,
+            direction: Axis.horizontal,
+            allowHalfRating: true,
+            itemCount: 5,
+            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+            itemBuilder: (context, _) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            onRatingUpdate: (rating) {
+              print(rating);
+            },
+          ),*/
           */
