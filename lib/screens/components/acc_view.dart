@@ -7,7 +7,7 @@ class _ArticleDescription extends StatelessWidget {
   final String? subtitle;
   final String? author;
   final String? publishDate;
-  final String? readDuration;
+  final double? readDuration;
 
   _ArticleDescription({
     Key? key,
@@ -85,7 +85,7 @@ class CustomListItemTwo extends StatelessWidget {
   final String? subtitle;
   final String? author;
   final String? publishDate;
-  final String? readDuration;
+  final double? readDuration;
 
   CustomListItemTwo({
     Key? key,

@@ -317,7 +317,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               ? Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "email : ${profile.emailController}",
+                    "email : ${profile.emailController!}",
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.grey),
                   ),
@@ -1216,13 +1216,13 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           profileStream = fetchBusinessProfile();
         });
       } else {
-        debugPrint(data);
+        print("unable to uodate address$data");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.red,
             elevation: 30,
             behavior: SnackBarBehavior.floating,
-            content: Text("Active not Updated"),
+            content: Text("Address not Updated"),
           ),
         );
         setState(() {
@@ -1958,6 +1958,7 @@ List<closingDay> closeDayList = [
 ];
 
 class BusinessProfile {
+  final int? businessId;
   final String? businessName;
   final String? businessDescription;
   final String? openingTime;
@@ -1970,36 +1971,41 @@ class BusinessProfile {
   final String? countyController;
   final String? countryController;
   final String? houseNoController;
+  final int? likes;
 
   final String? businessSubCatorgyController;
-  final String? latitude;
-  final String? longtitude;
+  var latitude;
+  var longtitude;
   final double? rating;
   final String? joined;
   final List<dynamic>? activeDays;
 
-  BusinessProfile(
-      {this.businessName,
-      this.businessDescription,
-      this.openingTime,
-      this.closingTime,
-      this.emailController,
-      this.phoneController,
-      this.addressController,
-      this.postalController,
-      this.cityController,
-      this.countyController,
-      this.countryController,
-      this.houseNoController,
-      this.businessSubCatorgyController,
-      this.latitude,
-      this.longtitude,
-      this.rating,
-      this.joined,
-      this.activeDays});
+  BusinessProfile({
+    this.businessId,
+    this.businessName,
+    this.businessDescription,
+    this.openingTime,
+    this.closingTime,
+    this.emailController,
+    this.phoneController,
+    this.addressController,
+    this.postalController,
+    this.cityController,
+    this.countyController,
+    this.countryController,
+    this.houseNoController,
+    this.businessSubCatorgyController,
+    this.latitude,
+    this.longtitude,
+    this.rating,
+    this.joined,
+    this.activeDays,
+    this.likes,
+  });
 
   factory BusinessProfile.fromJson(Map<String, dynamic> json) {
     return BusinessProfile(
+      businessId: json["business_account_id"],
       businessName: json["business_name"],
       businessDescription: json["business_descripition"],
       openingTime: json["opening_time"],
@@ -2017,6 +2023,7 @@ class BusinessProfile {
       longtitude: json["longtitude"],
       rating: json["rating"],
       joined: json["created_at"],
+      likes: json["likes"],
       activeDays: json["active_days"].toList(),
     );
   }

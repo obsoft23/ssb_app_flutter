@@ -3256,6 +3256,42 @@ class MyStatelessWidget extends StatelessWidget {
   }
 
 
+   floatingActionButton: SpeedDial(
+        //isOpenOnStart: true,
+        backgroundColor: Colors.blueGrey,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.0,
+        animatedIcon: AnimatedIcons.add_event,
+        spacing: 12,
+        spaceBetweenChildren: 12,
+        childrenButtonSize: Size(60, 60),
+        children: [
+          SpeedDialChild(
+            child: Icon(FontAwesomeIcons.bookmark, size: 17),
+            onTap: () {},
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.directions, size: 22),
+            onTap: () {},
+          ),
+          SpeedDialChild(
+            child: Icon(
+              CupertinoIcons.heart,
+              size: 21,
+            ),
+            onTap: () {
+              /* showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20))),
+                  context: context,
+                  builder: (context) => ratingModal(context));*/
+            },
+          ),
+        ],
+      ),
+
+
   /*return ListTile(
         leading: acc.image == null
             ? FlutterLogo(

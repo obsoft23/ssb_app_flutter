@@ -98,8 +98,6 @@ class Network {
     return prefs.setInt("business_id", value);
   }
 
-
-
   clearBusinessId() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('business_id');
@@ -173,4 +171,63 @@ class Network {
       //Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
     }*/
   }
+
+  likes(isLiked, businessId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final _id = prefs.getInt('id');
+    final Uri url = Uri.parse("http://localhost:8000/api/business/update/like");
+    final data = {
+      "isLiked": isLiked,
+      "business_id": businessId,
+      "user_id": _id
+    };
+
+    final body = jsonEncode(data);
+
+    debugPrint("sending request for likes or not: ${body}");
+
+    final response = await http.post(
+      url,
+      body: body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+    print(json.decode(response.body));
+    return isLiked;
+  }
+
+  Future<bool> confirmIfUserLiked(businessId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final _id = prefs.getInt('id');
+    final Uri url =
+        Uri.parse("http://localhost:8000/api/business/confirm/like");
+    final data = {"business_id": businessId, "user_id": _id};
+
+    final body = jsonEncode(data);
+
+    debugPrint("sending request for see if previusly liked: ${body}");
+
+    final request = await http.post(
+      url,
+      body: body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+    final response = json.decode(request.body);
+    print(response);
+    if (response == true) {
+      return true;
+    } else {
+      return false;
+    }
+    //
+  }
+
+  /* */
 }

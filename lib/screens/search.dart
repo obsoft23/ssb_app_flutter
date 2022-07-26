@@ -78,7 +78,16 @@ class _SearchPageState extends State<SearchPage> {
       bool serviceEnabled;
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        print("enable locations");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Location services disabled"),
+          ),
+        );
+        await Geolocator.openAppSettings();
+        await Geolocator.openLocationSettings();
       }
       permission = await Geolocator.checkPermission();
       if (permission != LocationPermission.denied ||
@@ -93,13 +102,24 @@ class _SearchPageState extends State<SearchPage> {
 
         List placemarks = await placemarkFromCoordinates(
             position.latitude, position.longitude,
-            localeIdentifier: "en_UK]");
-        // List placemarks = await placemarkFromCoordinates(54.1113876, -3.2178761, localeIdentifier: "en_UK]");
+            localeIdentifier: "en_UK");
+        //  List placemarks = await placemarkFromCoordinates(54.1113876, -3.2178761,
+        // localeIdentifier: "en_UK]");
         print(" lets get user locations${placemarks[0].toString()}");
         country = placemarks[0].country.toString();
         town = placemarks[0].locality.toString();
       } else {
-        print("please enable location");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            elevation: 30,
+            behavior: SnackBarBehavior.floating,
+            content: Text(
+                "location permission reaquired - please check your settings"),
+          ),
+        );
+        await Geolocator.openAppSettings();
+        await Geolocator.openLocationSettings();
       }
     } catch (e) {
       print(e);
@@ -187,14 +207,18 @@ class MySearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         final suggestion = suggestions[index];
         return Expanded(
-          child: ListTile(
-            title: Text(suggestion),
-            onTap: () {
-              query = suggestion;
-              showResults(context);
-            },
-          ),
-        );
+            child: Column(
+          children: [
+            ListTile(
+              title: Text(suggestion),
+              onTap: () {
+                query = suggestion;
+                showResults(context);
+              },
+            ),
+            Divider()
+          ],
+        ));
       },
     );
   }
