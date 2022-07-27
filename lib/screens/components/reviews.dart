@@ -101,17 +101,24 @@ class _ReviewPageState extends State<ReviewPage> {
     return Container(
       child: CommentBox(
         userImage: "http://localhost:8000/api/fetch-user-image/${userImageURL}",
-        child: commentChild(filedata),
+        child: commentChild(),
         labelText: 'Write a review...',
         withBorder: false,
         errorText: 'Review cannot be blank',
-        sendButtonMethod: () {
+        sendButtonMethod: () async {
           if (formKey.currentState!.validate()) {
             print(commentController.text);
-            setState(() {
-              Network().sendReview(widget.id, commentController.text);
-            });
-            commentController.clear();
+
+            final success =
+                await Network().sendReview(widget.id, commentController.text);
+            print(success);
+            if (success == true) {
+              commentController.clear();
+              setState(() {
+                fetchReviews(widget.id);
+              });
+            }
+            // commentController.clear();
             // FocusScope.of(context).unfocus();
           } else {
             print("Not validated");
@@ -119,14 +126,14 @@ class _ReviewPageState extends State<ReviewPage> {
         },
         formKey: formKey,
         commentController: commentController,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black87,
         textColor: Colors.white,
         sendWidget: Icon(Icons.send_sharp, size: 24, color: Colors.white),
       ),
     );
   }
 
-  Widget commentChild(data) {
+  Widget commentChild() {
     return ListView.builder(
       itemCount: reviews.length,
       itemBuilder: (context, index) {
@@ -136,7 +143,7 @@ class _ReviewPageState extends State<ReviewPage> {
             leading: GestureDetector(
               onTap: () async {
                 // Display the image in large form.
-                print("Comment Clicked");
+                print("Comment Clicked$index");
               },
               child: Container(
                 height: 50.0,
@@ -147,12 +154,12 @@ class _ReviewPageState extends State<ReviewPage> {
                 child: CircleAvatar(
                   radius: 50,
                   backgroundImage: NetworkImage(
-                      "http://localhost:8000/api/fetch-user-image/${data[index]['image']}"),
+                      "http://localhost:8000/api/fetch-user-image/${filedata[index]['image']}"),
                 ),
               ),
             ),
             title: Text(
-              data[index]['name'],
+              filedata[index]['name'],
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             ),
             subtitle: Text(reviews[index].review),
@@ -165,6 +172,8 @@ class _ReviewPageState extends State<ReviewPage> {
 
 fetchReviews(int id) async {
   print("fetch business id${id}");
+  filedata.clear();
+  reviews.clear();
 
   final response = await http.get(
     Uri.parse("http://localhost:8000/api/business/fetch/review/${id}"),
@@ -182,9 +191,9 @@ fetchReviews(int id) async {
       reviews.add(Review.fromJson(review));
     }
 
-    for (var user in _reviews["user"]) {
+    /*  for (var user in _reviews["user"]) {
       filedata.add(ReviewProfile.fromJson(user));
-    }
+    }*/
 
     filedata = _reviews["user"];
 

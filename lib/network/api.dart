@@ -256,7 +256,11 @@ class Network {
 
     final response = json.decode(request.body);
     print(response);
+    if (request.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+    /* */
   }
-  /* */
-
 }

@@ -529,6 +529,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 await prefs.remove('email');
                 await prefs.remove('has_professional_acc');
                 await prefs.remove('business_id');
+                await prefs.remove('user_acc_name');
+                await prefs.remove('profile_image_url');
                 Navigator.push(
                   context,
                   MaterialPageRoute(
