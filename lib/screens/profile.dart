@@ -115,6 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
       data = jsonDecode(response.body);
 
       nameController.text = data["name"];
+      localStorage.setString("user_acc_name", data["name"]);
       emailController.text = data["email"];
       if (data["fullname"] != null) {
         fullNameController.text = data["fullname"];
@@ -131,6 +132,8 @@ class _ProfilePageState extends State<ProfilePage> {
       if (data["image"] != null) {
         image = NetworkImage(
             "http://localhost:8000/api/fetch-user-image/${data["image"]}");
+
+        localStorage.setString("profile_image_url", data["image"]);
       }
       /*  image = NetworkImage(
           "http://localhost:8000/api/public/profilepictures/${data["image"]}");*/

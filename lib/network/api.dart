@@ -229,5 +229,34 @@ class Network {
     //
   }
 
+  sendReview(businessId, review) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id');
+    final Uri url =
+        Uri.parse("http://localhost:8000/api/business/confirm/review");
+    final data = {
+      "business_id": businessId,
+      "user_id": userId,
+      "review": review,
+      "rating": 2.5,
+    };
+
+    final body = jsonEncode(data);
+
+    debugPrint("sending request for save review: ${body}");
+    final request = await http.post(
+      url,
+      body: body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+
+    final response = json.decode(request.body);
+    print(response);
+  }
   /* */
+
 }
