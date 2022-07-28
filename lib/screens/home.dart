@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/network/api.dart';
+import 'package:flutter_application_1/screens/favourites.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/screens/conversations.dart';
 import 'package:flutter_application_1/screens/notifications.dart';
@@ -23,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   final possibleColor = Color(0xff26A9FF);
 
   static final _widgetOptions = [
-    ConversationsPage(),
+    FavouritesPage(),
     SearchPage(),
     NotificationsPage(),
     ProfilePage()
@@ -56,8 +57,8 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             // icon: Icon(Icons.bubble_chart_rounded),
-            icon: FaIcon(FontAwesomeIcons.comment),
-            label: 'conversations',
+            icon: FaIcon(FontAwesomeIcons.list, size: 22),
+            label: 'Favourites',
           ),
           BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.magnifyingGlass),

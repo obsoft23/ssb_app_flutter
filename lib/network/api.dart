@@ -263,4 +263,38 @@ class Network {
     }
     /* */
   }
+
+  confirmIfFav(id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id');
+    final Uri url =
+        Uri.parse("http://localhost:8000/api/business/confirm/favourite");
+    final data = {
+      "business_id": id,
+      "user_id": userId,
+    };
+
+    final body = jsonEncode(data);
+
+    final request = await http.post(
+      url,
+      body: body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${prefs.getString("token")}'
+      },
+    );
+
+    debugPrint("sending request for see if favourites: ${data}");
+    final response = json.decode(request.body);
+    print(response);
+    if (response == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //
 }

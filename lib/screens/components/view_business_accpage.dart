@@ -17,6 +17,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:like_button/like_button.dart';
 import 'package:flutter_application_1/network/api.dart';
+import 'package:favorite_button/favorite_button.dart';
 
 class ViewBusinessAccpage extends StatefulWidget {
   final String? businessName;
@@ -33,6 +34,7 @@ class ViewBusinessAccpage extends StatefulWidget {
 class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   late bool pageLiked = seeLikeStatus();
   late Stream profileStream;
+  late bool isFav = false;
 
   bool bookmark = false;
   var profile;
@@ -47,6 +49,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   DateTime _dateTime = DateTime.now();
 
   bool isLoading = false;
+  bool is_Favorite = true;
 
   var selectedValue;
 
@@ -382,22 +385,18 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   icon: Icon(Icons.share),
                 ),
                 Spacer(),
-                LikeButton(
-                  size: 40,
-                  circleColor: CircleColor(
-                      start: Color(0xff00ddff), end: Color(0xff0099cc)),
-                  bubblesColor: BubblesColor(
-                    dotPrimaryColor: Color(0xff33b5e5),
-                    dotSecondaryColor: Color(0xff0099cc),
-                  ),
-                  likeBuilder: (bool isLiked) {
-                    return Icon(
-                      FontAwesomeIcons.solidBookmark,
-                      color: isLiked ? Colors.red : Colors.black87,
-                      size: 30,
-                    );
+                IconButton(
+                  onPressed: () async {
+                    // isFav == true ? isFav = false : isFav = true;
+                    isFav = await Network().confirmIfFav(profile.businessId);
+                    Network().confirmIfFav(profile.businessId);
+                    setState(() {});
                   },
-                  onTap: onFavButtonTapped,
+                  icon: Icon(
+                    Icons.bookmark,
+                    size: 30,
+                    color: isFav ? Colors.red : Colors.black,
+                  ),
                 ),
               ],
             ),
@@ -446,7 +445,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   onTap: () async {
                     print('hi');
 
-                    String? telephoneNumber = '+2347012345678';
+                    String? telephoneNumber = profile.phoneController;
                     final _url1 = "tel:$telephoneNumber";
                     final Uri _url = Uri.parse(_url1);
 
