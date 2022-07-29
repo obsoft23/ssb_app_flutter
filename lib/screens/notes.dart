@@ -3363,4 +3363,49 @@ class MyStatelessWidget extends StatelessWidget {
               print(rating);
             },
           ),*/
+
+
+          //favouritesPage
+          Scaffold(
+      body: NestedScrollView(
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              elevation: 1,
+              backgroundColor: Colors.transparent,
+              floating: true,
+              forceElevated: innerBoxIsScrolled,
+              leading: null,
+              title: Text(
+                "Saved List",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ];
+        },
+        body: StreamBuilder(
+          stream: favouriteStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("Error"),
+              );
+            } else if (snapshot.hasData) {
+              return buildFavouritePage(context);
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.connectionState == ConnectionState.active) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
           */

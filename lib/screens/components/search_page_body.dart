@@ -290,7 +290,7 @@ Widget businessList() {
             thumbnail: acc.image != null
                 ? Container(
                     child: Image.network(
-                      "http://localhost:8000/api/fetch-user-image/${userDetails.image}",
+                      "http://localhost:8000/api/fetch-business-acc-image/${acc.image}",
                     ),
                   )
                 : Container(

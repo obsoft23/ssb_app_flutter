@@ -34,7 +34,7 @@ class ViewBusinessAccpage extends StatefulWidget {
 class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   late bool pageLiked = seeLikeStatus();
   late Stream profileStream;
-  late bool isFav = false;
+  late var isFav = false;
 
   bool bookmark = false;
   var profile;
@@ -129,6 +129,9 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
               leading: GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
+                  setState(() {
+                    profileStream = fetchBusinessProfile();
+                  });
                 },
                 child: Container(
                   margin: EdgeInsets.only(left: 8),
@@ -236,6 +239,8 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
         closinghoursController.text = profile.closingTime;
       }
       pageLiked = await Network().confirmIfUserLiked(profile.businessId);
+      seeFavStatus();
+      // isFav = await Network().confirmIfFav(profile.businessId);
 
       yield data;
     } else {
@@ -244,22 +249,11 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   }
 
   Future<bool> onLikeButtonTapped(bool isLiked) async {
-    /// send your request here
     final bool success = await Network().likes(isLiked, profile.businessId);
     setState(() {});
     profileStream = fetchBusinessProfile();
 
     return success ? !isLiked : isLiked;
-  }
-
-  Future<bool> onFavButtonTapped(bool isLiked) async {
-    /// send your request here
-    // final bool success= await sendRequest();
-
-    /// if failed, you can do nothing
-    // return success? !isLiked:isLiked;
-
-    return !isLiked;
   }
 
   buildViewPage(context) {
@@ -387,15 +381,15 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                 Spacer(),
                 IconButton(
                   onPressed: () async {
-                    // isFav == true ? isFav = false : isFav = true;
-                    isFav = await Network().confirmIfFav(profile.businessId);
-                    Network().confirmIfFav(profile.businessId);
+                    isFav ? isFav = false : isFav = true;
+                    await Network().confirmIfFav(context, profile.businessId);
+                    //   Network().confirmIfFav(profile.businessId);
                     setState(() {});
                   },
                   icon: Icon(
                     Icons.bookmark,
                     size: 30,
-                    color: isFav ? Colors.red : Colors.black,
+                    color: isFav ? Colors.yellow : Colors.black,
                   ),
                 ),
               ],
@@ -810,5 +804,9 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
 
   seeLikeStatus() async {
     await Network().confirmIfUserLiked(profile.businessId);
+  }
+
+  seeFavStatus() async {
+    isFav = await Network().confirmIfFav(context, profile.businessId);
   }
 }

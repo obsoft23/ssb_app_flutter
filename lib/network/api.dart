@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import, unused_field, unused_local_variable, unused_element, avoid_print, prefer_adjacent_string_concatenation, unnecessary_brace_in_string_interps
+// ignore_for_file: unused_import, unused_field, unused_local_variable, unused_element, avoid_print, prefer_adjacent_string_concatenation, unnecessary_brace_in_string_interps, prefer_const_constructors
 
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -264,7 +264,7 @@ class Network {
     /* */
   }
 
-  confirmIfFav(id) async {
+  Future<bool> confirmIfFav(context, id) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
     final Uri url =
@@ -288,11 +288,27 @@ class Network {
 
     debugPrint("sending request for see if favourites: ${data}");
     final response = json.decode(request.body);
-    print(response);
+    print("data returned from check if fav $response");
     if (response == true) {
-      return true;
-    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          elevation: 30,
+          behavior: SnackBarBehavior.floating,
+          content: Text("Added to your Favourites"),
+        ),
+      );
       return false;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          elevation: 30,
+          behavior: SnackBarBehavior.floating,
+          content: Text("Removed from your Favourites"),
+        ),
+      );
+      return true;
     }
   }
 

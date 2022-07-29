@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/screens/components/view_business_accpage.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter_application_1/screens/components/email_support.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -345,11 +346,22 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                 ),
                 Spacer(),
                 Center(
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    color: Colors.white,
-                    child: Icon(CupertinoIcons.eye),
+                  child: GestureDetector(
+                    onTap: () {
+                      showMaterialModalBottomSheet(
+                        context: context,
+                        builder: (context) => ViewBusinessAccpage(
+                          businessName: profile.businessName,
+                          id: profile.businessId,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      color: Colors.white,
+                      child: Icon(CupertinoIcons.eye),
+                    ),
                   ),
                 ),
                 Spacer(),
