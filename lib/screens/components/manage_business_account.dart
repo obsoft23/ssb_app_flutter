@@ -32,7 +32,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:filter_list/filter_list.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_application_1/screens/components/form_date.dart';
+import 'package:flutter_application_1/screens/components/parse/form_date.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class ManageBusinessAccount extends StatefulWidget {

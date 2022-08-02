@@ -50,8 +50,8 @@ class _SignUpState extends State<SignUp> {
       final response =
           await Network().registerUser(username, email, password, platformType);
       if (response.statusCode == 200) {
-        print(response);
-        var data = jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+        print("response from db trying to sign up $data");
         Network().setToken(data["token"]);
         Network().setUserId(data["user"]["id"]);
         Network().setEmail(data["user"]["email"]);
@@ -74,7 +74,7 @@ class _SignUpState extends State<SignUp> {
       } else {
         try {
           final returnedError = jsonDecode(response.body);
-
+          print("returned this error - $returnedError");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.blue,
@@ -84,7 +84,7 @@ class _SignUpState extends State<SignUp> {
             ),
           );
         } catch (error) {
-          print(error);
+          print("try and catch this error - $error");
         }
       }
     } else {
@@ -125,7 +125,7 @@ class _SignUpState extends State<SignUp> {
                 controller: usernameController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'username',
+                  labelText: 'name',
                 ),
               ),
             ),

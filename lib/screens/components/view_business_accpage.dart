@@ -382,7 +382,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                 IconButton(
                   onPressed: () async {
                     isFav ? isFav = false : isFav = true;
-                    await Network().confirmIfFav(context, profile.businessId);
+                    await Network().confirmIfFav(profile.businessId);
                     //   Network().confirmIfFav(profile.businessId);
                     setState(() {});
                   },
@@ -807,6 +807,6 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   }
 
   seeFavStatus() async {
-    isFav = await Network().confirmIfFav(context, profile.businessId);
+    isFav = await Network().confirmIfFav(profile.businessId);
   }
 }

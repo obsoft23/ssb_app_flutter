@@ -21,7 +21,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_application_1/screens/components/old/upload_business_images.dart';
-//import 'package:ssb_app/screens/components/pick_address_map.dart';
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:http/http.dart' as http;
@@ -29,6 +28,7 @@ import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:filter_list/filter_list.dart';
+import 'package:time_range_picker/time_range_picker.dart';
 
 class Professional extends StatefulWidget {
   const Professional({Key? key}) : super(key: key);
@@ -362,21 +362,18 @@ class _ProfessionalState extends State<Professional> {
                                 child: const Text('Select*'),
                                 onPressed: () async {
                                   showCupertinoModalPopup(
-                                      context: context,
-                                      builder: (context) {
-                                        return CupertinoActionSheet(
-                                            actions: [buildOpeningTime()],
-                                            cancelButton:
-                                                CupertinoActionSheetAction(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text("Done")));
-                                      });
-                                  /*  SizedBox(
-                                height: 200,
-                                child: buildOpeningTime(),
-                              );*/
+                                    context: context,
+                                    builder: (context) {
+                                      return CupertinoActionSheet(
+                                          actions: [buildOpeningTime()],
+                                          cancelButton:
+                                              CupertinoActionSheetAction(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text("Done")));
+                                    },
+                                  );
                                 },
                               )
                             ],
@@ -660,6 +657,7 @@ class _ProfessionalState extends State<Professional> {
                             : Container(
                                 padding: EdgeInsets.all(8),
                                 child: TextFormField(
+                                  readOnly: true,
                                   controller: countryController,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {

@@ -64,6 +64,8 @@ dependencies:
   like_button: ^2.0.4
   comment_box: ^0.0.17
   favorite_button: ^0.0.4
+  time_range_picker: ^2.2.0
+  latlong2: ^0.8.1
 
 dev_dependencies:
   flutter_test:

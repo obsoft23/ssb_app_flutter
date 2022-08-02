@@ -359,6 +359,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.5.0"
+  latlong2:
+    dependency: "direct main"
+    description:
+      name: latlong2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.1"
   like_button:
     dependency: "direct main"
     description:
@@ -679,6 +686,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.9"
+  time_range_picker:
+    dependency: "direct main"
+    description:
+      name: time_range_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.0"
   tuple:
     dependency: "direct main"
     description:

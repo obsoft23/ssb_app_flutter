@@ -32,6 +32,7 @@ class _SearchPageState extends State<SearchPage> {
     getVocationsList();
 
     getCurrentLocation();
+  
     super.initState();
   }
 
@@ -40,18 +41,19 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
-//Falcon(FontAwesomeIcons.comment)
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
+        leading:
+            null /*IconButton(
           icon: Icon(Icons.settings),
           color: Colors.blueAccent,
           onPressed: () {},
-        ),
+        )*/
+        ,
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -60,12 +62,13 @@ class _SearchPageState extends State<SearchPage> {
               showSearch(context: context, delegate: MySearchDelegate());
             },
           ),
+          /*
           IconButton(
             icon: FaIcon(FontAwesomeIcons.filter),
             color: Colors.blueAccent,
             iconSize: 17,
             onPressed: () {},
-          ),
+          ),*/
         ],
       ),
       body: SearchPageBody(),

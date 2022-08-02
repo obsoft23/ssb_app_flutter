@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:typed_data';
 import 'package:flutter_application_1/screens/components/manage_business_account.dart';
+import 'package:flutter_application_1/screens/components/old/profile2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_application_1/network/api.dart';
 import 'package:flutter_application_1/screens/business_profile_slider.dart';
@@ -38,43 +39,6 @@ class ProfilePage extends StatefulWidget {
 
 var userDetails;
 
-class Profile {
-  final int? id;
-  final String? name;
-  final String? email;
-  final String? fullname;
-  final String? bio;
-  final String? image;
-  final String? phone;
-  final String? token;
-  final dynamic hasProfessionalAcc;
-  Profile({
-    this.id,
-    this.name,
-    this.email,
-    this.fullname,
-    this.bio,
-    this.image,
-    this.phone,
-    this.token,
-    this.hasProfessionalAcc,
-  });
-
-  factory Profile.fromJson(Map<String, dynamic> json) {
-    return Profile(
-      id: json["id"],
-      name: json["name"],
-      email: json["email"],
-      fullname: json["fullname"],
-      bio: json["bio"],
-      image: json["image"],
-      phone: json["phone"],
-      token: json["token"],
-      hasProfessionalAcc: json["has_professional_acc"],
-    );
-  }
-}
-
 class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = false;
   var token;
@@ -83,8 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
   var imageTemp;
   String? base64image;
   var profilePicture;
-  var createStatus = "0";
-  late Stream mainProfileStream;
+  int createStatus = 0;
 
   TabController? tabController;
   int selectedIndex = 0;

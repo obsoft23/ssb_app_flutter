@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_intro.dart';
 import 'package:flutter_application_1/screens/home.dart';
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +33,7 @@ class _LandingPageState extends State<LandingPage> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
+          //  return AppIntroPage();
           return LoginPage();
         }),
       );

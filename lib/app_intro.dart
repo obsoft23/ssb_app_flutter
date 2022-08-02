@@ -1,23 +1,20 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, unused_local_variable, unused_element, avoid_print, unused_field, unnecessary_this
+// ignore_for_file: prefer_const_constructors, unused_import
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/network/api.dart';
-import 'package:flutter_application_1/screens/components/business_profilepage.dart';
-import 'package:intro_slider/dot_animation_enum.dart';
-import 'package:intro_slider/intro_slider.dart';
+import 'package:flutter_application_1/screens/home.dart';
+import 'package:flutter_application_1/screens/login.dart';
 import 'package:intro_slider/slide_object.dart';
-import 'package:intro_slider/scrollbar_behavior_enum.dart';
-import 'package:flutter_application_1/screens/components/create_professional_account.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intro_slider/intro_slider.dart';
 
-class IntroScreen extends StatefulWidget {
-  const IntroScreen({Key? key}) : super(key: key);
+class AppIntroPage extends StatefulWidget {
+  const AppIntroPage({Key? key}) : super(key: key);
 
   @override
-  IntroScreenState createState() => IntroScreenState();
+  State<AppIntroPage> createState() => _AppIntroPageState();
 }
 
-class IntroScreenState extends State<IntroScreen> {
+class _AppIntroPageState extends State<AppIntroPage> {
   List<Slide> slides = [];
 
   @override
@@ -26,7 +23,7 @@ class IntroScreenState extends State<IntroScreen> {
 
     slides.add(
       Slide(
-        title: "Create Professional Account",
+        title: "Welcome to SSB",
         styleTitle: TextStyle(
           color: Colors.white,
           fontSize: 22.0,
@@ -45,11 +42,21 @@ class IntroScreenState extends State<IntroScreen> {
     );
     slides.add(
       Slide(
-        title: "RULER",
+        title: "Welcome to SSB",
+        styleTitle: TextStyle(
+          color: Colors.white,
+          fontSize: 22.0,
+          fontWeight: FontWeight.bold, /*fontFamily: 'RobotoMono'*/
+        ),
         description:
-            "Much evil soon high in hope do view. Out may few northward believing attempted. Yet timed being songs marry one defer men our. Although finished blessing do of",
-        //pathImage: "images/photo_ruler.png",
-        backgroundColor: Color(0xff9932CC),
+            "With a professional account, our users access to your business or vocation ",
+        styleDescription: TextStyle(
+            color: Colors.black,
+            fontSize: 15.0,
+            fontStyle: FontStyle.italic,
+            fontFamily: 'Raleway'),
+        pathImage: "assets/images/projections.png",
+        backgroundColor: Color.fromARGB(255, 242, 245, 249),
       ),
     );
   }
@@ -59,7 +66,7 @@ class IntroScreenState extends State<IntroScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Professional(),
+        builder: (context) => LoginPage(),
       ),
     );
   }
@@ -72,12 +79,12 @@ class IntroScreenState extends State<IntroScreen> {
     );
   }
 
-  Widget renderSkipBtn() {
+/*  Widget renderSkipBtn() {
     return const Icon(
       Icons.skip_next,
       color: Color(0xffF3B4BA),
     );
-  }
+  }*/
 
   ButtonStyle myButtonStyle() {
     return ButtonStyle(
@@ -91,8 +98,8 @@ class IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return IntroSlider(
-      slides: this.slides,
-      onDonePress: this.onDonePress,
+      slides: slides,
+      onDonePress: onDonePress,
       renderDoneBtn: renderDoneBtn(),
       renderNextBtn: renderNextBtn(),
     );

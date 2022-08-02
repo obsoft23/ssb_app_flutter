@@ -27,6 +27,8 @@ class Network {
     'Authorization': 'Bearer $Network.getToken(token)'
   };
 
+  BuildContext? get context => null;
+
   static _setHeaders() => {
         'Content-type': 'application/json',
         'Accept': 'application/*',
@@ -108,7 +110,7 @@ class Network {
     var url = Uri.parse('http://localhost:8000/api/auth/register');
     final data = {"name": name, "email": email, "password": password};
     final body = jsonEncode(data);
-    debugPrint(body);
+    debugPrint("data sent  trying to register user$body");
     return await http.post(url, body: data);
   }
 
@@ -264,7 +266,7 @@ class Network {
     /* */
   }
 
-  Future<bool> confirmIfFav(context, id) async {
+  Future<bool> confirmIfFav(id) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
     final Uri url =
@@ -290,7 +292,7 @@ class Network {
     final response = json.decode(request.body);
     print("data returned from check if fav $response");
     if (response == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context!).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
           elevation: 30,
@@ -300,7 +302,7 @@ class Network {
       );
       return false;
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context!).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
           elevation: 30,
@@ -313,4 +315,18 @@ class Network {
   }
 
   //
+
+  fetchCommon() async {
+    var url = Uri.parse("http://localhost:8000/api/vocations/common");
+    print("fetching list of common professions");
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    });
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      return null;
+    }
+  }
 }
