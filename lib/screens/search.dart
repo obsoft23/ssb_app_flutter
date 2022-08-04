@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, unused_local_variable, unused_element, avoid_print, prefer_typing_uninitialized_variables
 
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_application_1/network/api.dart';
@@ -32,7 +33,7 @@ class _SearchPageState extends State<SearchPage> {
     getVocationsList();
 
     getCurrentLocation();
-  
+
     super.initState();
   }
 
@@ -56,7 +57,7 @@ class _SearchPageState extends State<SearchPage> {
         ,
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Icon(CupertinoIcons.search),
             color: Colors.blueAccent,
             onPressed: () {
               showSearch(context: context, delegate: MySearchDelegate());

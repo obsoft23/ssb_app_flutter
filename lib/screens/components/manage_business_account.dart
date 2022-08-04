@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/screens/components/review_parse.dart';
 import 'package:flutter_application_1/screens/components/view_business_accpage.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter_application_1/screens/components/email_support.dart';
@@ -43,6 +44,8 @@ class ManageBusinessAccount extends StatefulWidget {
 }
 
 late List<String> searchResults = [];
+List reviews = [];
+List filedata = [];
 TextEditingController businessSubCatorgyController = TextEditingController();
 
 //hours
@@ -57,6 +60,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   var profile;
   DateTime _dateTime = DateTime.now();
   bool isLoading = false;
+  bool isReviewed = false;
   var selectedValue;
   var selectedOpeningDayList = [];
   var newselectedOpeningDayList = [];
@@ -290,12 +294,16 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
+                      showMaterialModalBottomSheet(
+                        context: context,
+                        builder: (context) => UploadBusinessImages(),
+                      );
+                      /* Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) {
                           return UploadBusinessImages();
                         }),
-                      );
+                      );*/
                     },
                     child: Container(
                       height: 40,
@@ -309,9 +317,12 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             ],
           ),
           profile.businessName != null
-              ? Text(
-                  "${profile.businessName}",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "${profile.businessName}",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
                 )
               : Text(""),
           profile.emailController != null
@@ -541,76 +552,13 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             ],
           ),
           SizedBox(height: 10),
-          ListTile(
-            leading: FlutterLogo(size: 72.0),
-            title: Text('Three-line ListTile'),
-            subtitle:
-                Text('A sufficiently long subtitle warrants three lines.'),
-            trailing: RatingBar.builder(
-              initialRating: 4,
-              minRating: 3,
-              itemSize: 10,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
-            ),
-            isThreeLine: true,
-          ),
-          ListTile(
-            leading: FlutterLogo(size: 72.0),
-            title: Text('Three-line ListTile'),
-            subtitle:
-                Text('A sufficiently long subtitle warrants three lines.'),
-            trailing: RatingBar.builder(
-              initialRating: 5,
-              minRating: 1,
-              itemSize: 10,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
-            ),
-            isThreeLine: true,
-          ),
-          ListTile(
-            leading: FlutterLogo(size: 72.0),
-            title: Text('Three-line ListTile'),
-            subtitle:
-                Text('A sufficiently long subtitle warrants three lines.'),
-            trailing: RatingBar.builder(
-              initialRating: 3,
-              minRating: 1,
-              itemSize: 10,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
-            ),
-            isThreeLine: true,
-          ),
-          SizedBox(height: 50),
+          reviews.isEmpty
+              ? Text("No reviews ...")
+              : Container(
+                  child: reviewsList(profile.businessId),
+                ),
+
+          SizedBox(height: 60),
         ],
       ),
     );
@@ -657,7 +605,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
                 showMaterialModalBottomSheet(
                   context: context,
-                  builder: (context) => openBusinessImages(),
+                  builder: (context) => UploadBusinessImages(),
                 );
               },
             ),
@@ -1357,7 +1305,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             );
 
             uploadBusinessPhotos(cropped, index);
-            setState(() {});
+
             break;
           case 2:
             secondImage = Image.file(
@@ -1366,7 +1314,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             );
 
             uploadBusinessPhotos(cropped, index);
-            setState(() {});
+
             break;
           case 3:
             thirdImage = Image.file(
@@ -1487,10 +1435,10 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Image  - 1 ",
+                    "Image  - 1 (Main Acc Image)",
                     style: TextStyle(
                       fontSize: 17,
-                      color: Colors.black54,
+                      color: Colors.black87,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1511,7 +1459,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   ? Container(
                       padding: EdgeInsets.all(10),
                       width: 600,
-                      height: MediaQuery.of(context).size.height * .30,
+                      height: MediaQuery.of(context).size.height * .45,
                       color: Colors.grey,
                       child: Center(
                         child: Icon(
@@ -1562,7 +1510,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   ? Container(
                       padding: EdgeInsets.all(10),
                       width: 600,
-                      height: MediaQuery.of(context).size.height * .30,
+                      height: MediaQuery.of(context).size.height * .45,
                       color: Colors.grey,
                       child: Center(
                         child: Icon(
@@ -1613,7 +1561,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   ? Container(
                       padding: EdgeInsets.all(10),
                       width: 600,
-                      height: MediaQuery.of(context).size.height * .30,
+                      height: MediaQuery.of(context).size.height * .45,
                       color: Colors.grey,
                       child: Center(
                         child: Icon(
@@ -1664,7 +1612,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   ? Container(
                       padding: EdgeInsets.all(10),
                       width: 600,
-                      height: MediaQuery.of(context).size.height * .30,
+                      height: MediaQuery.of(context).size.height * .45,
                       color: Colors.grey,
                       child: Center(
                         child: Icon(
@@ -1896,7 +1844,9 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               duration: const Duration(seconds: 6),
             ),
           );
-          setState(() {});
+          setState(() {
+            profileStream = fetchBusinessProfile();
+          });
         } else {
           print(response);
         }
@@ -1934,6 +1884,79 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           'Accept': 'application/json',
           'Authorization': 'Bearer ${_token}'
         });
+  }
+
+  reviewsList(id) {
+    return FutureBuilder(
+      future: fetchReviews(id),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: reviews.length,
+            itemBuilder: ((context, index) {
+              return ListTile(
+                leading: FlutterLogo(size: 72.0),
+                title: Text('Three-line ListTile'),
+                subtitle:
+                    Text('A sufficiently long subtitle warrants three lines.'),
+                trailing: RatingBar.builder(
+                  initialRating: 3,
+                  minRating: 1,
+                  itemSize: 10,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) {
+                    print(rating);
+                  },
+                ),
+                isThreeLine: true,
+              );
+            }),
+          );
+        } else if (snapshot.hasError) {
+          return Text("Error");
+        } else {
+          return Text("Nothing");
+        }
+      },
+    );
+  }
+
+  fetchReviews(id) async {
+    final response = await http.get(
+      Uri.parse("http://localhost:8000/api/business/fetch/review/${id}"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      final _reviews = jsonDecode(response.body);
+
+      for (var review in _reviews["reviews"]) {
+        reviews.add(Review.fromJson(review));
+      }
+
+      /*  for (var user in _reviews["user"]) {
+      filedata.add(ReviewProfile.fromJson(user));
+    }*/
+
+      filedata = _reviews["user"];
+
+      await Future.delayed(const Duration(seconds: 1));
+      print(" comments are $reviews and user details $filedata");
+
+      return reviews;
+    }
   }
 }
 

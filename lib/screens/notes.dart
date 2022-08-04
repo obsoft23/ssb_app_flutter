@@ -3421,4 +3421,197 @@ calculateDistance(lat1, lon1, lat2, lon2) async {
                 latitude, longtitude, acc.latitude!, acc.longtitude!),*/
 }
 
+
+ ListTile(
+            leading: FlutterLogo(size: 72.0),
+            title: Text('Three-line ListTile'),
+            subtitle:
+                Text('A sufficiently long subtitle warrants three lines.'),
+            trailing: RatingBar.builder(
+              initialRating: 4,
+              minRating: 3,
+              itemSize: 10,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                print(rating);
+              },
+            ),
+            isThreeLine: true,
+          ),
+          ListTile(
+            leading: FlutterLogo(size: 72.0),
+            title: Text('Three-line ListTile'),
+            subtitle:
+                Text('A sufficiently long subtitle warrants three lines.'),
+            trailing: RatingBar.builder(
+              initialRating: 5,
+              minRating: 1,
+              itemSize: 10,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                print(rating);
+              },
+            ),
+            isThreeLine: true,
+          ),
+          ListTile(
+            leading: FlutterLogo(size: 72.0),
+            title: Text('Three-line ListTile'),
+            subtitle:
+                Text('A sufficiently long subtitle warrants three lines.'),
+            trailing: RatingBar.builder(
+              initialRating: 3,
+              minRating: 1,
+              itemSize: 10,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                print(rating);
+              },
+            ),
+            isThreeLine: true,
+          ),
+
+
+
+
+class Categories extends StatefulWidget {
+  const Categories({Key? key}) : super(key: key);
+
+  @override
+  _CategoriesState createState() => _CategoriesState();
+}
+
+class _CategoriesState extends State<Categories> {
+  /*List<String> categories = [
+    "Common",
+    "FreeLance(Sole)",
+    "Entertainment",
+    "Automotive",
+    "Housing",
+    "Public"
+  ];*/
+  int selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      height: 25,
+      child: ListView.builder(
+        //itemCount: categories.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: ((context, index) => buildCategory(index)),
+      ),
+    );
+  }
+
+  Widget buildCategory(int index) {
+  return GestureDetector(
+      onTap: () {
+        setState(() {});
+        selectedIndex = index;
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12.0),
+        child: Column(
+          children: [
+            Text(
+              "categories[index]",
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: selectedIndex == index
+                    ? Colors.blueAccent
+                    : Colors.grey[500],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 5),
+              height: 2,
+              width: 30,
+              color: selectedIndex == index
+                  ? Colors.blueAccent
+                  : Colors.transparent,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+/*
+  #6C63FF
+  // tileColor: color.withOpacity(0.3),
+  switch (index) {
+                case 1:
+                  singleImage = null;
+
+                  break;
+                case 2:
+                  secondImage = null;
+                  break;
+                case 3:
+                  thirdImage = null;
+                  break;
+                case 4:
+                  fourthImage = null;
+                  break;
+                default:
+                  print("index inserted is${index} but  no match");
+              }
+  */
+
+
+
+
+
+    /*  switch (common[itemNo]["id"]) {
+      case 2:
+        image = DecorationImage(
+          image: AssetImage("assets/images/prog.png"),
+          fit: BoxFit.cover,
+        );
+
+        break;
+      case 3:
+        image = DecorationImage(
+          image: AssetImage("assets/images/projections.png"),
+          fit: BoxFit.cover,
+        );
+
+        break;
+
+      default:
+        print("index inserted is${common[itemNo]["id"]} but  no match");
+    }*/
+
           */

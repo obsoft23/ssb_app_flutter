@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             // icon: Icon(Icons.bubble_chart_rounded),
-            icon: FaIcon(FontAwesomeIcons.list, size: 22),
+            icon: FaIcon(FontAwesomeIcons.penClip, size: 22),
             label: 'Favourites',
           ),
           BottomNavigationBarItem(

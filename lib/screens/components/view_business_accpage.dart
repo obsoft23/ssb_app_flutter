@@ -34,7 +34,9 @@ class ViewBusinessAccpage extends StatefulWidget {
 class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   late bool pageLiked = seeLikeStatus();
   late Stream profileStream;
-  late var isFav = false;
+  late bool isFav = false;
+  List reviews = [];
+  List filedata = [];
 
   bool bookmark = false;
   var profile;
@@ -382,7 +384,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                 IconButton(
                   onPressed: () async {
                     isFav ? isFav = false : isFav = true;
-                    await Network().confirmIfFav(profile.businessId);
+                    await Network().confirmIfFav(context, profile.businessId);
                     //   Network().confirmIfFav(profile.businessId);
                     setState(() {});
                   },
@@ -596,77 +598,13 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
             ],
           ),
           SizedBox(height: 10),
-          ListTile(
-            leading: FlutterLogo(size: 72.0),
-            title: Text('Three-line ListTile'),
-            subtitle:
-                Text('A sufficiently long subtitle warrants three lines.'),
-            trailing: RatingBar.builder(
-              initialRating: 4,
-              minRating: 3,
-              itemSize: 10,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
-            ),
-            isThreeLine: true,
-          ),
-          ListTile(
-            leading: FlutterLogo(size: 72.0),
-            title: Text('Three-line ListTile'),
-            subtitle:
-                Text('A sufficiently long subtitle warrants three lines.'),
-            trailing: RatingBar.builder(
-              initialRating: 5,
-              minRating: 1,
-              itemSize: 10,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
-            ),
-            isThreeLine: true,
-          ),
-          ListTile(
-            leading: FlutterLogo(size: 72.0),
-            title: Text('Three-line ListTile'),
-            subtitle:
-                Text('A sufficiently long subtitle warrants three lines.'),
-            trailing: RatingBar.builder(
-              initialRating: 3,
-              minRating: 1,
-              itemSize: 10,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
-            ),
-            isThreeLine: true,
-          ),
+          reviews.isEmpty
+              ? Text("No reviews ...")
+              : Container(
+                  child: reviewsList(profile.businessId),
+                ),
 
-          SizedBox(height: 50),
+          SizedBox(height: 60),
         ],
       ),
     );
@@ -706,100 +644,77 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
     );
   }
 
-  Widget commentModal(context) {
-    return SingleChildScrollView(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 10),
-              width: 45,
-              height: 5,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(30))),
-              child: Container(
-                color: Colors.grey[400],
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Expanded(
-              child: ListView(
-                children: const <Widget>[
-                  ListTile(
-                    leading: FlutterLogo(size: 72.0),
-                    title: Text(
-                      'Three-line ListTile,',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    subtitle: Text(
-                      'A sufficiently long subtitle warrants three lines.',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    trailing: Icon(CupertinoIcons.heart),
-                    isThreeLine: true,
+  reviewsList(id) {
+    return FutureBuilder(
+      future: fetchReviews(id),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: reviews.length,
+            itemBuilder: ((context, index) {
+              return ListTile(
+                leading: FlutterLogo(size: 72.0),
+                title: Text('Three-line ListTile'),
+                subtitle:
+                    Text('A sufficiently long subtitle warrants three lines.'),
+                trailing: RatingBar.builder(
+                  initialRating: 3,
+                  minRating: 1,
+                  itemSize: 10,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                decoration: InputDecoration(
-                  prefixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [Icon(Icons.face_outlined), Text("Message...")],
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                      width: 1,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 1),
-                  ),
+                  onRatingUpdate: (rating) {
+                    print(rating);
+                  },
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
+                isThreeLine: true,
+              );
+            }),
+          );
+        } else if (snapshot.hasError) {
+          return Text("Error");
+        } else {
+          return Text("Nothing");
+        }
+      },
     );
   }
 
-  Widget sendMessageContainer(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.photo),
-              iconSize: 30,
-              color: Colors.blue,
-            ),
-            Expanded(
-              child: TextField(
-                //  controller: _sendmessagecontroller,
-                decoration:
-                    InputDecoration.collapsed(hintText: 'send a message'),
-                textCapitalization: TextCapitalization.sentences,
-              ),
-            ),
-            IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.send),
-                iconSize: 30,
-                color: Colors.blue),
-          ],
-        ),
-      ),
+  fetchReviews(id) async {
+    final response = await http.get(
+      Uri.parse("http://localhost:8000/api/business/fetch/review/${id}"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
     );
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      final _reviews = jsonDecode(response.body);
+
+      for (var review in _reviews["reviews"]) {
+        reviews.add(Review.fromJson(review));
+      }
+
+      /*  for (var user in _reviews["user"]) {
+      filedata.add(ReviewProfile.fromJson(user));
+    }*/
+
+      filedata = _reviews["user"];
+
+      await Future.delayed(const Duration(seconds: 1));
+      print(" comments are $reviews and user details $filedata");
+
+      return reviews;
+    }
   }
 
   seeLikeStatus() async {
@@ -807,6 +722,6 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   }
 
   seeFavStatus() async {
-    isFav = await Network().confirmIfFav(profile.businessId);
+    isFav = await Network().confirmIfFav(context, profile.businessId);
   }
 }

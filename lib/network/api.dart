@@ -27,8 +27,6 @@ class Network {
     'Authorization': 'Bearer $Network.getToken(token)'
   };
 
-  BuildContext? get context => null;
-
   static _setHeaders() => {
         'Content-type': 'application/json',
         'Accept': 'application/*',
@@ -231,7 +229,7 @@ class Network {
     //
   }
 
-  sendReview(businessId, review) async {
+  sendReview(businessId, review, rating) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
     final Uri url =
@@ -240,7 +238,7 @@ class Network {
       "business_id": businessId,
       "user_id": userId,
       "review": review,
-      "rating": 2.5,
+      "rating": rating,
     };
 
     final body = jsonEncode(data);
@@ -266,7 +264,7 @@ class Network {
     /* */
   }
 
-  Future<bool> confirmIfFav(id) async {
+  Future<bool> confirmIfFav(context, id) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
     final Uri url =
@@ -292,7 +290,7 @@ class Network {
     final response = json.decode(request.body);
     print("data returned from check if fav $response");
     if (response == true) {
-      ScaffoldMessenger.of(context!).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
           elevation: 30,
@@ -302,7 +300,7 @@ class Network {
       );
       return false;
     } else {
-      ScaffoldMessenger.of(context!).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
           elevation: 30,
@@ -324,7 +322,8 @@ class Network {
       'Accept': 'application/json',
     });
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final List data = json.decode(response.body);
+      return data;
     } else {
       return null;
     }
