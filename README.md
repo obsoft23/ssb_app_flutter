@@ -1,4 +1,4 @@
-# flutter_application_1
+
 
 A new Flutter project.
 
@@ -23,4 +23,5 @@ Stack:
 - Png resource (undraw.co)
 
 ![Simulator Screen Shot - iPhone 12 mini - 2022-08-04 at 17 14 56](
-<image src="https://user-images.githubusercontent.com/46889336/182936118-7fbaa76d-fe50-4e1d-9c1f-5235f938037b.png" width="600" height="1024" />
+
+<image src="https://user-images.githubusercontent.com/46889336/182936118-7fbaa76d-fe50-4e1d-9c1f-5235f938037b.png" width="400" height="924" />
