@@ -43,13 +43,44 @@ class IntroScreenState extends State<IntroScreen> {
         backgroundColor: Color(0xff203152),
       ),
     );
+
     slides.add(
       Slide(
-        title: "RULER",
+        title: "Skilled Workers Time to earn more",
+        styleTitle: TextStyle(
+          color: Colors.white,
+          fontSize: 22.0,
+          fontWeight: FontWeight.bold, /*fontFamily: 'RobotoMono'*/
+        ),
         description:
-            "Much evil soon high in hope do view. Out may few northward believing attempted. Yet timed being songs marry one defer men our. Although finished blessing do of",
-        //pathImage: "images/photo_ruler.png",
-        backgroundColor: Color(0xff9932CC),
+            "With a professional account, our users access to your business or vocation ",
+        styleDescription: TextStyle(
+            color: Colors.white,
+            fontSize: 15.0,
+            fontStyle: FontStyle.italic,
+            fontFamily: 'Raleway'),
+        pathImage: "assets/images/vocations.png",
+        backgroundColor: Color.fromARGB(255, 28, 52, 100),
+      ),
+    );
+
+    slides.add(
+      Slide(
+        title: "Enjoy Increase in skill Demand",
+        styleTitle: TextStyle(
+          color: Colors.white,
+          fontSize: 22.0,
+          fontWeight: FontWeight.bold, /*fontFamily: 'RobotoMono'*/
+        ),
+        description:
+            "With a professional account, our users access to your business or vocation ",
+        styleDescription: TextStyle(
+            color: Colors.white,
+            fontSize: 15.0,
+            fontStyle: FontStyle.italic,
+            fontFamily: 'Raleway'),
+        pathImage: "assets/images/teams.png",
+        backgroundColor: Color(0xff203152),
       ),
     );
   }

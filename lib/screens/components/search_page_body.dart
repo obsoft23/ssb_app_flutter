@@ -38,7 +38,6 @@ class _SearchPageBodyState extends State<SearchPageBody> {
   @override
   void initState() {
     super.initState();
-    fetchList();
   }
 
   @override
@@ -65,15 +64,27 @@ class ItemCard extends StatelessWidget {
     /* final List<Map> myProducts =
         List.generate(1, (index) => {"id": index, "name": "Product $index"})
             .toList();*/
-    return GridView.builder(
-      itemCount: common.length,
-      itemBuilder: (context, index) => ItemTile(index),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1,
-      ),
+    return FutureBuilder(
+      future: fetchList(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return GridView.builder(
+            itemCount: common.length,
+            itemBuilder: (context, index) => ItemTile(index),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1,
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
+  //
 }
 
 class ItemTile extends StatelessWidget {
@@ -311,9 +322,9 @@ fetchList() async {
   });
   if (response.statusCode == 200) {
     final List data = json.decode(response.body);
-
+    await Future.delayed(const Duration(seconds: 1));
     common = data;
-    await Future.delayed(const Duration(seconds: 30));
+
     return common;
   } else {
     return null;
