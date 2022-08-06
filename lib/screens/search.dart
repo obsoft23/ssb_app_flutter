@@ -186,7 +186,35 @@ class MySearchDelegate extends SearchDelegate {
               child: Text("Error"),
             );
           } else if (snapshot.hasData) {
-            return businessList();
+            return Column(
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                searchStatus == false
+                    ? Column(
+                        children: [
+                          SizedBox(
+                            height: 40,
+                          ),
+                          Center(
+                            child: SizedBox(
+                              width: 300,
+                              height: 100,
+                              child: Text(
+                                  "Sorry ... we could not find any $query around you"),
+                            ),
+                          ),
+                        ],
+                      )
+                    : SizedBox(
+                        height: 10,
+                      ),
+                Expanded(
+                  child: businessList(),
+                ),
+              ],
+            );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
                 child: CircularProgressIndicator(
@@ -210,19 +238,21 @@ class MySearchDelegate extends SearchDelegate {
       itemCount: suggestions.length,
       itemBuilder: (context, index) {
         final suggestion = suggestions[index];
+        print("searched result here says $suggestion");
         return Expanded(
-            child: Column(
-          children: [
-            ListTile(
-              title: Text(suggestion),
-              onTap: () {
-                query = suggestion;
-                showResults(context);
-              },
-            ),
-            Divider()
-          ],
-        ));
+          child: Column(
+            children: [
+              ListTile(
+                title: Text(suggestion),
+                onTap: () {
+                  query = suggestion;
+                  showResults(context);
+                },
+              ),
+              Divider()
+            ],
+          ),
+        );
       },
     );
   }

@@ -34,29 +34,6 @@ class _ReviewPageState extends State<ReviewPage> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController commentController = TextEditingController();
 
-  /*List filedata = [
-      {
-      'name': 'Adeleye Ayodeji',
-      'pic': 'https://picsum.photos/300/30',
-      'message': 'I love to code'
-    },
-    {
-      'name': 'Biggi Man',
-      'pic': 'https://picsum.photos/300/30',
-      'message': 'Very cool'
-    },
-    {
-      'name': 'Biggi Man',
-      'pic': 'https://picsum.photos/300/30',
-      'message': 'Very cool'
-    },
-    {
-      'name': 'Biggi Man',
-      'pic': 'https://picsum.photos/300/30',
-      'message': 'Very cool'
-    },
-  ];*/
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,45 +92,87 @@ class _ReviewPageState extends State<ReviewPage> {
 
   Widget buildReviewPage(BuildContext context) {
     return Container(
-      child: CommentBox(
-        userImage: "http://localhost:8000/api/fetch-user-image/${userImageURL}",
-        child: commentChild(),
-        labelText: 'Write a review...',
-        withBorder: false,
-        errorText: 'Review cannot be blank',
-        sendButtonMethod: () async {
-          if (formKey.currentState!.validate() || userRating.isEmpty) {
-            print(commentController.text);
-            if (userRating != null) {
-              final success = await Network()
-                  .sendReview(widget.id, commentController.text, userRating);
-              print(success);
-              if (success == true) {
-                commentController.clear();
-                setState(() {
-                  fetchReviews(widget.id);
-                });
-              } else {
-                print("please rate");
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Text("Please select a rating..."),
-                    duration: const Duration(seconds: 6),
-                  ),
-                );
-              }
-            }
-          } else {
-            print("Not validated");
-          }
-        },
-        formKey: formKey,
-        commentController: commentController,
-        backgroundColor: Colors.black87,
-        textColor: Colors.white,
-        sendWidget: Icon(Icons.send_sharp, size: 24, color: Colors.white),
-      ),
+      child: userImageURL != null
+          ? CommentBox(
+              userImage:
+                  "http://localhost:8000/api/fetch-user-image/${userImageURL}",
+              child: commentChild(),
+              labelText: 'Write a review...',
+              withBorder: false,
+              errorText: 'Review cannot be blank',
+              sendButtonMethod: () async {
+                if (formKey.currentState!.validate() || userRating.isEmpty) {
+                  print(commentController.text);
+                  if (userRating != null) {
+                    final success = await Network().sendReview(
+                        widget.id, commentController.text, userRating);
+                    print(success);
+                    if (success == true) {
+                      commentController.clear();
+                      setState(() {
+                        fetchReviews(widget.id);
+                      });
+                    } else {
+                      print("please rate");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text("Please select a rating..."),
+                          duration: const Duration(seconds: 6),
+                        ),
+                      );
+                    }
+                  }
+                } else {
+                  print("Not validated");
+                }
+              },
+              formKey: formKey,
+              commentController: commentController,
+              backgroundColor: Colors.black87,
+              textColor: Colors.white,
+              sendWidget: Icon(Icons.send_sharp, size: 24, color: Colors.white),
+            )
+          : CommentBox(
+              userImage:
+                  "https://avatars.dicebear.com/api/adventurer-neutral/mail%40ashallendesign.co.uk.svg",
+              child: commentChild(),
+              labelText: 'Write a review...',
+              withBorder: false,
+              errorText: 'Review cannot be blank',
+              sendButtonMethod: () async {
+                if (formKey.currentState!.validate() || userRating.isEmpty) {
+                  print(commentController.text);
+                  if (userRating != null) {
+                    final success = await Network().sendReview(
+                        widget.id, commentController.text, userRating);
+                    print(success);
+                    if (success == true) {
+                      commentController.clear();
+                      setState(() {
+                        fetchReviews(widget.id);
+                      });
+                    } else {
+                      print("please rate");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text("Please select a rating..."),
+                          duration: const Duration(seconds: 6),
+                        ),
+                      );
+                    }
+                  }
+                } else {
+                  print("Not validated");
+                }
+              },
+              formKey: formKey,
+              commentController: commentController,
+              backgroundColor: Colors.black87,
+              textColor: Colors.white,
+              sendWidget: Icon(Icons.send_sharp, size: 24, color: Colors.white),
+            ),
     );
   }
 

@@ -9,6 +9,7 @@ import 'package:flutter_application_1/network/api.dart';
 import 'package:flutter_application_1/screens/components/parse/acc_view.dart';
 import 'package:flutter_application_1/screens/components/parse/searchParse.dart';
 import 'package:flutter_application_1/screens/components/view_business_accpage.dart';
+import 'package:flutter_application_1/screens/home.dart';
 import 'package:flutter_application_1/screens/profile.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -148,7 +149,7 @@ class ItemTile extends StatelessWidget {
           child: Container(
             margin: EdgeInsets.only(left: 8),
             child: Center(
-              child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+              child: Icon(Icons.arrow_back, color: Colors.blue, size: 24),
             ),
           ),
         ),
@@ -161,7 +162,7 @@ class ItemTile extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Icon(CupertinoIcons.search),
             color: Colors.blueAccent,
             onPressed: () {
               showSearch(context: context, delegate: MySearchDelegate());
@@ -298,7 +299,7 @@ Widget businessList() {
                   ),
             title: acc.businessName!,
             subtitle: acc.businessDescripition!,
-            author: acc.fullAddress == null ? acc.fullAddress : null,
+            author: acc.fullAddress,
             publishDate: acc.openingTime! + " : " + acc.closingTime!,
             readDuration: Geolocator.distanceBetween(
               latitude,

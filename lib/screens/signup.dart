@@ -107,7 +107,7 @@ class _SignUpState extends State<SignUp> {
             Container(
               alignment: Alignment.center,
               padding: EdgeInsets.all(10),
-              child: Image.asset('assets/images/instargram.png'),
+              child: Image.asset('assets/images/logo.png'),
             ),
             Container(
               padding: const EdgeInsets.all(10),

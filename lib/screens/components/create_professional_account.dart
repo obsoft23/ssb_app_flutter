@@ -186,6 +186,7 @@ class _ProfessionalState extends State<Professional> {
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
+            setState(() {});
           },
           child: Container(
             margin: EdgeInsets.only(left: 8),
@@ -226,6 +227,7 @@ class _ProfessionalState extends State<Professional> {
                       elevation: 30,
                       behavior: SnackBarBehavior.floating,
                       content: Text("Please select days you work"),
+                      duration: Duration(seconds: 1),
                     ),
                   );
                 } else {
@@ -689,11 +691,16 @@ class _ProfessionalState extends State<Professional> {
   }
 
   NextPage() {
-    return Navigator.push(
+    /* return Navigator.push(
       context,
       MaterialPageRoute(builder: (context) {
         return UploadBusinessImages();
       }),
+    );*/
+
+    return showMaterialModalBottomSheet(
+      context: context,
+      builder: (context) => UploadBusinessImages(),
     );
   }
 

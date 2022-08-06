@@ -31,6 +31,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
   }
 
   Future _loginAccount(email, password) async {
@@ -110,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(10),
-                child: Image.asset('assets/images/instargram.png'),
+                child: Image.asset('assets/images/logo.png'),
               ),
               Container(
                 padding: const EdgeInsets.all(10),

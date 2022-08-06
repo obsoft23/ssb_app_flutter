@@ -149,8 +149,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                 child: Container(
                   margin: EdgeInsets.only(left: 8),
                   child: Center(
-                    child: Icon(Icons.arrow_back_ios,
-                        color: Colors.blue, size: 16),
+                    child: Icon(Icons.arrow_back, color: Colors.blue, size: 20),
                   ),
                 ),
               ),
@@ -814,7 +813,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
           child: Container(
             margin: EdgeInsets.only(left: 8),
             child: Center(
-              child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+              child: Icon(Icons.arrow_back, color: Colors.blue, size: 22),
             ),
           ),
         ),

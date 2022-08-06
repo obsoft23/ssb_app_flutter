@@ -138,8 +138,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                 child: Container(
                   margin: EdgeInsets.only(left: 8),
                   child: Center(
-                    child: Icon(Icons.arrow_back_ios,
-                        color: Colors.blue, size: 16),
+                    child: Icon(Icons.arrow_back, color: Colors.blue, size: 22),
                   ),
                 ),
               ),
@@ -384,7 +383,27 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                 IconButton(
                   onPressed: () async {
                     isFav ? isFav = false : isFav = true;
-                    await Network().confirmIfFav(context, profile.businessId);
+                    final response =
+                        await Network().confirmIfFav(profile.businessId);
+                    if (response) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.green,
+                          elevation: 30,
+                          behavior: SnackBarBehavior.floating,
+                          content: Text("Added to your Favourites"),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          elevation: 30,
+                          behavior: SnackBarBehavior.floating,
+                          content: Text("Removed from your Favourites"),
+                        ),
+                      );
+                    }
                     //   Network().confirmIfFav(profile.businessId);
                     setState(() {});
                   },
@@ -722,6 +741,6 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   }
 
   seeFavStatus() async {
-    isFav = await Network().confirmIfFav(context, profile.businessId);
+    isFav = await Network().confirmIfFav(profile.businessId);
   }
 }

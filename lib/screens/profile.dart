@@ -242,11 +242,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: OutlinedButton.icon(
                         onPressed: () {
                           // Respond to button press
-                          Navigator.push(
+                          /*  Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ManageBusinessAccount(),
+                              builder: (context) => 
                             ),
+                          );*/
+
+                          showMaterialModalBottomSheet(
+                            context: context,
+                            builder: (context) => ManageBusinessAccount(),
                           );
                         },
                         label: Text("Manage Professional Account"),

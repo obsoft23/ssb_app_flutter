@@ -80,7 +80,7 @@ class Network {
 
   setProfessionalStatus(value) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.setString("has_professional_acc", value);
+    return prefs.setInt("has_professional_acc", value);
   }
 
   getProfessionalStatus() async {
@@ -264,7 +264,7 @@ class Network {
     /* */
   }
 
-  Future<bool> confirmIfFav(context, id) async {
+  Future<bool> confirmIfFav(id) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
     final Uri url =
@@ -290,24 +290,8 @@ class Network {
     final response = json.decode(request.body);
     print("data returned from check if fav $response");
     if (response == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          elevation: 30,
-          behavior: SnackBarBehavior.floating,
-          content: Text("Added to your Favourites"),
-        ),
-      );
       return false;
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          elevation: 30,
-          behavior: SnackBarBehavior.floating,
-          content: Text("Removed from your Favourites"),
-        ),
-      );
       return true;
     }
   }

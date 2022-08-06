@@ -53,7 +53,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
             "Saved List",
             style: TextStyle(
               color: Colors.black,
-              fontSize: 15,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           )),
@@ -72,10 +72,9 @@ class _FavouritesPageState extends State<FavouritesPage> {
                     ? Center(
                         child: Text("No saved Favourite List"),
                       )
-                    : Container(),
-                Expanded(
-                  child: buildFavouritePage(context),
-                ),
+                    : Expanded(
+                        child: buildFavouritePage(context),
+                      ),
               ],
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -111,6 +110,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                 ? Container(
                     child: Image.network(
                       "http://localhost:8000/api/fetch-business-acc-image/${accs[index].image}",
+                      fit: BoxFit.cover,
                     ),
                   )
                 : Container(
@@ -162,6 +162,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
 
         await Future.delayed(const Duration(seconds: 1));
         print(" state $accs");
+        pagestatus = true;
         yield accs;
       }
       /* 

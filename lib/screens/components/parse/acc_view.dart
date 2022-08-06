@@ -6,7 +6,7 @@ class _ArticleDescription extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final String? author;
-  final String? publishDate;
+  var publishDate;
   var readDuration;
 
   _ArticleDescription({
@@ -45,6 +45,7 @@ class _ArticleDescription extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   color: Colors.black54,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -60,15 +61,17 @@ class _ArticleDescription extends StatelessWidget {
                       author!,
                       style: const TextStyle(
                         fontSize: 13.0,
-                        color: Colors.black87,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
                       ),
                     )
                   : Text(""),
               Text(
-                '$publishDate - $readDuration',
+                '$publishDate - $readDuration miles away',
                 style: const TextStyle(
                   fontSize: 13.0,
-                  color: Colors.black87,
+                  color: Colors.blueGrey,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -84,7 +87,7 @@ class CustomListItemTwo extends StatelessWidget {
   final String title;
   final String? subtitle;
   final String? author;
-  final String? publishDate;
+  var publishDate;
   var readDuration;
 
   CustomListItemTwo({

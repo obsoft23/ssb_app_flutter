@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
             Theme.of(context)
                 .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
           )*/
-          textTheme: GoogleFonts.latoTextTheme(
+         textTheme: GoogleFonts.latoTextTheme(
             Theme.of(context)
                 .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
           ),

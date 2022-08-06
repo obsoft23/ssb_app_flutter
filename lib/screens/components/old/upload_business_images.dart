@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_application_1/screens/home.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -126,12 +127,17 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
-            setState(() {});
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return HomePage();
+              }),
+            );
           },
           child: Container(
             margin: EdgeInsets.only(left: 8),
             child: Center(
-              child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+              child: Icon(Icons.arrow_back, color: Colors.blue, size: 22),
             ),
           ),
         ),
