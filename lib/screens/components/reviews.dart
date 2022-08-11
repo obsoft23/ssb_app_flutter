@@ -134,8 +134,7 @@ class _ReviewPageState extends State<ReviewPage> {
               sendWidget: Icon(Icons.send_sharp, size: 24, color: Colors.white),
             )
           : CommentBox(
-              userImage:
-                  "https://avatars.dicebear.com/api/adventurer-neutral/mail%40ashallendesign.co.uk.svg",
+              userImage: "https://ui-avatars.com/api/?name=Viva+Gram/",
               child: commentChild(),
               labelText: 'Write a review...',
               withBorder: false,
@@ -236,7 +235,7 @@ fetchReviews(int id) async {
     final _reviews = jsonDecode(response.body);
 
     for (var review in _reviews["reviews"]) {
-      reviews.add(Review.fromJson(review));
+      reviews.add(ReviewComment.fromJson(review));
     }
 
     /*  for (var user in _reviews["user"]) {

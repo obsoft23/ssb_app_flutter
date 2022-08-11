@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_application_1/screens/components/manage_business_account.dart';
 import 'package:flutter_application_1/screens/home.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
@@ -130,7 +131,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
-                return HomePage();
+                return ManageBusinessAccount();
               }),
             );
           },
@@ -178,7 +179,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
               padding: EdgeInsets.all(8),
               child: Center(
                 child: Text(
-                  "click above to add or remove Photos 1",
+                  "Main Business Photo -  1",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.grey),
                 ),
@@ -197,7 +198,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
                   ? Container(
                       padding: EdgeInsets.all(10),
                       width: 600,
-                      height: MediaQuery.of(context).size.height * .30,
+                      height: MediaQuery.of(context).size.height * .45,
                       color: Colors.grey,
                       child: Center(
                         child: Icon(
@@ -221,7 +222,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
               padding: EdgeInsets.all(8),
               child: Center(
                 child: Text(
-                  "click above to add or remove Photos 2",
+                  "Image -  2",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.grey),
                 ),
@@ -264,7 +265,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
               padding: EdgeInsets.all(8),
               child: Center(
                 child: Text(
-                  "click above to add or remove Photos 3",
+                  "Image -  3",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.grey),
                 ),
@@ -307,7 +308,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
               padding: EdgeInsets.all(8),
               child: Center(
                 child: Text(
-                  "click above to add or remove Photos 4",
+                  "Image - 4",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.grey),
                 ),

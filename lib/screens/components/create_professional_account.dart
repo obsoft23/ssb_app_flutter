@@ -20,7 +20,7 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_application_1/screens/components/old/upload_business_images.dart';
+import 'package:flutter_application_1/screens/components/upload_business_images.dart';
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:http/http.dart' as http;
@@ -226,7 +226,7 @@ class _ProfessionalState extends State<Professional> {
                       backgroundColor: Colors.red,
                       elevation: 30,
                       behavior: SnackBarBehavior.floating,
-                      content: Text("Please select days you work"),
+                      content: Text("Please select days you available"),
                       duration: Duration(seconds: 1),
                     ),
                   );

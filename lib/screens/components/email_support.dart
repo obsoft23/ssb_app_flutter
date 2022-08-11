@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, avoid_print, sized_box_for_whitespace, unused_import, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screens/components/old/upload_business_images.dart';
+import 'package:flutter_application_1/screens/components/upload_business_images.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:filter_list/filter_list.dart';
 

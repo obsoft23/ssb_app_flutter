@@ -18,6 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:like_button/like_button.dart';
 import 'package:flutter_application_1/network/api.dart';
 import 'package:favorite_button/favorite_button.dart';
+import 'package:flutter_application_1/screens/components/review_parse.dart';
 
 class ViewBusinessAccpage extends StatefulWidget {
   final String? businessName;
@@ -241,6 +242,8 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
       }
       pageLiked = await Network().confirmIfUserLiked(profile.businessId);
       seeFavStatus();
+      fetchReviews(profile.businessId);
+
       // isFav = await Network().confirmIfFav(profile.businessId);
 
       yield data;
@@ -616,12 +619,10 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
               ),
             ],
           ),
-          SizedBox(height: 10),
+
           reviews.isEmpty
               ? Text("No reviews ...")
-              : Container(
-                  child: reviewsList(profile.businessId),
-                ),
+              : reviewsList(profile.businessId),
 
           SizedBox(height: 60),
         ],
@@ -664,49 +665,35 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   }
 
   reviewsList(id) {
-    return FutureBuilder(
-      future: fetchReviews(id),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: reviews.length,
-            itemBuilder: ((context, index) {
-              return ListTile(
-                leading: FlutterLogo(size: 72.0),
-                title: Text('Three-line ListTile'),
-                subtitle:
-                    Text('A sufficiently long subtitle warrants three lines.'),
-                trailing: RatingBar.builder(
-                  initialRating: 3,
-                  minRating: 1,
-                  itemSize: 10,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    print(rating);
-                  },
-                ),
-                isThreeLine: true,
-              );
-            }),
-          );
-        } else if (snapshot.hasError) {
-          return Text("Error");
-        } else {
-          return Text("Nothing");
-        }
-      },
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: reviews.length,
+      itemBuilder: ((context, index) {
+        return ListTile(
+          leading: Container(
+            height: 50.0,
+            width: 50.0,
+            decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.all(Radius.circular(50))),
+            child: CircleAvatar(
+              radius: 50,
+              backgroundImage: NetworkImage(
+                  "http://localhost:8000/api/fetch-user-image/${filedata[index]['image']}"),
+            ),
+          ),
+          title: Text(
+            filedata[index]['name'],
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          subtitle: Text(reviews[index].review),
+        );
+      }),
     );
   }
 
   fetchReviews(id) async {
+    print("fetcching comments for this user accoundt$id");
     final response = await http.get(
       Uri.parse("http://localhost:8000/api/business/fetch/review/${id}"),
       headers: {
@@ -720,7 +707,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
       final _reviews = jsonDecode(response.body);
 
       for (var review in _reviews["reviews"]) {
-        reviews.add(Review.fromJson(review));
+        reviews.add(ReviewComment.fromJson(review));
       }
 
       /*  for (var user in _reviews["user"]) {

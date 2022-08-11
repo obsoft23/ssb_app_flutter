@@ -34,8 +34,8 @@ class _LandingPageState extends State<LandingPage> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
-         // return WelcomeScreen();
-          return LoginPage();
+          return WelcomeScreen();
+         // return LoginPage();
         }),
       );
     } else {

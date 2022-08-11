@@ -9,6 +9,7 @@ import 'package:flutter_application_1/network/api.dart';
 import 'package:flutter_application_1/screens/components/parse/acc_view.dart';
 import 'package:flutter_application_1/screens/components/parse/searchParse.dart';
 import 'package:flutter_application_1/screens/components/view_business_accpage.dart';
+import 'package:flutter_application_1/screens/favourites.dart';
 import 'package:flutter_application_1/screens/home.dart';
 import 'package:flutter_application_1/screens/profile.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -112,9 +113,9 @@ class ItemTile extends StatelessWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.blueAccent),
+            border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.all(
-                Radius.circular(8) //                 <--- border radius here
+                Radius.circular(7) //                 <--- border radius here
                 ),
             image: DecorationImage(
               image: NetworkImage(
@@ -145,6 +146,8 @@ class ItemTile extends StatelessWidget {
           onTap: () {
             accs.clear();
             Navigator.pop(context);
+            // favouriteStream = fetchUserFavourites();
+            favouriteStream = fetchUserFavourites();
           },
           child: Container(
             margin: EdgeInsets.only(left: 8),
@@ -161,13 +164,13 @@ class ItemTile extends StatelessWidget {
           ),
         ),
         actions: [
-          IconButton(
+          /* IconButton(
             icon: Icon(CupertinoIcons.search),
             color: Colors.blueAccent,
             onPressed: () {
               showSearch(context: context, delegate: MySearchDelegate());
             },
-          ),
+          ),*/
         ],
       ),
       body: StreamBuilder(
@@ -208,12 +211,29 @@ class ItemTile extends StatelessWidget {
               ],
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: CircularProgressIndicator(
-              color: Colors.green,
-            ));
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.green,
+                  ),
+                ),
+                Center(child: Text("processing your request"))
+              ],
+            );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.blueAccent,
+                  ),
+                ),
+                Center(child: Text("looking for ${title} around you"))
+              ],
+            );
           }
         },
       ),
@@ -222,11 +242,13 @@ class ItemTile extends StatelessWidget {
 }
 
 Stream findUserRequest(title) async* {
-  SharedPreferences localStorage = await SharedPreferences.getInstance();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
   final _data = {
     "sub_category": title,
     "country": country,
     "town": town,
+    "latitude": latitude,
+    "longitude": longtitude,
   };
 
   print("query to be sent to DB${_data}");
@@ -236,6 +258,7 @@ Stream findUserRequest(title) async* {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'Authorization': 'Bearer ${prefs.getString("token")}'
     },
   );
 
@@ -302,10 +325,10 @@ Widget businessList() {
             author: acc.fullAddress,
             publishDate: acc.openingTime! + " : " + acc.closingTime!,
             readDuration: Geolocator.distanceBetween(
-              latitude,
               longtitude,
-              acc.latitude!,
+              latitude,
               acc.longtitude!,
+              acc.latitude!,
             ).floor(),
           ),
         ),

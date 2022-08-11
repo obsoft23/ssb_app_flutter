@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/screens/components/review_parse.dart';
 import 'package:flutter_application_1/screens/components/view_business_accpage.dart';
+import 'package:flutter_application_1/screens/home.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter_application_1/screens/components/email_support.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -23,7 +24,7 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_application_1/screens/components/old/upload_business_images.dart';
+import 'package:flutter_application_1/screens/components/upload_business_images.dart';
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:http/http.dart' as http;
@@ -145,6 +146,12 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               leading: GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
+                  /* Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return HomePage();
+                    }),
+                  );*/
                 },
                 child: Container(
                   margin: EdgeInsets.only(left: 8),
@@ -1942,7 +1949,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
       final _reviews = jsonDecode(response.body);
 
       for (var review in _reviews["reviews"]) {
-        reviews.add(Review.fromJson(review));
+        reviews.add(ReviewComment.fromJson(review));
       }
 
       /*  for (var user in _reviews["user"]) {

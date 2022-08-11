@@ -1,4 +1,4 @@
-class Review {
+class ReviewComment {
   int? id;
   String? review;
   double? rating;
@@ -6,7 +6,7 @@ class Review {
   int? businessAccountId;
   String? createdAt;
 
-  Review({
+  ReviewComment({
     this.id,
     this.review,
     this.rating,
@@ -15,7 +15,7 @@ class Review {
     this.createdAt,
   });
 
-  Review.fromJson(Map<String, dynamic> json) {
+  ReviewComment.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     review = json['review'];
     rating = json['rating'];

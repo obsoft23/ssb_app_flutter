@@ -46,21 +46,20 @@ class IntroScreenState extends State<IntroScreen> {
 
     slides.add(
       Slide(
-        title: "Skilled Workers Time to earn more",
+        title: "Earn More with your skill labour",
         styleTitle: TextStyle(
           color: Colors.white,
           fontSize: 22.0,
           fontWeight: FontWeight.bold, /*fontFamily: 'RobotoMono'*/
         ),
-        description:
-            "With a professional account, our users access to your business or vocation ",
+        description: " ",
         styleDescription: TextStyle(
             color: Colors.white,
             fontSize: 15.0,
             fontStyle: FontStyle.italic,
             fontFamily: 'Raleway'),
         pathImage: "assets/images/vocations.png",
-        backgroundColor: Color.fromARGB(255, 28, 52, 100),
+        backgroundColor: Color(0xff203152),
       ),
     );
 
@@ -72,11 +71,10 @@ class IntroScreenState extends State<IntroScreen> {
           fontSize: 22.0,
           fontWeight: FontWeight.bold, /*fontFamily: 'RobotoMono'*/
         ),
-        description:
-            "With a professional account, our users access to your business or vocation ",
+        description: " ",
         styleDescription: TextStyle(
             color: Colors.white,
-            fontSize: 15.0,
+            fontSize: 16.0,
             fontStyle: FontStyle.italic,
             fontFamily: 'Raleway'),
         pathImage: "assets/images/teams.png",

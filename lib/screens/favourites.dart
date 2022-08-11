@@ -89,7 +89,9 @@ class _FavouritesPageState extends State<FavouritesPage> {
     );
   }
 
-  buildFavouritePage(BuildContext context) {
+ 
+}
+ buildFavouritePage(BuildContext context) {
     return ListView.builder(
       itemCount: accs.length,
       itemBuilder: (context, index) {
@@ -181,4 +183,3 @@ class _FavouritesPageState extends State<FavouritesPage> {
       }*/
     }
   }
-}
