@@ -3661,5 +3661,33 @@ class _CategoriesState extends State<Categories> {
       default:
         print("index inserted is${common[itemNo]["id"]} but  no match");
     }*/
+ // $business_profiles = BusinessAccount::where('business_sub_category', '=', $category)->get();
+      /* $business_profiles = DB::table("business_accounts")
+       ->select("*", DB::raw("6371 * acos(cos(radians(" . $request->latitude . "))
+       * cos(radians(business_accounts.latitude)) 
+       * cos(radians(business_accounts.longtitude) - radians(" . $request->longtitude . ")) 
+       + sin(radians(" .$request->latitude. ")) 
+       * sin(radians(business_accounts.latitude))) AS distance"))
+       ->having('distance', '<', $request->latitude)
+       ->first();*/
+       
+       /* if($business_profiles->count() < 1){
+            return response()->json(["success" => 0]);
+           exit();
+        }
+        $business_profiles->each(function ($collection, $alphabet) {
+             var_dump($alphabet, $collection);
+        });*/
 
+
+
+
+         ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.green,
+                          elevation: 30,
+                          behavior: SnackBarBehavior.floating,
+                          content: Text("Added to your Favourites"),
+                        ),
+                      );
           */

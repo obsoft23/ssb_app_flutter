@@ -35,7 +35,7 @@ class ViewBusinessAccpage extends StatefulWidget {
 class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   late bool pageLiked = seeLikeStatus();
   late Stream profileStream;
-  late bool isFav = false;
+  late bool isItFav = seeFavStatus();
   List reviews = [];
   List filedata = [];
 
@@ -241,7 +241,8 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
         closinghoursController.text = profile.closingTime;
       }
       pageLiked = await Network().confirmIfUserLiked(profile.businessId);
-      seeFavStatus();
+      isItFav = await Network().checkFav(profile.businessId);
+
       fetchReviews(profile.businessId);
 
       // isFav = await Network().confirmIfFav(profile.businessId);
@@ -385,27 +386,16 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                 Spacer(),
                 IconButton(
                   onPressed: () async {
-                    isFav ? isFav = false : isFav = true;
-                    final response =
-                        await Network().confirmIfFav(profile.businessId);
-                    if (response) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.green,
-                          elevation: 30,
-                          behavior: SnackBarBehavior.floating,
-                          content: Text("Added to your Favourites"),
-                        ),
-                      );
+                    isItFav ? isItFav = false : isItFav = true;
+
+                    final _add = await Network().addToFav(profile.businessId);
+                    final _response =
+                        await Network().checkFav(profile.businessId);
+
+                    if (_response) {
+                      print("is a fav");
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.red,
-                          elevation: 30,
-                          behavior: SnackBarBehavior.floating,
-                          content: Text("Removed from your Favourites"),
-                        ),
-                      );
+                      print("not fav anymore");
                     }
                     //   Network().confirmIfFav(profile.businessId);
                     setState(() {});
@@ -413,7 +403,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   icon: Icon(
                     Icons.bookmark,
                     size: 30,
-                    color: isFav ? Colors.yellow : Colors.black,
+                    color: isItFav ? Colors.yellow : Colors.black,
                   ),
                 ),
               ],
@@ -728,6 +718,6 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   }
 
   seeFavStatus() async {
-    isFav = await Network().confirmIfFav(profile.businessId);
+    await Network().checkFav(profile.businessId);
   }
 }

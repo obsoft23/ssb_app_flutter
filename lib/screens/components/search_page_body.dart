@@ -248,7 +248,7 @@ Stream findUserRequest(title) async* {
     "country": country,
     "town": town,
     "latitude": latitude,
-    "longitude": longtitude,
+    "longtitude": longtitude,
   };
 
   print("query to be sent to DB${_data}");
@@ -280,6 +280,8 @@ Stream findUserRequest(title) async* {
       await Future.delayed(const Duration(seconds: 1));
       yield searchStatus;
     }
+  } else {
+    print(response.body);
   }
 }
 
