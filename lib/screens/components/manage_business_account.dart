@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_application_1/screens/components/review_parse.dart';
 import 'package:flutter_application_1/screens/components/view_business_accpage.dart';
 import 'package:flutter_application_1/screens/home.dart';
+import 'package:flutter_application_1/screens/profile.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter_application_1/screens/components/email_support.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -146,12 +147,12 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               leading: GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
-                  /* Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
                       return HomePage();
                     }),
-                  );*/
+                  );
                 },
                 child: Container(
                   margin: EdgeInsets.only(left: 8),

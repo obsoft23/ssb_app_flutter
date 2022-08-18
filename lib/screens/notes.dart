@@ -2962,11 +2962,45 @@ Row(
 
 
 
+$business_profiles =BusinessAccount::select(['id', 'name'])->when($request->long and $request->lat, function ($query) use ($request) {
+            $query->addSelect(DB::raw("ST_Distance_Sphere( POINT('$request->long', '$request->lat'), POINT(business_accounts.longitude, business_accounts.latitude) as distance"))
+                ->orderBy('distance');
+        })
+        ->when($request->sub_category, function ($query, $shopName) {
+            $query->where('sub_category', '=', "`$shopName`");
+        })
+        ->take(9)
+        ->get();
 
 
+$shopName = $request->sub_category;
+        $business_profiles = BusinessAccount::select(['*'])
+        ->when($request->long and $request->lat, function ($query) use ($request) {
+            $query->addSelect(DB::raw("ST_Distance_Sphere(
+                    POINT('$request->long', '$request->lat'), POINT(business_accounts.longtitude, business_accounts.latitude)
+                ) as distance"))
+                ->orderBy('distance');
+        })
+        ->when($request->sub_category, function ($query, $shopName) {
+            $query->where('business_accounts.business_sub_category', '=', "`$shopName`");
+        })
+        ->take(9)
+        ->get();
 
 
-
+//working
+  $business_profiles = BusinessAccount::select(['*'])
+        ->when($request->long and $request->lat, function ($query) use ($request) {
+            $query->addSelect(DB::raw("ST_Distance_Sphere(
+                    POINT('$request->long', '$request->lat'), POINT(business_accounts.longtitude, business_accounts.latitude)
+                ) as distance"))
+                ->orderBy('distance');
+        })
+        ->when($request->shopName, function ($query, $shopName) {
+            $query->where('shops.name', 'like', "%{$shopName}%");
+        })
+        ->take(9)
+        ->get();
 
 
 
