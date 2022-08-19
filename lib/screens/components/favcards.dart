@@ -87,7 +87,6 @@ class _VideoDescription extends StatelessWidget {
               color: Colors.blueGrey,
             ),
           ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
           SizedBox(
             height: 50,
             child: Text(
@@ -96,10 +95,9 @@ class _VideoDescription extends StatelessWidget {
                   const TextStyle(fontSize: 10.0, overflow: TextOverflow.fade),
             ),
           ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
           Text(
             '$viewCount likes',
-            style: const TextStyle(fontSize: 12.0),
+            style: const TextStyle(fontSize: 10.0),
           ),
         ],
       ),

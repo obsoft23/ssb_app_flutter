@@ -209,12 +209,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   " ${userDetails.bio}",
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
-                    fontSize: 15,
+                    fontSize: 13,
+                    color: Colors.black54,
                   ),
                 ),
               )
             : Container(child: null),
-        SizedBox(height: 10.0),
+        // SizedBox(height: 5.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -233,7 +234,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           );
                         },
-                        label: Text("Create Professional Account"),
+                        label: Text(
+                          "Create Professional Account",
+                          style: TextStyle(fontSize: 13),
+                        ),
                         icon: Icon(Icons.add, size: 18),
                       ),
                     )
@@ -255,7 +259,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             builder: (context) => ManageBusinessAccount(),
                           );
                         },
-                        label: Text("Manage Professional Account"),
+                        label: Text(
+                          "Manage Professional Account",
+                          style: TextStyle(fontSize: 13),
+                        ),
                         icon: Icon(Icons.add, size: 18),
                       ),
                     ),
@@ -263,7 +270,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         SizedBox(height: 15),
-        Row(
+        /*  Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TabBar(
@@ -285,9 +292,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
           ],
-        ),
+        ),*/
         SizedBox(height: 10),
-        Expanded(
+        /* Expanded(
           child: TabBarView(
             controller: tabController,
             children: [
@@ -326,7 +333,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-        )
+        )*/
       ],
     );
   }
@@ -343,7 +350,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Container(
               margin: EdgeInsets.only(left: 8),
               child: Center(
-                child: Icon(Icons.arrow_back_ios, color: Colors.blue, size: 16),
+                child: Icon(Icons.arrow_back, color: Colors.blue, size: 22),
               ),
             ),
           ),
@@ -435,7 +442,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           ListTile(
             leading: Icon(Icons.person),
-            title: Text('Edit Profile'),
+            title: Text(
+              'Edit Profile',
+              style: TextStyle(fontSize: 16),
+            ),
             onTap: () {
               Navigator.pop(context);
               /* showBarModalBottomSheet(
@@ -451,7 +461,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           ListTile(
             leading: Icon(Icons.edit),
-            title: Text('Change password'),
+            title: Text(
+              'Change password',
+              style: TextStyle(fontSize: 16),
+            ),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
@@ -462,7 +475,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           ListTile(
             leading: Icon(Icons.logout),
-            title: Text('Logout'),
+            title: Text(
+              'Logout',
+              style: TextStyle(fontSize: 16),
+            ),
             onTap: () {
               Navigator.pop(context);
               logoutDialog();

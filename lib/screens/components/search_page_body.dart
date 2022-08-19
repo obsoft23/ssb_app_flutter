@@ -114,9 +114,7 @@ class ItemTile extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.all(
-                Radius.circular(7) //                 <--- border radius here
-                ),
+            borderRadius: BorderRadius.all(Radius.circular(7)),
             image: DecorationImage(
               image: NetworkImage(
                   "${Network.baseURL}/api/vocation/${common[itemNo]["vocation_image"]}"),
@@ -124,11 +122,15 @@ class ItemTile extends StatelessWidget {
             ),
           ),
           child: common.isNotEmpty
-              ? Text(
-                  '${common[itemNo]["vocations"]}',
-                  key: Key('text_$itemNo'),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+              ? Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Text(
+                    '${common[itemNo]["vocations"]}',
+                    key: Key('text_$itemNo'),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey,
+                    ),
                   ),
                 )
               : null,
@@ -161,6 +163,7 @@ class ItemTile extends StatelessWidget {
           '$title',
           style: TextStyle(
             color: Colors.black,
+            fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
         ),

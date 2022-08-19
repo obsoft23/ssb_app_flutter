@@ -196,7 +196,7 @@ class _ProfessionalState extends State<Professional> {
                 style: TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  fontSize: 12.5,
                 ),
               ),
             ),
@@ -263,7 +263,7 @@ class _ProfessionalState extends State<Professional> {
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14.5,
+                          fontSize: 12.5,
                         ),
                       ),
                     ),

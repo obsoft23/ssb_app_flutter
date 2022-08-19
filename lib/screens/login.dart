@@ -214,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
-              Row(
+              /* Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
@@ -269,7 +269,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.blue,
                   ),
                 ],
-              )
+              )*/
             ],
           ),
         ),

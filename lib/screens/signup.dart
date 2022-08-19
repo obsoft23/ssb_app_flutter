@@ -197,6 +197,7 @@ class _SignUpState extends State<SignUp> {
               ],
               mainAxisAlignment: MainAxisAlignment.center,
             ),
+            /* 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -250,7 +251,7 @@ class _SignUpState extends State<SignUp> {
                   color: Colors.blue,
                 ),
               ],
-            )
+            )*/
           ],
         ),
       ),

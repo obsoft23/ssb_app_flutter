@@ -413,7 +413,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   leading: Icon(CupertinoIcons.envelope_badge),
                   title: Text(
                     '${profile.emailController}',
-                    style: TextStyle(fontSize: 17, color: Colors.black87),
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   onTap: () {
                     String? encodeQueryParameters(Map<String, String> params) {
@@ -443,7 +443,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   title: Text(
                     '${profile.phoneController}',
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 16,
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
                     ),
@@ -469,7 +469,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   title: Text(
                     '${profile.addressController}',
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 16,
                     ),
                   ),
                   onTap: () {},
@@ -482,7 +482,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   title: Text(
                     'Joined ${profile.joined}',
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 16,
                     ),
                   ),
                   onTap: () {},
@@ -501,7 +501,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                       "Bio ",
                       style: GoogleFonts.acme(
                         textStyle: TextStyle(
-                          fontSize: 16,
+                          fontSize: 18,
                           color: Colors.black54,
                           fontWeight: FontWeight.bold,
                         ),
@@ -535,9 +535,9 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   children: <Widget>[
                     Text(
                       "Business Description ",
-                      style: GoogleFonts.roboto(
+                      style: GoogleFonts.acme(
                         textStyle: TextStyle(
-                          fontSize: 16,
+                          fontSize: 18,
                           color: Colors.black54,
                           fontWeight: FontWeight.bold,
                         ),
@@ -553,7 +553,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   leading: Icon(Icons.lock_person_outlined),
                   title: Text(
                     'Category : ${profile.businessSubCatorgyController}',
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(fontSize: 16),
                   ),
                   onTap: () {},
                   dense: true,
@@ -564,7 +564,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   leading: Icon(Icons.add_task_sharp),
                   title: Text(
                     'Opened  between ${profile.openingTime} am - ${profile.closingTime} pm',
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(fontSize: 16),
                   ),
                   onTap: () {},
                   dense: true,
@@ -575,7 +575,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   //  leading: Icon(Icons.add_task_sharp),
                   title: Text(
                     'We opened on : ${profile.activeDays.toString()}',
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(fontSize: 16),
                   ),
                   onTap: () {},
                   dense: true,
@@ -594,9 +594,9 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                   children: <Widget>[
                     Text(
                       "Reviews and Rating ",
-                      style: GoogleFonts.roboto(
+                      style: GoogleFonts.acme(
                         textStyle: TextStyle(
-                          fontSize: 16,
+                          fontSize: 18,
                           color: Colors.black54,
                           fontWeight: FontWeight.bold,
                         ),

@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/network/api.dart';
-import 'package:flutter_application_1/screens/components/business_profilepage.dart';
+import 'package:flutter_application_1/screens/components/old/business_profilepage.dart';
 import 'package:intro_slider/dot_animation_enum.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
@@ -29,16 +29,16 @@ class IntroScreenState extends State<IntroScreen> {
         title: "Create Professional Account",
         styleTitle: TextStyle(
           color: Colors.white,
-          fontSize: 22.0,
+          fontSize: 16.0,
           fontWeight: FontWeight.bold, /*fontFamily: 'RobotoMono'*/
         ),
         description:
             "With a professional account, our users access to your business or vocation ",
         styleDescription: TextStyle(
-            color: Colors.white,
-            fontSize: 15.0,
-            fontStyle: FontStyle.italic,
-            fontFamily: 'Raleway'),
+          color: Colors.white,
+          fontSize: 13.0,
+          //fontStyle: FontStyle.italic,
+        ),
         pathImage: "assets/images/pro.png",
         backgroundColor: Color(0xff203152),
       ),
@@ -49,15 +49,15 @@ class IntroScreenState extends State<IntroScreen> {
         title: "Earn More with your skill labour",
         styleTitle: TextStyle(
           color: Colors.white,
-          fontSize: 22.0,
+          fontSize: 16.0,
           fontWeight: FontWeight.bold, /*fontFamily: 'RobotoMono'*/
         ),
-        description: " ",
+        description:
+            "Another writing challenge can be to take the individual sentences in the random paragraph and incorporate a single sentence from that into a new paragraph to create a short story.",
         styleDescription: TextStyle(
-            color: Colors.white,
-            fontSize: 15.0,
-            fontStyle: FontStyle.italic,
-            fontFamily: 'Raleway'),
+          color: Colors.white,
+          fontSize: 13.0,
+        ),
         pathImage: "assets/images/vocations.png",
         backgroundColor: Color(0xff203152),
       ),
@@ -68,15 +68,15 @@ class IntroScreenState extends State<IntroScreen> {
         title: "Enjoy Increase in skill Demand",
         styleTitle: TextStyle(
           color: Colors.white,
-          fontSize: 22.0,
+          fontSize: 16.0,
           fontWeight: FontWeight.bold, /*fontFamily: 'RobotoMono'*/
         ),
-        description: " ",
+        description:
+            "While it may not be obvious to everyone, there are a number of reasons creating random paragraphs can be useful. A few examples of how some people use this generator are listed in the following paragraphs.",
         styleDescription: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-            fontStyle: FontStyle.italic,
-            fontFamily: 'Raleway'),
+          color: Colors.white,
+          fontSize: 13.0,
+        ),
         pathImage: "assets/images/teams.png",
         backgroundColor: Color(0xff203152),
       ),

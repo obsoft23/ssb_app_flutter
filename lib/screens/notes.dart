@@ -3129,8 +3129,28 @@ $shopName = $request->sub_category;
       ),
     );*/
 
+     /* Container(
+            height: 50,
+            color: Colors.grey[400],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Professional Details ",
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),*/
 
 
+ /* decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(0)),*/
 
 
 

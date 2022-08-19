@@ -17,17 +17,18 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   List<Widget> indicator() {
     return List<Widget>.generate(
-        slides.length,
-        (index) => Container(
-              margin: EdgeInsets.symmetric(horizontal: 3.0),
-              height: 10.0,
-              width: 10.0,
-              decoration: BoxDecoration(
-                  color: currentPage.round() == index
-                      ? Color(0XFF256075)
-                      : Color(0XFF256075).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10.0)),
-            ));
+      slides.length,
+      (index) => Container(
+        margin: EdgeInsets.symmetric(horizontal: 3.0),
+        height: 10.0,
+        width: 10.0,
+        decoration: BoxDecoration(
+            color: currentPage.round() == index
+                ? Colors.blue
+                : Colors.blue.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(10.0)),
+      ),
+    );
   }
 
   double currentPage = 0.0;
@@ -63,7 +64,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         child: Image.asset(
                           items[index]['image'],
                           fit: BoxFit.fitWidth,
-                          width: 220.0,
+                          width: 200.0,
                           alignment: Alignment.bottomCenter,
                         ),
                       ),
@@ -76,22 +77,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             children: <Widget>[
                               Text(
                                 items[index]['header'],
-                                style: GoogleFonts.lato(
-                                  fontSize: 24.0,
+                                style: GoogleFonts.aclonica(
+                                  fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0XFF3F3D56),
                                   height: 2.0,
                                 ),
                               ),
-                              Text(
-                                items[index]['description'],
-                                style: GoogleFonts.sourceSansPro(
-                                  color: Colors.grey,
-                                  letterSpacing: 1.2,
-                                  fontSize: 16.0,
-                                  height: 1.3,
+                              //montaga
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  items[index]['description'],
+                                  style: GoogleFonts.monteCarlo(
+                                    color: Colors.black,
+                                    letterSpacing: 1.2,
+                                    fontSize: 20.0,
+                                    // height: 1.3,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                               SizedBox(
                                 height: 20,
@@ -106,17 +111,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               },
             ),
             Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  margin: EdgeInsets.only(top: 90.0),
-                  padding: EdgeInsets.symmetric(vertical: 40.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: indicator(),
-                  ),
-                )
-                //  ),
+              alignment: Alignment.topCenter,
+              child: Container(
+                margin: EdgeInsets.only(top: 90.0),
+                padding: EdgeInsets.symmetric(vertical: 40.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: indicator(),
                 ),
+              ),
+            ),
             Align(
               alignment: Alignment.bottomRight,
               child: Padding(
@@ -125,16 +129,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   margin: EdgeInsets.only(top: 0),
                   height: 50,
                   width: MediaQuery.of(context).size.width,
-                  /* decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(0)),*/
                   child: ElevatedButton(
                     style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    side: BorderSide(color: Colors.white)))),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: BorderSide(),
+                        ),
+                      ),
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -184,12 +187,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 30.0),
                   child: Column(
                     children: <Widget>[
-                      Text(item['header'],
-                          style: TextStyle(
-                              fontSize: 50.0,
-                              fontWeight: FontWeight.w300,
-                              color: Color(0XFF3F3D56),
-                              height: 2.0)),
+                      Text(
+                        item['header'],
+                        style: TextStyle(
+                          fontSize: 50.0,
+                          fontWeight: FontWeight.w300,
+                          //    color: Color.fromARGB(255, 60, 43, 243),
+                          color: Colors.blue,
+                          height: 2.0,
+                        ),
+                      ),
                       Text(
                         item['description'],
                         style: TextStyle(

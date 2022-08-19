@@ -164,8 +164,8 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               title: Text(
                 "Manage Professional Account",
                 style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 15,
+                    color: Colors.black,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600),
               ),
               actions: [
@@ -386,29 +386,13 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
               ],
             ),
           ),
-          /* Container(
-            height: 50,
-            color: Colors.grey[400],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Professional Details ",
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),*/
+
           profile.phoneController != null
               ? ListTile(
                   leading: Icon(CupertinoIcons.phone),
                   title: Text(
                     '${profile.phoneController}',
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(fontSize: 16),
                   ),
                   onTap: () {},
                   dense: true,
@@ -420,7 +404,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   title: Text(
                     '${profile.addressController}',
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 16,
                     ),
                   ),
                   onTap: () {},
@@ -464,13 +448,13 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             ],
           ),
           profile.businessDescription != null
-              ? Row(
+              ? Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(14.0),
+                      padding: const EdgeInsets.all(15.0),
                       child: Text(
                         '${profile.businessDescription}',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 15),
                       ),
                     ),
                   ],
@@ -526,7 +510,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                   //  leading: Icon(Icons.add_task_sharp),
                   title: Text(
                     'We opened on : ${profile.activeDays.toString()}',
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(fontSize: 15),
                   ),
                   onTap: () {},
                   dense: true,

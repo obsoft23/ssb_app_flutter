@@ -69,7 +69,7 @@ class _ArticleDescription extends StatelessWidget {
               Text(
                 '$publishDate - $readDuration miles away',
                 style: const TextStyle(
-                  fontSize: 10.0,
+                  fontSize: 11.0,
                   color: Colors.black54,
                   fontWeight: FontWeight.bold,
                 ),
