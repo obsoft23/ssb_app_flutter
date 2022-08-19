@@ -129,7 +129,7 @@ class ItemTile extends StatelessWidget {
                     key: Key('text_$itemNo'),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+                      color: Colors.black87,
                     ),
                   ),
                 )

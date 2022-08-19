@@ -11,8 +11,8 @@ import 'package:http/http.dart' as http;
 //import 'package:sqflite/sqflite.dart';
 
 class Network {
-  static var baseURL = "http://localhost:8000";
-// static var baseURL = "http://10.0.2.2:8000/api/";
+  // static var baseURL = "http://localhost:8000";
+  static var baseURL = "http://10.0.2.2:8000";
 
   //if you are using android studio emulator, change localhost to 10.0.2.2
 
@@ -148,7 +148,6 @@ class Network {
       'Authorization': 'Bearer ${token}'
     });
   }
-
 
   void logout() async {
     /*var res = await Network().postData('/logout');

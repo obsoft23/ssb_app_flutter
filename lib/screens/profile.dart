@@ -346,6 +346,7 @@ class _ProfilePageState extends State<ProfilePage> {
           leading: GestureDetector(
             onTap: () {
               Navigator.pop(context);
+              mainProfileStream = _fetchUser();
             },
             child: Container(
               margin: EdgeInsets.only(left: 8),
