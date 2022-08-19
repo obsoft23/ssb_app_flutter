@@ -154,7 +154,7 @@ class _ProfessionalState extends State<Professional> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
 
     final response = await http.get(
-      Uri.parse("http://localhost:8000/api/vocations/fetch"),
+      Uri.parse("${Network.baseURL}/api/vocations/fetch"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -742,7 +742,7 @@ class _ProfessionalState extends State<Professional> {
       //print(_data);
       final prefs = await SharedPreferences.getInstance();
       final response = await http.post(
-        Uri.parse("http://localhost:8000/api/business/create"),
+        Uri.parse("${Network.baseURL}/api/business/create"),
         body: jsonEncode(_data),
         headers: {
           'Content-Type': 'application/json',

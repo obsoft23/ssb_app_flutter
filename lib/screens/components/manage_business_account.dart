@@ -880,7 +880,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
 
     final response = await http.get(
-      Uri.parse("http://localhost:8000/api/vocations/fetch"),
+      Uri.parse("${Network.baseURL}/api/vocations/fetch"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -983,7 +983,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     };
     print(_data);
     final request = await http.post(
-      Uri.parse("http://localhost:8000/api/business/update/details"),
+      Uri.parse("${Network.baseURL}/api/business/update/details"),
       body: jsonEncode(_data),
       headers: {
         'Content-Type': 'application/json',
@@ -1094,7 +1094,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     };
 
     final request = await http.post(
-      Uri.parse("http://localhost:8000/api/business/update/hours"),
+      Uri.parse("${Network.baseURL}/api/business/update/hours"),
       body: jsonEncode(_data),
       headers: {
         'Content-Type': 'application/json',
@@ -1158,7 +1158,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     };
 
     final request = await http.post(
-      Uri.parse("http://localhost:8000/api/business/update/address"),
+      Uri.parse("${Network.baseURL}/api/business/update/address"),
       body: jsonEncode(_data),
       headers: {
         'Content-Type': 'application/json',
@@ -1203,8 +1203,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     final int? business_id = localStorage.getInt("business_id");
     final response = await http.get(
-      Uri.parse(
-          "http://localhost:8000/api/business-photos/fetch/${business_id}"),
+      Uri.parse("${Network.baseURL}/api/business-photos/fetch/${business_id}"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -1223,7 +1222,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             switch (index) {
               case "1":
                 singleImage = Image.network(
-                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  "${Network.baseURL}/api/fetch-business-acc-image/${image_name}",
                   fit: BoxFit.cover,
                 );
 
@@ -1232,7 +1231,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                 break;
               case "2":
                 secondImage = Image.network(
-                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  "${Network.baseURL}/api/fetch-business-acc-image/${image_name}",
                   fit: BoxFit.cover,
                 );
 
@@ -1241,7 +1240,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                 break;
               case "3":
                 thirdImage = Image.network(
-                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  "${Network.baseURL}/api/fetch-business-acc-image/${image_name}",
                   fit: BoxFit.cover,
                 );
 
@@ -1249,7 +1248,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
                 break;
               case "4":
                 fourthImage = Image.network(
-                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  "${Network.baseURL}/api/fetch-business-acc-image/${image_name}",
                   fit: BoxFit.cover,
                 );
 
@@ -1726,7 +1725,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     };
 
     final response = await http.post(
-      Uri.parse("http://localhost:8000/api/business/update/active_days"),
+      Uri.parse("${Network.baseURL}/api/business/update/active_days"),
       body: jsonEncode(_data),
       headers: {
         'Content-Type': 'application/json',
@@ -1768,8 +1767,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     final int? business_id = localStorage.getInt("business_id");
 
     final response = await http.get(
-      Uri.parse(
-          "http://localhost:8000/api/business-profile/fetch/${business_id}"),
+      Uri.parse("${Network.baseURL}/api/business-profile/fetch/${business_id}"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -1787,10 +1785,9 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
         // print(images[i]);
         String? image_name = images[i]["image_name"];
         final index = images[i]["image_order_index"];
-        print(
-            "http://localhost:8000/api/fetch-business-acc-image/${image_name}");
+        // print("${Network.baseURL}/api/fetch-business-acc-image/${image_name}");
         String name =
-            "http://localhost:8000/api/fetch-business-acc-image/${image_name}";
+            "${Network.baseURL}/api/fetch-business-acc-image/${image_name}";
         businessImages.insert(i, name);
       }
       print(businessImages);
@@ -1836,7 +1833,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     try {
       final request = await Dio()
           .post(
-        "http://localhost:8000/api/business/photos/add",
+        "${Network.baseURL}/api/business/photos/add",
         data: _data,
         options: Options(
           headers: {'Authorization': 'Bearer ${prefs.getString("token")}'},
@@ -1884,7 +1881,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
     };
 
     final response = await http.post(
-        Uri.parse("http://localhost:8000/api/business/delete/add/${_id}"),
+        Uri.parse("${Network.baseURL}/api/business/delete/add/${_id}"),
         body: data,
         headers: {
           'Content-Type': 'application/json',
@@ -1938,7 +1935,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
   fetchReviews(id) async {
     final response = await http.get(
-      Uri.parse("http://localhost:8000/api/business/fetch/review/${id}"),
+      Uri.parse("${Network.baseURL}/api/business/fetch/review/${id}"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

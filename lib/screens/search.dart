@@ -134,7 +134,7 @@ class _SearchPageState extends State<SearchPage> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
 
     final response = await http.get(
-      Uri.parse("http://localhost:8000/api/vocations/fetch"),
+      Uri.parse("${Network.baseURL}/api/vocations/fetch"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

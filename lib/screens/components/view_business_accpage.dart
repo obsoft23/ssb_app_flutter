@@ -198,8 +198,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
     print("fetch business id${widget.id}");
 
     final response = await http.get(
-      Uri.parse(
-          "http://localhost:8000/api/business-profile/fetch/${widget.id}"),
+      Uri.parse("${Network.baseURL}/api/business-profile/fetch/${widget.id}"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -218,10 +217,9 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
         // print(images[i]);
         String? image_name = images[i]["image_name"];
         final index = images[i]["image_order_index"];
-        print(
-            "http://localhost:8000/api/fetch-business-acc-image/${image_name}");
+        // print("${Network.baseURL}/api/fetch-business-acc-image/${image_name}");
         String name =
-            "http://localhost:8000/api/fetch-business-acc-image/${image_name}";
+            "${Network.baseURL}/api/fetch-business-acc-image/${image_name}";
         businessImages.insert(i, name);
       }
 
@@ -669,7 +667,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
             child: CircleAvatar(
               radius: 50,
               backgroundImage: NetworkImage(
-                  "http://localhost:8000/api/fetch-user-image/${filedata[index]['image']}"),
+                  "${Network.baseURL}/api/fetch-user-image/${filedata[index]['image']}"),
             ),
           ),
           title: Text(
@@ -685,7 +683,7 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
   fetchReviews(id) async {
     print("fetcching comments for this user accoundt$id");
     final response = await http.get(
-      Uri.parse("http://localhost:8000/api/business/fetch/review/${id}"),
+      Uri.parse("${Network.baseURL}/api/business/fetch/review/${id}"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

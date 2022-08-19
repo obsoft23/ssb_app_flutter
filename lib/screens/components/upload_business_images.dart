@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_application_1/network/api.dart';
 import 'package:flutter_application_1/screens/components/manage_business_account.dart';
 import 'package:flutter_application_1/screens/home.dart';
 import 'package:http_parser/http_parser.dart';
@@ -51,8 +52,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     final int? business_id = localStorage.getInt("business_id");
     final response = await http.get(
-      Uri.parse(
-          "http://localhost:8000/api/business-photos/fetch/${business_id}"),
+      Uri.parse("${Network.baseURL}/api/business-photos/fetch/${business_id}"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -71,7 +71,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
             switch (index) {
               case "1":
                 singleImage = Image.network(
-                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  "${Network.baseURL}/api/fetch-business-acc-image/${image_name}",
                   fit: BoxFit.cover,
                 );
 
@@ -80,7 +80,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
                 break;
               case "2":
                 secondImage = Image.network(
-                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  "${Network.baseURL}/api/fetch-business-acc-image/${image_name}",
                   fit: BoxFit.cover,
                 );
 
@@ -89,7 +89,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
                 break;
               case "3":
                 thirdImage = Image.network(
-                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  "${Network.baseURL}/api/fetch-business-acc-image/${image_name}",
                   fit: BoxFit.cover,
                 );
 
@@ -97,7 +97,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
                 break;
               case "4":
                 fourthImage = Image.network(
-                  "http://localhost:8000/api/fetch-business-acc-image/${image_name}",
+                  "${Network.baseURL}/api/fetch-business-acc-image/${image_name}",
                   fit: BoxFit.cover,
                 );
 
@@ -510,10 +510,11 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
       "business_id": _id
     });
     print(_id);
+
     try {
       final request = await Dio()
           .post(
-            "http://localhost:8000/api/business/photos/add",
+            "${Network.baseURL}/api/business/photos/add",
             data: _data,
             options: Options(
               headers: {'Authorization': 'Bearer ${prefs.getString("token")}'},
@@ -539,7 +540,7 @@ class _UploadBusinessImagesState extends State<UploadBusinessImages> {
     };
 
     final response = await http.post(
-        Uri.parse("http://localhost:8000/api/business/delete/add/${_id}"),
+        Uri.parse("${Network.baseURL}/api/business/delete/add/${_id}"),
         body: data,
         headers: {
           'Content-Type': 'application/json',

@@ -95,7 +95,7 @@ class _ReviewPageState extends State<ReviewPage> {
       child: userImageURL != null
           ? CommentBox(
               userImage:
-                  "http://localhost:8000/api/fetch-user-image/${userImageURL}",
+                  "${Network.baseURL}/api/fetch-user-image/${userImageURL}",
               child: commentChild(),
               labelText: 'Write a review...',
               withBorder: false,
@@ -201,7 +201,7 @@ class _ReviewPageState extends State<ReviewPage> {
                       child: CircleAvatar(
                         radius: 50,
                         backgroundImage: NetworkImage(
-                            "http://localhost:8000/api/fetch-user-image/${filedata[index]['image']}"),
+                            "${Network.baseURL}/api/fetch-user-image/${filedata[index]['image']}"),
                       ),
                     ),
                   ),
@@ -223,7 +223,7 @@ fetchReviews(int id) async {
   reviews.clear();
 
   final response = await http.get(
-    Uri.parse("http://localhost:8000/api/business/fetch/review/${id}"),
+    Uri.parse("${Network.baseURL}/api/business/fetch/review/${id}"),
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',

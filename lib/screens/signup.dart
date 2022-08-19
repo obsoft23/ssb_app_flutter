@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/constructors/signup_error.dart';
 import 'package:flutter_application_1/screens/home.dart';
 
 import 'package:flutter_application_1/screens/login.dart';
@@ -44,8 +43,6 @@ class _SignUpState extends State<SignUp> {
   bool inputTextNotNull = false;
   String? platformType;
   _createAccount(username, email, password, confirmPassword) async {
-    final List<User> user;
-
     if (password == confirmPassword) {
       final response =
           await Network().registerUser(username, email, password, platformType);
@@ -63,7 +60,7 @@ class _SignUpState extends State<SignUp> {
           SnackBar(
             backgroundColor: Colors.green,
             content: Text("loggin in..."),
-            duration: const Duration(seconds: 6),
+            duration: const Duration(seconds: 2),
           ),
         );
         Navigator.push(

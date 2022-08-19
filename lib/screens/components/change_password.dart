@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/network/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -127,11 +128,10 @@ class _ChangePasswordState extends State<ChangePassword> {
   updatePassword(newPassword, confirmPassword) async {
     if (newPassword == confirmPassword) {
       final prefs = await SharedPreferences.getInstance();
-
       var _data = {"newPassword": newPassword, "id": prefs.getInt("id")};
       final response = await http.put(
           Uri.parse(
-              "http://localhost:8000/api/access/update/${prefs.getInt("id")}"),
+              "${Network.baseURL}/api/access/update/${prefs.getInt("id")}"),
           body: jsonEncode(_data),
           headers: {
             'Content-Type': 'application/json',

@@ -7,14 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_application_1/constructors/signup_error.dart';
 
 //import 'package:sqflite/sqflite.dart';
 
 class Network {
-  static var baseURL = "http://localhost:8000/api/";
+  static var baseURL = "http://localhost:8000";
 // static var baseURL = "http://10.0.2.2:8000/api/";
-  static dynamic token;
+
   //if you are using android studio emulator, change localhost to 10.0.2.2
 
   static final authHeaders = {
@@ -105,7 +104,7 @@ class Network {
 
   registerUser(String name, email, String password, platformType) async {
     // ignore: prefer_typing_uninitialized_variables
-    var url = Uri.parse('http://localhost:8000/api/auth/register');
+    var url = Uri.parse('${Network.baseURL}/api/auth/register');
     final data = {"name": name, "email": email, "password": password};
     final body = jsonEncode(data);
     debugPrint("data sent  trying to register user$body");
@@ -113,7 +112,7 @@ class Network {
   }
 
   loginUser(String email, String password) async {
-    var url = Uri.parse("http://localhost:8000/api/auth/login"); //needs fixing
+    var url = Uri.parse("${Network.baseURL}/api/auth/login"); //needs fixing
     final data = {"email": email, "password": password};
     final body = jsonEncode(data);
     debugPrint("to be sent: ${body}");
@@ -121,7 +120,7 @@ class Network {
   }
 
   updateUser(name, email, phone, bio, image, token, id) async {
-    final Uri url = Uri.parse("http://localhost:8000/api/auth/update");
+    final Uri url = Uri.parse("${Network.baseURL}/api/auth/update");
     final data = {
       "id": id,
       "name": name,
@@ -141,7 +140,7 @@ class Network {
   }
 
   fetchUser(token) async {
-    var url = Uri.parse("http://localhost:8000/api/profile/fetch");
+    var url = Uri.parse("${Network.baseURL}/api/profile/fetch");
     print("token to attach to fetch user: ${token}");
     return await http.get(url, headers: {
       'Content-Type': 'application/json',
@@ -150,16 +149,6 @@ class Network {
     });
   }
 
-  static List<User> parseUser(responseBody) {
-    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-    return parsed.map<User>((json) => User.fromJson(json)).toList();
-  }
-
-  static List<User> parseError(responseBody) {
-    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-
-    return parsed.map<User>((json) => User.fromJson(json)).toList();
-  }
 
   void logout() async {
     /*var res = await Network().postData('/logout');
@@ -175,7 +164,7 @@ class Network {
   likes(isLiked, businessId) async {
     final prefs = await SharedPreferences.getInstance();
     final _id = prefs.getInt('id');
-    final Uri url = Uri.parse("http://localhost:8000/api/business/update/like");
+    final Uri url = Uri.parse("${Network.baseURL}/api/business/update/like");
     final data = {
       "isLiked": isLiked,
       "business_id": businessId,
@@ -202,8 +191,7 @@ class Network {
   Future<bool> confirmIfUserLiked(businessId) async {
     final prefs = await SharedPreferences.getInstance();
     final _id = prefs.getInt('id');
-    final Uri url =
-        Uri.parse("http://localhost:8000/api/business/confirm/like");
+    final Uri url = Uri.parse("${Network.baseURL}/api/business/confirm/like");
     final data = {"business_id": businessId, "user_id": _id};
 
     final body = jsonEncode(data);
@@ -232,8 +220,7 @@ class Network {
   sendReview(businessId, review, rating) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
-    final Uri url =
-        Uri.parse("http://localhost:8000/api/business/confirm/review");
+    final Uri url = Uri.parse("${Network.baseURL}/api/business/confirm/review");
     final data = {
       "business_id": businessId,
       "user_id": userId,
@@ -267,8 +254,7 @@ class Network {
   addToFav(id) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
-    final Uri url =
-        Uri.parse("http://localhost:8000/api/business/add/favourite");
+    final Uri url = Uri.parse("${Network.baseURL}/api/business/add/favourite");
     final data = {
       "business_id": id,
       "user_id": userId,
@@ -300,8 +286,8 @@ class Network {
   checkFav(id) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
-    final Uri url = Uri.parse(
-        "http://localhost:8000/api/business/confirm/favourite/status");
+    final Uri url =
+        Uri.parse("${Network.baseURL}/api/business/confirm/favourite/status");
     final data = {
       "business_id": id,
       "user_id": userId,
@@ -335,7 +321,7 @@ class Network {
   //
 
   fetchCommon() async {
-    var url = Uri.parse("http://localhost:8000/api/vocations/common");
+    var url = Uri.parse("${Network.baseURL}/api/vocations/common");
     print("fetching list of common professions");
     final response = await http.get(url, headers: {
       'Content-Type': 'application/json',

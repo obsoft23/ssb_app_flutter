@@ -95,12 +95,12 @@ class _ProfilePageState extends State<ProfilePage> {
       // print(""${data})
       if (data["image"] != null) {
         image = NetworkImage(
-            "http://localhost:8000/api/fetch-user-image/${data["image"]}");
+            "${Network.baseURL}/api/fetch-user-image/${data["image"]}");
 
         localStorage.setString("profile_image_url", data["image"]);
       }
       /*  image = NetworkImage(
-          "http://localhost:8000/api/public/profilepictures/${data["image"]}");*/
+          "${Network.baseURL}/api/public/profilepictures/${data["image"]}");*/
       yield data;
 
       userDetails = Profile.fromJson(jsonDecode(response.body));
@@ -191,7 +191,7 @@ class _ProfilePageState extends State<ProfilePage> {
             : CircleAvatar(
                 radius: 70,
                 backgroundImage: NetworkImage(
-                  "http://localhost:8000/api/fetch-user-image/${userDetails.image}",
+                  "${Network.baseURL}/api/fetch-user-image/${userDetails.image}",
                 ),
               ),
         SizedBox(height: 10.0),
@@ -819,7 +819,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final request = await Dio()
           .post(
-            "http://localhost:8000/api/profile/image/${_id}",
+            "${Network.baseURL}/api/profile/image/${_id}",
             data: _data,
             options: Options(
               headers: {'Authorization': 'Bearer ${prefs.getString("token")}'},
@@ -876,7 +876,7 @@ class _ProfilePageState extends State<ProfilePage> {
           };
 
     final response = await http.put(
-        Uri.parse("http://localhost:8000/api/profile/update/${id}"),
+        Uri.parse("${Network.baseURL}/api/profile/update/${id}"),
         body: jsonEncode(_data),
         headers: {
           'Content-Type': 'application/json',

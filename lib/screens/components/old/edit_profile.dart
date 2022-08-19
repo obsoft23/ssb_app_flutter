@@ -73,7 +73,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       var response = await http
-          .get(Uri.parse("http://localhost:8000/api/profile/fetch"), headers: {
+          .get(Uri.parse("${Network.baseURL}/api/profile/fetch"), headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer ${prefs.getString("token")}'
@@ -97,10 +97,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         // print(""${data})
         if (data["image"] != null) {
           image = NetworkImage(
-              "http://localhost:8000/api/fetch-user-image/${data["image"]}");
+              "${Network.baseURL}/api/fetch-user-image/${data["image"]}");
         }
         /*  image = NetworkImage(
-          "http://localhost:8000/api/public/profilepictures/${data["image"]}");*/
+          "${Network.baseURL}/api/public/profilepictures/${data["image"]}");*/
         yield data;
       } else {
         throw Exception("failed to load data");
@@ -476,7 +476,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       final request = await Dio()
           .post(
-            "http://localhost:8000/api/profile/image/${_id}",
+            "${Network.baseURL}/api/profile/image/${_id}",
             data: _data,
             options: Options(
               headers: {'Authorization': 'Bearer ${prefs.getString("token")}'},
@@ -534,7 +534,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           };
 
     final response = await http.put(
-        Uri.parse("http://localhost:8000/api/profile/update/${id}"),
+        Uri.parse("${Network.baseURL}/api/profile/update/${id}"),
         body: jsonEncode(_data),
         headers: {
           'Content-Type': 'application/json',

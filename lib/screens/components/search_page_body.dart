@@ -119,7 +119,7 @@ class ItemTile extends StatelessWidget {
                 ),
             image: DecorationImage(
               image: NetworkImage(
-                  "http://localhost:8000/api/vocation/${common[itemNo]["vocation_image"]}"),
+                  "${Network.baseURL}/api/vocation/${common[itemNo]["vocation_image"]}"),
               fit: BoxFit.cover,
             ),
           ),
@@ -145,9 +145,10 @@ class ItemTile extends StatelessWidget {
         leading: GestureDetector(
           onTap: () {
             accs.clear();
+            favouriteStream = fetchUserFavourites();
             Navigator.pop(context);
             // favouriteStream = fetchUserFavourites();
-            favouriteStream = fetchUserFavourites();
+            fetchUserFavourites();
           },
           child: Container(
             margin: EdgeInsets.only(left: 8),
@@ -253,7 +254,7 @@ Stream findUserRequest(title) async* {
 
   print("query to be sent to DB${_data}");
   final response = await http.post(
-    Uri.parse("http://localhost:8000/api/vocations/find"),
+    Uri.parse("${Network.baseURL}/api/vocations/find"),
     body: jsonEncode(_data),
     headers: {
       'Content-Type': 'application/json',
@@ -313,7 +314,7 @@ Widget businessList() {
             thumbnail: acc.image != null
                 ? Container(
                     child: Image.network(
-                      "http://localhost:8000/api/fetch-business-acc-image/${acc.image}",
+                      "${Network.baseURL}/api/fetch-business-acc-image/${acc.image}",
                     ),
                   )
                 : Container(
@@ -343,7 +344,7 @@ Widget businessList() {
 }
 
 fetchList() async {
-  var url = Uri.parse("http://localhost:8000/api/vocations/fetch");
+  var url = Uri.parse("${Network.baseURL}/api/vocations/fetch");
   print("fetching list of common professions");
   final response = await http.get(url, headers: {
     'Content-Type': 'application/json',
