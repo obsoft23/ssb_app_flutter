@@ -15,6 +15,8 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  bool isVisible = false;
+
   List<Widget> indicator() {
     return List<Widget>.generate(
       slides.length,
@@ -40,6 +42,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     _pageViewController.addListener(() {
       setState(() {
         currentPage = _pageViewController.page!;
+        _pageViewController.page == 2 ? isVisible = true : isVisible = false;
+        // print(_pageViewController.page);
       });
     });
   }
@@ -121,34 +125,38 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.all(40),
-                child: Container(
-                  margin: EdgeInsets.only(top: 0),
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: BorderSide(),
+            Visibility(
+              visible: isVisible,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(40),
+                  child: Container(
+                    margin: EdgeInsets.only(top: 0),
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: BorderSide(),
+                          ),
                         ),
                       ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return LoginPage();
-                        }),
-                      );
-                    },
-                    child: Text(
-                      'Welcome',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return LoginPage();
+                          }),
+                        );
+                      },
+                      child: Text(
+                        'Welcome',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                   ),
                 ),

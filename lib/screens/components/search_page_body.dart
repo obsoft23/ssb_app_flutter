@@ -192,6 +192,7 @@ class ItemTile extends StatelessWidget {
                 ),
                 searchStatus == false
                     ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
                             height: 40,
@@ -267,6 +268,7 @@ Stream findUserRequest(title) async* {
   );
 
   if (response.statusCode == 200) {
+    accs.clear();
     final _accs = json.decode(response.body);
     print("error in new empty ${_accs} here");
     if (_accs[0] != false) {

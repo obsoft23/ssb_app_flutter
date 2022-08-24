@@ -1,5 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, unused_local_variable, unused_element, avoid_print, unused_field, sized_box_for_whitespace, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, non_constant_identifier_names, camel_case_types
-
+/*
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -25,7 +25,7 @@ import 'package:flutter_application_1/screens/components/upload_business_images.
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:http/http.dart' as http;
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
+//import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:filter_list/filter_list.dart';
@@ -986,3 +986,4 @@ List<closingDay> closeDayList = [
   closingDay(weekDay: "Friday ", avatar: ""),
   closingDay(weekDay: "Saturday ", avatar: ""),
 ];
+*/

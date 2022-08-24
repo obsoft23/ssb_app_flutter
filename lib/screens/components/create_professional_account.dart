@@ -24,7 +24,7 @@ import 'package:flutter_application_1/screens/components/upload_business_images.
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:http/http.dart' as http;
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
+//import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:filter_list/filter_list.dart';
@@ -204,7 +204,7 @@ class _ProfessionalState extends State<Professional> {
         ),
         title: Text(
           "Create Professional Account",
-          style: TextStyle(color: Colors.black, fontSize: 15),
+          style: TextStyle(color: Colors.black, fontSize: 12.5),
         ),
         actions: [
           GestureDetector(
@@ -513,7 +513,7 @@ class _ProfessionalState extends State<Professional> {
                               border: UnderlineInputBorder(),
                             ),
                             onTap: () {
-                              final locationPoint = Navigator.push(
+                              /* final locationPoint = Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) {
@@ -577,7 +577,7 @@ class _ProfessionalState extends State<Professional> {
                                     );
                                   },
                                 ),
-                              );
+                              );*/
                               //print("here is the lat and lng${locationPoint}");
                             },
                           ),

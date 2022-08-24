@@ -1,11 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, unused_local_variable, unused_element, avoid_print, avoid_unnecessary_containers
-
+/*
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/network/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/screens/chat_screen.dart';
 import 'package:flutter_application_1/screens/models/message_modal.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class ConversationsPage extends StatefulWidget {
   const ConversationsPage({Key? key}) : super(key: key);
@@ -15,6 +16,11 @@ class ConversationsPage extends StatefulWidget {
 }
 
 class _ConversationsPageState extends State<ConversationsPage> {
+  final client = StreamChatClient(
+    'vqe6zf3pjavt',
+    logLevel: Level.INFO,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +55,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
       body: ListView.builder(
         itemCount: chats.length,
         itemBuilder: (context, index) {
-          final Message chat = chats[index];
+          final chat = chats[index];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
@@ -222,3 +228,4 @@ class MySearchDelegate extends SearchDelegate {
     );
   }
 }
+*/

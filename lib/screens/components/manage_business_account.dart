@@ -29,7 +29,7 @@ import 'package:flutter_application_1/screens/components/upload_business_images.
 import 'package:flutter_application_1/screens/login.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:http/http.dart' as http;
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
+//import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:filter_list/filter_list.dart';
@@ -1014,7 +1014,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
   }
 
   Widget changePickerAddress() {
-    return PlacePicker(
+    return Container(); /*PlacePicker(
         apiKey: "AIzaSyCNpV4UY0noGgT86B134PfGziQODVF1MtE",
         initialPosition: userLocation,
         useCurrentLocation: true,
@@ -1066,7 +1066,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
             countryController.text,
           );
           Navigator.pop(context);
-        });
+        });*/
   }
 
   updateBusinessHours(openingTime, closingTime) async {

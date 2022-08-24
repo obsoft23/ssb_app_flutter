@@ -66,6 +66,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
             );
           } else if (snapshot.hasData) {
             return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 10),
                 pagestatus == false
@@ -146,6 +147,7 @@ Stream fetchUserFavourites() async* {
       'Authorization': 'Bearer ${prefs.getString("token")}'
     },
   );
+  accs.clear();
   if (response.statusCode == 200) {
     final _accs = json.decode(response.body);
     print(_accs);

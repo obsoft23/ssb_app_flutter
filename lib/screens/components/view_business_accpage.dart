@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/components/manage_business_account.dart';
 import 'package:flutter_application_1/screens/components/reviews.dart';
+import 'package:flutter_application_1/screens/favourites.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -115,8 +116,18 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
     bool isLoading = false;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           // Add your onPressed code here!
+          final latitude = profile.latitude;
+          final longitude = profile.longtitude;
+          final place = profile.cityController;
+          final _url1 = Uri.parse(
+              "https://www.google.com/maps/place/$place/@$latitude,$longtitude");
+          if (await canLaunchUrl(_url1)) {
+            await launchUrl(_url1);
+          } else {
+            throw "cant launch mao";
+          }
         },
         backgroundColor: Colors.green,
         child: const Icon(Icons.navigation),
@@ -133,6 +144,8 @@ class _ViewBusinessAccpageState extends State<ViewBusinessAccpage> {
                 onTap: () {
                   Navigator.pop(context);
                   setState(() {
+                    //favouriteStream = fetchUserFavourites();
+                    favouriteStream = fetchUserFavourites();
                     profileStream = fetchBusinessProfile();
                   });
                 },

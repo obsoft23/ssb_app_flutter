@@ -164,6 +164,7 @@ class MySearchDelegate extends SearchDelegate {
   @override
   Widget? buildLeading(context) => IconButton(
         onPressed: () {
+          accs.clear();
           close(context, null);
         },
         icon: const Icon(Icons.arrow_back),

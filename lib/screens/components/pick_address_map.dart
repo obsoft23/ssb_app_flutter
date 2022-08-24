@@ -1,5 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, unused_local_variable, unused_element, avoid_print, unused_field, sized_box_for_whitespace, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables
-
+/*
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -10,7 +10,7 @@ import 'package:flutter_application_1/screens/business_profile_slider.dart';
 import 'package:flutter_application_1/screens/components/old/edit_profile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
+//import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_application_1/screens/components/change_password.dart';
@@ -78,7 +78,8 @@ class _PickAddressState extends State<PickAddress> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return PlacePicker(
+                        return Container()
+                      /*  return PlacePicker(
                           apiKey: "AIzaSyCNpV4UY0noGgT86B134PfGziQODVF1MtE",
                           initialPosition: PickAddress.kInitialPosition,
                           useCurrentLocation: true,
@@ -90,7 +91,7 @@ class _PickAddressState extends State<PickAddress> {
                             Navigator.of(context).pop();
                             setState(() {});
                           },
-                          /*showBarModalBottomSheet(
+                          showBarModalBottomSheet(
                                     context: context,
                                     builder: (context) => Expanded(
                                       child: Container(
@@ -149,3 +150,4 @@ class _PickAddressState extends State<PickAddress> {
         ));
   }
 }
+*/

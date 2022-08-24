@@ -3743,5 +3743,133 @@ class _CategoriesState extends State<Categories> {
                           behavior: SnackBarBehavior.floating,
                           content: Text("Added to your Favourites"),
                         ),
-                      );
+
+
+                        /*ListView.builder(
+        itemCount: chats.length,
+        itemBuilder: (context, index) {
+          final chat = chats[index];
+          return GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ChatScreen(
+                  user: chat.sender,
+                  id: chat.sender.id,
+                ),
+              ),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: chat.unread
+                            ? BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    width: 2,
+                                    color: Theme.of(context).primaryColor),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                  )
+                                ],
+                              )
+                            : BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    width: 0,
+                                    color: Theme.of(context).primaryColor),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 0,
+                                    blurRadius: 0,
+                                  )
+                                ],
+                              ),
+                        child: CircleAvatar(
+                          /* backgroundImage: AssetImage('assets/images/hulk.jpg'),*/
+                          radius: 35,
+                        ),
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(left: 20),
+                          width: MediaQuery.of(context).size.width * 0.65,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "${chat.sender.name}",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      chat.sender.isOnline
+                                          ? Container(
+                                              margin: EdgeInsets.only(left: 5),
+                                              width: 7,
+                                              height: 7,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.blue[200],
+                                              ),
+                                            )
+                                          : Container()
+                                    ],
+                                  ),
+                                  Text(
+                                    '${chat.time}',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black54),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  '${chat.text}',
+                                  style: TextStyle(
+                                      fontSize: 13, color: Colors.black54),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ))
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),*/     
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
           */
