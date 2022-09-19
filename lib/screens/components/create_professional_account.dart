@@ -519,7 +519,7 @@ class _ProfessionalState extends State<Professional> {
                                   builder: (context) {
                                     return PlacePicker(
                                       apiKey:
-                                          "AIzaSyCNpV4UY0noGgT86B134PfGziQODVF1MtE",
+                                          "",
                                       initialPosition: userLocation,
                                       useCurrentLocation: true,
                                       region: 'uk',
