@@ -1015,7 +1015,7 @@ class _ManageBusinessAccountState extends State<ManageBusinessAccount> {
 
   Widget changePickerAddress() {
     return Container(); /*PlacePicker(
-        apiKey: "AIzaSyCNpV4UY0noGgT86B134PfGziQODVF1MtE",
+        apiKey: "",
         initialPosition: userLocation,
         useCurrentLocation: true,
         region: 'uk',
