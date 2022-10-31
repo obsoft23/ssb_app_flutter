@@ -21,7 +21,7 @@ Now Available on iOS store - https://apps.apple.com/gb/app/vivagram/id6443725278
 
 Stack:
 - Flutter
-- Node JS(Socket IO, express Js)
+- Node JS(Socket IO, express Js) - chat messaging
 - REST API(Laravel)
 - Auth (Laravel Sanctum)
 - Png resource (undraw.co)
