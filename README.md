@@ -4,7 +4,7 @@ A Flutter project.
 
 ## Introducing Vivagram
 
-This project is a rewrite of an idea convienced during leisure, was previously written with hybrid technology - cordova.
+This project is a rewrite of an idea born during leisure hours, was previously written with hybrid technology - cordova.
 
 
 A few resources to get you started if this is your first Flutter project:
