@@ -18,16 +18,22 @@ samples, guidance on mobile development, and a full API reference.
 
 Stack:
 - Flutter
+- Node JS(Socket IO, express Js)
 - REST API(Laravel)
 - Auth (Laravel Sanctum)
 - Png resource (undraw.co)
 - Google Maps Geolocator
 - Dio
+- SQL , NGinx
 (Among other resource).
 
 ![Simulator Screen Shot - iPhone 12 mini - 2022-08-04 at 17 14 56]
+![Simulator Screen Shot - iphone 11 pro max - 2022-10-30 at 08 41 53](
+<image src="https://user-images.githubusercontent.com/46889336/198968179-d7ab6663-44dc-49e0-ba5a-446b60ac9a5c.png" width="300" height="724" />
+<image src="https://user-images.githubusercontent.com/46889336/198968179-d7ab6663-44dc-49e0-ba5a-446b60ac9a5c.png" width="300" height="724" />
+<image src="https://user-images.githubusercontent.com/46889336/198968330-146174eb-103c-45dc-b80c-2709543de259.png" width="300" height="724" />
+<image src="https://user-images.githubusercontent.com/46889336/198968379-647589ae-b9fa-468c-8b01-c51f40cb04cd.png" width="300" height="724" />
 
-<image src="https://user-images.githubusercontent.com/46889336/182936118-7fbaa76d-fe50-4e1d-9c1f-5235f938037b.png" width="300" height="724" />
 
 
 
